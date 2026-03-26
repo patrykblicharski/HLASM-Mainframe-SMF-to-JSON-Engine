@@ -27,29 +27,43 @@ START    CSECT
          USING START,R12
 
 * --- External subroutines declaration ---
+         EXTRN PROC_102
          EXTRN PROC_101
          EXTRN PROC_30         
 
+
+         WTO   '*** SMF2JSON: PROCESSING STARTED ***'
+*         OPEN  (SNAPDCB,OUTPUT)  
+
+
          OPEN  (SMFFILE,INPUT)
+
+*SMF record headers fields
+*
+*Offset 0 SMF30LEN(2) Record Length
+*Offset 2 SMF30SEG(2) Segment descriptor
+*Offset 4 SMF30FLG(1) System indicator
+*Offset 5 SMF30RTY(1) Record type ex: 1E -> 30
+*Offset 6 SMF30TME(4) Time
+*Offset 10 SMF30DTE(4) Date
+*Offset 14 SMF30SID(4) LPAR ID ex : PROD
 
          WTO   '[ '
 
 LOOP     GET   SMFFILE            * Open SMF File
          LR    R2,R1              * Save RDW
 
+*         LA    R3,1000(,R2)
+*         SNAP  DCB=SNAPDCB,ID=50,PDATA=REGS,STORAGE=((R2),(R3)) 
+
          USING SMF30RHD,R2
+
+
+ANALYSE  DS    0H
 
 * --- Reading SMF Type : RTY (Offset +5, size 1) ---
          SR    R4,R4             * Clean R4
-         IC    R4,SMF30RTY      * Use SMF30RTY macro (Offset+5)
-
-         CLI   SMF30RTY,101        
-         BE    ANALYSE
-*         CLI   SMF30RTY,102        
-*         BE    ANALYSE
-         B     LOOP              *Skip all records expect 101 and 30
-
-ANALYSE  DS    0H
+         IC    R4,SMF30RTY       * Use SMF30RTY macro (Offset+5)
 
 * --- EBCDIC Convertion to decimal       
 * --- Ex: If R4 = X'65', DOUBLE will contain X'000000000000101C
@@ -91,14 +105,9 @@ ANALYSE  DS    0H
          UNPK  TIMEJSON(2),DOUBLE+6(2) 
          OI    TIMEJSON+1,X'F0'         
 
-* --- Extract SID (Offset +14) ---
-
-         MVC   SIDJSON,SMF30SID
 * --- SHOW JSON ---
          LA    R1,RTYWTO      
-         SVC   35               
-         LA    R1,SIDWTO     
-         SVC   35             
+         SVC   35                          
          LA    R1,DATEWTO     
          SVC   35               
          LA    R1,TIMEWTO     
@@ -115,10 +124,8 @@ ANALYSE  DS    0H
 
          L     R15,=V(PROC_101)    * Call SUBROUTINE, R1:list pointer
          BASR  R14,R15     
-
-* DEBUG
+         WTO   '}, '
          B     LOOP          
-*         B     EOF
 
 NO_101   CLI   5(R1),X'66'         * Type 102 ?
          BNE   NO_102
@@ -128,10 +135,8 @@ NO_101   CLI   5(R1),X'66'         * Type 102 ?
 
          L     R15,=V(PROC_102)     * Call SUBROUTINE, R1:list pointer
          BASR  R14,R15    
- 
-* DEBUG
+         WTO   '}, '
          B     LOOP          
-*         B     EOF
 
 NO_102   CLI   5(R1),X'1E'         * Type 30 ?
          BNE   NO_30
@@ -139,20 +144,32 @@ NO_102   CLI   5(R1),X'1E'         * Type 30 ?
          LA    R1,PARMLIST         * R1 : List pointer for subroutine
 
          L     R15,=V(PROC_30)     * Call SUBROUTINE, R1:list pointer
-         BASR  R14,R15    
-         B     LOOP          
+         BASR  R14,R15
+         WTO   '}, '   
+* DEBUG : finish program when 1st SMF 30 is located          
+*         B     EOF
+         B     LOOP     
 
+NO_30    CLI   5(R1),X'02'         * Type 02 ?
+         BNE   NO_02
+         WTO   '}, '                         
+         B     LOOP                * No processing for Type 02 
+
+
+NO_02    WTO   '}, '
+
+* DEBUG : finish when 1st SMF record found other than 30 or 101, 102
+*         B     LOOP  
+        
          
-
-NO_30    WTO   '}, '
-
-         B     LOOP
-         
+* END OF DATA REACHED
 
 EOF      CLOSE (SMFFILE)
-
+*         CLOSE (SNAPDCB)
 
          WTO   '] '
+         
+         WTO   '*** SMF2JSON: PROCESSING COMPLETE ***'
 
          PR
 
@@ -168,16 +185,10 @@ DOUBLE   DS    D
          DS    0F                  * Fullword alignment : 32 bits
 RTYWTO   DC    AL2(RTYEND-RTYWTO)
          DC    XL2'0000'
-         DC    C'{ "record_type": "'
+         DC    C'{ "smf_record_type": "'
 RTYJSON  DC    CL3'   '         
          DC    C'",'
 RTYEND   EQU   *         
-SIDWTO   DC    AL2(SIDEND-SIDWTO)
-         DC    XL2'0000'
-         DC    C'"system_id": "'
-SIDJSON  DC    CL4'    '         
-         DC    C'",'
-SIDEND   EQU   *
 DATEWTO  DC    AL2(DATEEND-DATEWTO)
          DC    XL2'0000'
          DC    C'"date": "'
@@ -192,6 +203,11 @@ TIMEJSON DC    CL8'HH:MM:SS'
 TIMEEND  EQU   *
       
          DS    0F                 * Fullword alignment : 32 bits
+
+* Warning : comma to cols number 72 
+*SNAPDCB  DCB   DSORG=PS,MACRF=(W),DDNAME=SNAP,RECFM=VBA,
+*               LRECL=125,BLKSIZE=882
+*         DS    0F                 * Fullword alignment : 32 bits 
 
 * --- Définitions des zones ---
 SMFFILE  DCB   DDNAME=SMFFILE,                                         X

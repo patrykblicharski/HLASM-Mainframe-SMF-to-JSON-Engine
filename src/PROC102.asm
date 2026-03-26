@@ -16,11 +16,7 @@ R13      EQU   13
 R14      EQU   14
 R15      EQU   15
 
-PROC_102 CSECT
-         IFASMFR (30)   * SMF Records structs
-         DSNDQWHS       * SMF Header Standard structs
-         DSNDQWHC       * SMF Header Correlation structs         
-         DSNDQW01
+
 PROC_102 CSECT
          BAKR  R14,0         
          LR    R12,R15        
@@ -73,6 +69,12 @@ IFCIEND  EQU   *
          DS    0F       --Aligne
 * Warning : comma to cols number 72 
 SNAPDCB  DCB   DSORG=PS,MACRF=(W),DDNAME=SNAP,RECFM=VBA,               X
-               LRECL=125,BLKSIZE=882         
+               LRECL=125,BLKSIZE=882
+
+
+         IFASMFR (30)   * SMF Records structs
+         DSNDQWHS       * SMF Header Standard structs
+         DSNDQWHC       * SMF Header Correlation structs         
+         DSNDQW01                        
          END
          
