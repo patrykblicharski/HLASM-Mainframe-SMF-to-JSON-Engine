@@ -1,4 +1,11 @@
-# Mainframe-SMF-to-JSON-Engine
+```text
+      ____  __  __ _____ _            _ ____   ___  _   _ 
+ ____/ ___||  \/  |  ___| |_ ___     | / ___| / _ \| \ | |
+|_  /\___ \| |\/| | |_  | __/ _ \ _  | \___ \| | | |  \| |
+ / /  ___) | |  | |  _| | || (_) | |_| |___) | |_| | |\  |
+/___||____/|_|  |_|_|    \__\___/ \___/|____/ \___/|_| \_|
+```
+# zSMFtoJSON
 
 A high-performance z/OS HLASM (High Level Assembler) engine designed to parse raw System Management Facilities (SMF) records and convert them into standardized, analytics-ready JSON.
 
@@ -15,7 +22,29 @@ Mainframe-SMF-to-JSON-Engine bridges this gap. Built in HLASM for maximum speed 
 
 ## Sample JSON Output
 ```json
-[ { "record_type": "101",
+[ 
+ { "smf_record_type": "030",
+ "date": "26.084",
+ "time": "12:13:59",
+ "smf_system_id": "PROD",
+ "work_address_space_ind": "JES2",
+ "smf_record_subtype": "00004",
+ "smf_record_version": "05",
+ "product_name": "SMF     ",
+ "os_level": "SP7.2.2 ",
+ "system_name": "PROD    ",
+ "sysplex_name": "SYSPLEX  ",
+ "job_name": "SMFEXTRT",
+ "program_name": "IFASMFDP",
+ "step_name": "STEP1   ",
+ "user_id": "        ",
+ "dasd_io_pending_cu_queue_time": "00000000",
+ "dasd_io_start_subchannel_count": "0000B08C",
+ "completion_code": "00000",
+ "cpu_step_time": "00000772",
+ "srb_time": "000002A7",
+ },
+ { "record_type": "101",
  "system_id": "PROD",
  "date": "26.016",
  "time": "17:32:03",
