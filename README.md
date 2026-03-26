@@ -31,7 +31,7 @@ Mainframe-SMF-to-JSON-Engine bridges this gap. Built in HLASM for maximum speed 
  "smf_record_subtype": "00004",
  "smf_record_version": "05",
  "product_name": "SMF     ",
- "os_level": "SP7.2.2 ",
+ "os_level": "SP7.2.5 ",
  "system_name": "PROD    ",
  "sysplex_name": "SYSPLEX  ",
  "job_name": "SMFEXTRT",
