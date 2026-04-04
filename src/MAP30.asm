@@ -16,17 +16,9 @@ T_TME    EQU   9      SMF TIME (BIN4)
 T_RS_STR EQU   10     RS Variable Length EBCDIC String (Tag-Len-Data)
 
 
-
-
-* --------------------------------------------------------------------
-* THE TABLE STARTS HERE
-* --------------------------------------------------------------------
-* --- TABLE DE MAPPING ALIGNÉE SUR 24 OCTETS ---
-         DS    0F                  * Force l'alignement Fullword
+         DS    0F                
 
 TABLE30  EQU   *       
-* OFFSET RELATIF | OFFSET SECTION  | TYPE  | JSON LABEL (16) | PAD
-* ----|---------------------|-----|-------|-----------------|----
 
          DC    AL4(SMF30RTY-SMF30LEN),AL4(0)
          DC    AL1(T_DEC1),AL3(0)

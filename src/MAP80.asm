@@ -12,11 +12,8 @@ T_RS_15  EQU   15    VOLSER volume serial
 T_RS_17  EQU   17    Class name 
 
 
-* --------------------------------------------------------------------
-* THE TABLE STARTS HERE
-* --------------------------------------------------------------------
-* --- TABLE DE MAPPING ALIGNÉE SUR 24 OCTETS ---
-         DS    0F                  * Force l'alignement Fullword
+
+         DS    0F                  
 
 TABLE80  EQU   * 
          DC    AL4(SMF80RTY-SMF80LEN),AL4(0)

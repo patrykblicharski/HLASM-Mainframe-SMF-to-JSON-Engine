@@ -50,6 +50,52 @@ DC    AL1(T_RS_STR),AL1(T_RS_17),AL2(0)
 DC    CL16'class_name'
 ```
 
+## How To: Add New Mappings
+To add a new field to the JSON output, you need the IBM Official Documentation
+Each entry in the mapping table (e.g., MAP30.asm) follows a 24-byte structured format.
+
+**Case 1:** Field located in the Standard Header
+If the field is part of the fixed header (no triplet involved):
+
+- Relative Offset: FIELD_NAME - HEADER_START_LABEL
+- Triplet Offset: Set to AL4(0) (Indicates no triplet)
+- Data Type (1 byte): Choose from T_XXX constants (e.g., T_CHR4, T_DEC1).
+- 3 bytes of padding to maintain the 24-byte alignment.
+- JSON Label: Up to 16 characters for the output key.
+
+Example (System ID):
+```asm
+         DC    AL4(SMF30SID-SMF30LEN),AL4(0)
+         DC    AL1(T_CHR4),AL3(0)
+         DC    CL16'smf_system_id'
+```
+
+**Case 2:** Field located via a Triplet (Sections)
+Most SMF data (like CPU times or Product sections) are located via triplets (Offset, Length, Number).
+
+- Relative Offset: FIELD_NAME - SECTION_START_LABEL
+- Triplet Offset: TRIPLET_OFFSET - HEADER_START_LABEL
+- Data Type (1 byte) : The engine will automatically calculate the real memory address using the triplet.
+- 3 bytes of padding to maintain the 24-byte alignment.
+- JSON Label: Up to 16 characters for the output key.
+
+Example (CPU Step time):
+```asm
+         DC    AL4(SMF30CPT-SMF30PTY),AL4(SMF30COF-SMF30LEN)
+         DC    AL1(T_DEC4),AL3(0)
+         DC    CL16'cpu_step_time'
+```
+
+**Case 3:** Relocated Sections (Tag-Length-Data)
+Relocated sections (common in SMF 80) don't use standard triplets. Instead, they consist of a series of variable-length sections identified by a Tag ID.
+
+- Relative Offset: FIELD_NAME - HEADER_START_LABEL
+- Triplet Offset: Set to AL4(0) (Not used for RS).
+- Data Type (1 byte): Must be T_RS_STR
+- Tag ID (1 byte): The specific Tag ID you want to extract (e.g., 17 for Class Name).
+- Padding (2 bytes): 2 bytes of padding to maintain the 24-byte alignment.
+- JSON Label: Up to 16 characters for the output key.
+
 # Prerequisites
 z/OS Environment with HLASM compiler.
 
@@ -80,4 +126,27 @@ Follow these steps to deploy and run the SMF-to-JSON engine on your system.
 
    The JSON output will be available in the JSONOUT DD (either directed to SYSOUT or the dataset defined in the configuration).
 
+# Roadmap / TODO List
+
+### Phase 1: Core Engine & Data Mapping
+- [X] **Mapping Tables**:  The engine must be refactored to use Master Mapping Tables
+- [x] **Relocate Section Support**: Native parsing of SMF 80 (RACF) Tag-Length-Data structures.
+- [ ] **Extended Mapping Library**:
+    - [ ] **SMF 14/15**: Dataset Activity (Non-VSAM).
+    - [ ] **SMF 42**: DFSMS Statistics.
+    - [ ] **SMF 110**: CICS Performance Data (Dictionary-based parsing).
+    - [ ] **SMF 101/102**: DB2 Statistics/Performance.
+- [ ] **Numerical Formatting**: Support for **Packed Decimal (P)** and **Floating Point** conversion to JSON numbers.
+
+### Phase 2: Performance & Cost Optimization (zIIP)
+- [ ] **zIIP Offload Engine (`SMF2ZIIP`)**: 
+    - [ ] Implement **SRB (Service Request Block)** mode for execution.
+    - [ ] Create **WLM Enclaves** to make the code zIIP-eligible.
+    - [ ] Offload heavy EBCDIC-to-JSON string manipulation to assist processors.
+- [ ] **Buffer Management**: Implement multi-buffering (Double Buffering) to prevent I/O bottlenecks during high-volume dumps.
+
+### Phase 3: Extensibility & Integration
+- [ ] **User Exit Interface (`SMF2EXIT`)**: 
+    - [ ] Provide a standard linkage for User Exits to filter or mask sensitive data (PII) before JSON serialization.
+- [ ] **Live Streaming**: Direct integration with **z/OS Logstream (IFASMFDL)** to convert records in real-time instead of batch dumps.
 
