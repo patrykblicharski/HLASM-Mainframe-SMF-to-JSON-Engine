@@ -37,17 +37,11 @@ Each SMF type is defined by a mapping table. Here is how you define a field:
 
 Standard Triplets (Example SMF 30) :
 ```asm
-BASE OFFSET(4) | OFFSET TRIPLET IF NEEDED(4) | TYPE(1) | PAD(3) | JSON LABEL (16)
-DC    AL4(SMF30CPT-SMF30PTY),AL4(SMF30COF-SMF30LEN)
-DC    AL1(T_DEC4),AL3(0)
-DC    CL16'cpu_step_time'
+         SMF_FIELD SMF30CPT-SMF30PTY,TRIPLET=SMF30COF-SMF30LEN,TYPE=T_DEC4,JSON=cpu_step_time
 ```
 Relocate Sections (Example SMF 80) :
 ```asm
-BASE OFFSET(4) | UNUSED (4)  | TYPE(T_RS_STR) | TAG_ID(1) | JSON LABEL
-DC    AL4(SMF80REL-SMF80LEN),AL4(0)
-DC    AL1(T_RS_STR),AL1(T_RS_17),AL2(0)
-DC    CL16'class_name'
+         SMF_FIELD SMF80REL-SMF80LEN,TYPE=T_RS_STR,TAG=T_RS_17,JSON=class_name
 ```
 
 ## How To: Add New Mappings
