@@ -10,102 +10,45 @@
 A high-performance z/OS HLASM (High Level Assembler) engine designed to parse raw System Management Facilities (SMF) records and convert them into standardized, analytics-ready JSON.
 
 ## Overview
-System Management Facilities (SMF) provide a massive amount of data regarding z/OS health and performance. However, raw SMF records are stored in complex, binary, variable-length formats (triplets/offsets) that are difficult for modern analytics platforms to ingest.
+Raw SMF records are stored in complex binary formats (triplets, offsets, and relocate sections) that are difficult for modern platforms to ingest. This engine bridges the gap by providing a Table-Driven conversion that is both ultra-fast and highly customizable.
 
-Mainframe-SMF-to-JSON-Engine bridges this gap. Built in HLASM for maximum speed and minimal CPU overhead, it transforms these records into clean, flat or nested JSON objects.
+## New: Data-Driven Architecture
+The engine has been refactored to use Master Mapping Tables. This allows developers to choose exactly which fields to export to JSON by simply editing a table, without modifying the core logic.
 
-## Key Features
-- Lightning Fast: Written in pure Assembly to process millions of records with near-zero latency.
-- CDP Normalized: JSON keys follow the IBM Common Data Provider (CDP) standard for immediate integration.
-- Modular Architecture: Features a central dispatcher with pluggable procedures (PROC_XXX) for different SMF types.
-- Cloud Ready: Produces valid JSON output suitable for ingestion into AWS, Azure, or GCP data lakes.
+## Supported Data Types
+
+The engine handles the complexity of SMF formats automatically based on the table definition:
+Binary/EBCDIC: Fixed length strings (T_CHR1 to T_CHR8).
+Numeric: Decimal conversions (T_DEC1 to T_DEC4).
+Temporal: Native SMF Date (T_DTE) and Time (T_TME) to ISO-like strings.
+Relocate Sections (RS): Advanced parsing of Tag-Length-Data structures (SMF 80) via T_RS_STR.
 
 ## Sample JSON Output
 ```json
-[ 
- { "smf_record_type": "030",
- "date": "26.084",
- "time": "12:13:59",
- "smf_system_id": "PROD",
- "work_address_space_ind": "JES2",
- "smf_record_subtype": "00004",
- "smf_record_version": "05",
- "product_name": "SMF     ",
- "os_level": "SP7.2.5 ",
- "system_name": "PROD    ",
- "sysplex_name": "SYSPLEX  ",
- "job_name": "SMFEXTRT",
- "program_name": "IFASMFDP",
- "step_name": "STEP1   ",
- "user_id": "        ",
- "dasd_io_pending_cu_queue_time": "00000000",
- "dasd_io_start_subchannel_count": "0000B08C",
- "completion_code": "00000",
- "cpu_step_time": "00000772",
- "srb_time": "000002A7",
- },
- { "record_type": "101",
- "system_id": "PROD",
- "date": "26.016",
- "time": "17:32:03",
- "db2_ifcid": "003",
- "db2_sequence_number": "000008B6",
- "db2_location_name": "DALLASB         ",
- "db2_net_id": "NETD    ",
- "db2_lu_name": "DBBGLU1 ",
- "db2_connection_name": "DB2CALL ",
- "db2_plan_name": "QMF11   ",
- "db2_auth_id": "IBMUSER ",
- "db2_correlation_id": "IBMUSER ",
- "db2_end_user_id": "IBMUSER ",
- "db2_class2_cpu_time": "00000000-04375000",
- "db2_class2_elapsed_time": "00000000-04B159AC",
- "db2_latch_wait_time": "00000000-00000000",
- "db2_io_wait_time": "00000000-00000000" },
- { "record_type": "101",
- "system_id": "PROD",
- "date": "26.016",
- "time": "17:32:13",
- "db2_ifcid": "003",
- "db2_sequence_number": "000008B7",
- "db2_location_name": "DALLASB         ",
- "db2_net_id": "NETD    ",
- "db2_lu_name": "DBBGLU1 ",
- "db2_connection_name": "DB2CALL ",
- "db2_plan_name": "QMF11   ",
- "db2_auth_id": "IBMUSER ",
- "db2_correlation_id": "IBMUSER ",
- "db2_end_user_id": "IBMUSER ",
- "db2_class2_cpu_time": "00000000-04E064C8",
- "db2_class2_elapsed_time": "00000000-059AA844",
- "db2_latch_wait_time": "00000000-00000000",
- "db2_io_wait_time": "00000000-00000000" },
- { "record_type": "101",
- "system_id": "PROD",
- "date": "26.016",
- "time": "17:32:15",
- "db2_ifcid": "003",
- "db2_sequence_number": "000008B8",
- "db2_location_name": "DALLASB         ",
- "db2_net_id": "NETD    ",
- "db2_lu_name": "DBBGLU1 ",
- "db2_connection_name": "DB2CALL ",
- "db2_plan_name": "QMF11   ",
- "db2_auth_id": "IBMUSER ",
- "db2_correlation_id": "IBMUSER ",
- "db2_end_user_id": "IBMUSER ",
- "db2_class2_cpu_time": "00000000-00EED808",
- "db2_class2_elapsed_time": "00000000-012FC0A9",
- "db2_latch_wait_time": "00000000-00000000",
- "db2_io_wait_time": "00000000-00000000" } ]
+[
+{"smf_record_type":"30","smf_system_id":"PROD","time":"12:13:59","date":"2026-03-25","rec_version":"05","addr_space_ind":"SMF     ","program_name":"IFASMFDP","step_name":"STEP1   ","cpu_step_time":"1906","srb_time":"679"}
+,{"smf_record_type":"30","smf_system_id":"PROD","time":"12:16:08","date":"2026-03-25","rec_version":"05","addr_space_ind":"SMF     ","program_name":"BPXPRECP","step_name":"*OMVSEX ","cpu_step_time":"30","srb_time":""}
+,{"smf_record_type":"80","smf_system_id":"PROD","time":"12:20:29","date":"2026-03-25","user_id":"IBMUSER ","group_name":"SYS1    ","old_res":"IBMUSER.REXX","class_name":"DATASET "}
+]
 ```
 
-## Technical Implementation
-The engine utilizes z/OS system macros to map binary structures:
+## Technical Implementation: Mapping Tables
+Each SMF type is defined by a mapping table. Here is how you define a field:
 
-- DSNDQWHS: Standard Header Identification
-- DSNDQWHC: Correlation Header (Plan, AuthID, Connection)
-- DSNDQWAC: Accounting Class 2 (CPU and Elapsed times)
+Standard Triplets (Example SMF 30) :
+```asm
+BASE OFFSET(4) | OFFSET TRIPLET IF NEEDED(4) | TYPE(1) | PAD(3) | JSON LABEL (16)
+DC    AL4(SMF30CPT-SMF30PTY),AL4(SMF30COF-SMF30LEN)
+DC    AL1(T_DEC4),AL3(0)
+DC    CL16'cpu_step_time'
+```
+Relocate Sections (Example SMF 80) :
+```asm
+BASE OFFSET(4) | UNUSED (4)  | TYPE(T_RS_STR) | TAG_ID(1) | JSON LABEL
+DC    AL4(SMF80REL-SMF80LEN),AL4(0)
+DC    AL1(T_RS_STR),AL1(T_RS_17),AL2(0)
+DC    CL16'class_name'
+```
 
 # Prerequisites
 z/OS Environment with HLASM compiler.
