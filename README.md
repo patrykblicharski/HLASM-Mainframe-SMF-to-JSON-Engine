@@ -35,11 +35,15 @@ Relocate Sections (RS): Advanced parsing of Tag-Length-Data structures (SMF 80) 
 ## Technical Implementation: Mapping Tables
 Each SMF type is defined by a mapping table. Here is how you define a field:
 
-Standard Triplets (Example SMF 30) :
+Standard header field (Example SMF 30) :
+```asm
+         SMF_FIELD SMF30SID-SMF30LEN,TYPE=T_CHR4,JSON=smf_system_id
+```
+Triplets field (Example SMF 30) :
 ```asm
          SMF_FIELD SMF30CPT-SMF30PTY,TRIPLET=SMF30COF-SMF30LEN,TYPE=T_DEC4,JSON=cpu_step_time
 ```
-Relocate Sections (Example SMF 80) :
+Relocate Sections field (Example SMF 80) :
 ```asm
          SMF_FIELD SMF80REL-SMF80LEN,TYPE=T_RS_STR,TAG=T_RS_17,JSON=class_name
 ```
