@@ -51,7 +51,7 @@ DC    CL16'class_name'
 ```
 
 ## How To: Add New Mappings
-To add a new field to the JSON output, you need the IBM Official Documentation
+To add a new field to the JSON output, you need the IBM Official Documentation : *z/OS MVS System Management Facilities (SMF)*
 Each entry in the mapping table (e.g., MAP30.asm) follows a 24-byte structured format.
 
 **Case 1:** Field located in the Standard Header
@@ -65,9 +65,7 @@ If the field is part of the fixed header (no triplet involved):
 
 Example (System ID):
 ```asm
-         DC    AL4(SMF30SID-SMF30LEN),AL4(0)
-         DC    AL1(T_CHR4),AL3(0)
-         DC    CL16'smf_system_id'
+         SMF_FIELD SMF30SID-SMF30LEN,TYPE=T_CHR4,JSON=smf_system_id
 ```
 
 **Case 2:** Field located via a Triplet (Sections)
@@ -81,9 +79,7 @@ Most SMF data (like CPU times or Product sections) are located via triplets (Off
 
 Example (CPU Step time):
 ```asm
-         DC    AL4(SMF30CPT-SMF30PTY),AL4(SMF30COF-SMF30LEN)
-         DC    AL1(T_DEC4),AL3(0)
-         DC    CL16'cpu_step_time'
+         SMF_FIELD SMF30CPT-SMF30PTY,TRIPLET=SMF30COF-SMF30LEN,TYPE=T_DEC4,JSON=cpu_step_time
 ```
 
 **Case 3:** Relocated Sections (Tag-Length-Data)
@@ -98,9 +94,7 @@ Relocated sections (common in SMF 80) don't use standard triplets. Instead, they
 
 Example (Class Name, Tag ID : 17):
 ```asm
-         DC    AL4(SMF80REL-SMF80LEN),AL4(0)
-         DC    AL1(T_RS_STR),AL1(T_RS_17),AL2(0)
-         DC    CL16'class_name'
+         SMF_FIELD SMF80REL-SMF80LEN,TYPE=T_RS_STR,TAG=T_RS_17,JSON=class_name
 ```
 
 

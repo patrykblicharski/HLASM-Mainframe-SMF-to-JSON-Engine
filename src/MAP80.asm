@@ -13,39 +13,33 @@ T_RS_17  EQU   17    Class name
 
 
 
-         DS    0F                  
+TABLE80  SMF_START             
 
-TABLE80  EQU   * 
-         DC    AL4(SMF80RTY-SMF80LEN),AL4(0)
-         DC    AL1(T_DEC1),AL3(0)
-         DC    CL16'smf_record_type'
+         SMF_FIELD SMF80RTY-SMF80LEN,TYPE=T_DEC1,JSON=smf_record_type
 
-         DC    AL4(SMF80SID-SMF80LEN),AL4(0)
-         DC    AL1(T_CHR4),AL3(0)
-         DC    CL16'smf_system_id'
 
-         DC    AL4(SMF80TME-SMF80LEN),AL4(0)
-         DC    AL1(T_TME),AL3(0)
-         DC    CL16'time'
+         SMF_FIELD SMF80SID-SMF80LEN,TYPE=T_CHR4,JSON=smf_system_id
 
-         DC    AL4(SMF80DTE-SMF80LEN),AL4(0)
-         DC    AL1(T_DTE),AL3(0)
-         DC    CL16'date'
 
-         DC    AL4(SMF80USR-SMF80LEN),AL4(0)
-         DC    AL1(T_CHR8),AL3(0)
-         DC    CL16'user_id'
+         SMF_FIELD SMF80TME-SMF80LEN,TYPE=T_TME,JSON=time
 
-         DC    AL4(SMF80GRP-SMF80LEN),AL4(0)
-         DC    AL1(T_CHR8),AL3(0)
-         DC    CL16'group_name'
 
-         DC    AL4(SMF80REL-SMF80LEN),AL4(0)
-         DC    AL1(T_RS_STR),AL1(T_RS_1),AL2(0)
-         DC    CL16'old_resource'
+         SMF_FIELD SMF80DTE-SMF80LEN,TYPE=T_DTE,JSON=date
 
-         DC    AL4(SMF80REL-SMF80LEN),AL4(0)
-         DC    AL1(T_RS_STR),AL1(T_RS_17),AL2(0)
-         DC    CL16'class_name'
 
-         DC    AL4(0)      * End of Table
+         SMF_FIELD SMF80USR-SMF80LEN,TYPE=T_CHR8,JSON=user_id
+
+
+         SMF_FIELD SMF80GRP-SMF80LEN,TYPE=T_CHR8,JSON=group_name
+
+
+         SMF_FIELD SMF80REL-SMF80LEN,TYPE=T_RS_STR,TAG=T_RS_1,         X
+               JSON=old_resource
+
+
+         SMF_FIELD SMF80REL-SMF80LEN,TYPE=T_RS_STR,TAG=T_RS_17,        X
+               JSON=class_name
+
+
+         SMF_END
+

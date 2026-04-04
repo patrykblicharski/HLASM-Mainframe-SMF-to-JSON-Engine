@@ -689,6 +689,8 @@ SMFFILE  DCB   DDNAME=SMFFILE,                                         X
                MACRF=GL,                                               X
                EODAD=EOF
 
+
+
 * --- JSON Output ----
 BUFFERVB DS    0H                  * Aligne sur un Halfword
 BUF_RDW  DC    AL2(0)              * Total length (Data + 4)
@@ -700,7 +702,42 @@ JSONOUT  DCB   DDNAME=JSONOUT,                                         X
                RECFM=VB,                                               X
                LRECL=1024
 
+* --- MACRO Defintions for Mapping files ----
+         MACRO
+&NAME    SMF_START
+&NAME    DS    0F
+         MEND
 
+         MACRO
+&NAME    SMF_FIELD &OFF,&TRIPLET=,&TYPE=,&TAG=,&JSON=
+.*
+&NAME    DS    0F                  
+.*
+&V_BASE  SETC  '0'
+&V_SUB   SETC  '0'
+
+         AIF   (N'&TRIPLET EQ 0).SKIPB
+&V_BASE  SETC  '&TRIPLET'
+.SKIPB   ANOP
+         AIF   (N'&TAG EQ 0).SKIPS
+&V_SUB   SETC  '&TAG'
+.SKIPS   ANOP
+.*
+         DC    AL4(&OFF)           Offset
+         DC    AL4(&V_BASE)        Base TRIPLET
+         DC    AL1(&TYPE)          Type
+         DC    AL1(&V_SUB)         Tag ID for Relocate Section
+         DC    AL2(0)              Padding
+         DC    CL16'&JSON'         JSON Label
+         MEND
+
+
+
+
+         MACRO
+         SMF_END
+         DC    AL4(0)              Fin de table (Sentinelle)
+         MEND
 * mapping table SMF Type 30
          DS    0F                  * Alignement
          COPY  MAP30
