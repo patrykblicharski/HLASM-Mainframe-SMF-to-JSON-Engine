@@ -96,6 +96,13 @@ Relocated sections (common in SMF 80) don't use standard triplets. Instead, they
 - Padding (2 bytes): 2 bytes of padding to maintain the 24-byte alignment.
 - JSON Label: Up to 16 characters for the output key.
 
+Example (Class Name, Tag ID : 17):
+```asm
+         DC    AL4(SMF80REL-SMF80LEN),AL4(0)
+         DC    AL1(T_RS_STR),AL1(T_RS_17),AL2(0)
+         DC    CL16'class_name'
+```
+
 # Prerequisites
 z/OS Environment with HLASM compiler.
 
