@@ -103,6 +103,26 @@ Example (Class Name, Tag ID : 17):
          DC    CL16'class_name'
 ```
 
+
+### Data Type Reference Mapping
+
+Use these constants in your mapping tables (`MAP30`, `MAP80`) to define how the engine should process each field.
+
+| Constant | Code | IBM SMF Format | Description | JSON Output |
+| :--- | :--- | :--- | :--- | :--- |
+| **`T_BIN1`** | `0` | Binary (1) | Single byte binary value | Number |
+| **`T_CHR1`** | `1` | EBCDIC (1) | 1-byte character string | String |
+| **`T_CHR2`** | `2` | EBCDIC (2) | 2-byte character string | String |
+| **`T_CHR4`** | `3` | EBCDIC (4) | 4-byte character string | String |
+| **`T_CHR8`** | `4` | EBCDIC (8) | 8-byte character string | String |
+| **`T_DEC1`** | `5` | Binary (1) | Unsigned integer (8-bit) | Number |
+| **`T_DEC2`** | `6` | Binary (2) | Unsigned integer (16-bit) | Number |
+| **`T_DEC4`** | `7` | Binary (4) | Unsigned integer (32-bit) | Number |
+| **`T_DTE`** | `8` | Packed (PL4) | SMF Date (0cyydddF) | "YYYY-MM-DD" |
+| **`T_TME`** | `9` | Binary (4) | SMF Time (1/100th sec) | "HH:MM:SS" |
+| **`T_RS_STR`**| `10`| RS Tag | Relocate Section Variable Data | String |
+
+
 # Prerequisites
 z/OS Environment with HLASM compiler.
 
