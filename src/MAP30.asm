@@ -18,7 +18,7 @@ T_RS_STR EQU   10     RS Variable Length EBCDIC String (Tag-Len-Data)
 
 TABLE30  SMF_START   
 
-         SMF_FIELD SMF30RTY-SMF30LEN,TYPE=T_DEC1,JSON=smf_record_tpe
+         SMF_FIELD SMF30RTY-SMF30LEN,TYPE=T_DEC1,JSON=smf_record_type
 
 
          SMF_FIELD SMF30SID-SMF30LEN,TYPE=T_CHR4,JSON=smf_system_id
