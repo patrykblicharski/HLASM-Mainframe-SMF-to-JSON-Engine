@@ -14,6 +14,10 @@ Raw SMF records are stored in complex binary formats (triplets, offsets, and rel
 
 ## Enterprise Architecture
 
+<p align="center">
+  <img src="img/zIIP-offload.webp" alt="zIIP offload">
+</p>
+
 The engine is built with a dual-mode execution architecture:
 - **Standard Mode (TCB):** Runs as a standard task, compatible with any z/OS environment.
 - **Offload-Ready (SRB):** The core conversion logic is **fully reentrant** and thread-safe, designed to be dispatched for *zIIP Offloading*.
