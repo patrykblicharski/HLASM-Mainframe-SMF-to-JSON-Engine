@@ -12,6 +12,14 @@ A high-performance z/OS HLASM (High Level Assembler) engine designed to parse ra
 ## Overview
 Raw SMF records are stored in complex binary formats (triplets, offsets, and relocate sections) that are difficult for modern platforms to ingest. This engine bridges the gap by providing a Table-Driven conversion that is both ultra-fast and highly customizable.
 
+## Enterprise Architecture
+
+The engine is built with a dual-mode execution architecture:
+- **Standard Mode (TCB):** Runs as a standard task, compatible with any z/OS environment.
+- **Offload-Ready (SRB):** The core conversion logic is **fully reentrant** and thread-safe, designed to be dispatched for *zIIP Offloading*.
+
+> **Note:** The public version of this repository is configured for TCB mode. The high-level SRB dispatcher and WLM Enclave management modules for *zIIP Offloading* are part of the Enterprise edition.
+
 ## New: Data-Driven Architecture
 The engine has been refactored to use Master Mapping Tables. This allows developers to choose exactly which fields to export to JSON by simply editing a table, without modifying the core logic.
 
@@ -49,6 +57,9 @@ Relocate Sections field (Example SMF 80) :
 ```
 
 ## How To: Add New Mappings
+
+Contributions to Mapping Tables are highly encouraged! Any new mapping added to the library automatically benefits from the engine conversion logic and is designed to be thread-safe for future performance upgrades
+
 To add a new field to the JSON output, you need the IBM Official Documentation : *z/OS MVS System Management Facilities (SMF)*
 Each entry in the mapping table (e.g., MAP30.asm) follows a 24-byte structured format.
 
@@ -134,6 +145,8 @@ Follow these steps to deploy and run the SMF-to-JSON engine on your system.
    ```
    You should have an existing SRC, OBJ, and LOAD PDS (e.g., USER.SRC, USER.OBJ, USER.LOAD)
 
+   In the provided `CONFIG`, the variable `&USEZIIP` is set to `0` by default. This ensures compatibility for all users. Turning this on requires the proprietary SRB Dispatcher module.
+
 2. Build & Run
 
    Submit the JCL to compile all modules (PROC101, PROC30, HPSMF), link-edit them, and execute the engine:
@@ -157,12 +170,10 @@ Follow these steps to deploy and run the SMF-to-JSON engine on your system.
     - [ ] **SMF 101/102**: DB2 Statistics/Performance.
 - [ ] **Numerical Formatting**: Support for **Packed Decimal (P)** and **Floating Point** conversion to JSON numbers.
 
-### Phase 2: Performance & Cost Optimization (zIIP)
-- [ ] **zIIP Offload Engine (`SMF2ZIIP`)**: 
-    - [ ] Implement **SRB (Service Request Block)** mode for execution.
-    - [ ] Create **WLM Enclaves** to make the code zIIP-eligible.
-    - [ ] Offload heavy EBCDIC-to-JSON string manipulation to assist processors.
-- [ ] **Buffer Management**: Implement multi-buffering (Double Buffering) to prevent I/O bottlenecks during high-volume dumps.
+### Phase 2: Performance & Cost Optimization
+- [x] **Reentrant Transformation Engine:** Core logic optimized for concurrent execution.
+- [X] **zIIP Offload (Internal):** SRB scheduling and WLM Enclave integration (Private build).
+- [ ] **Double Buffering:** Asynchronous I/O to prevent TCB bottlenecks during high-volume processing.
 
 ### Phase 3: Extensibility & Integration
 - [ ] **User Exit Interface (`SMF2EXIT`)**: 
