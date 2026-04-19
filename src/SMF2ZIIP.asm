@@ -188,6 +188,11 @@ CONTINUE EQU   *
          LTR   R1,R1            * Reach End of Table ?
          JNZ   T_LOOP
 
+
+* --- End of JSON Object ---
+         MVI   0(R5),C'}'        * Close JSON object
+         LA    R5,1(,R5)
+
 *--- Processing Complete ---*
          L     R4,P_JSONBUF
          SR    R5,R4            * Calculate total generated length
@@ -589,6 +594,7 @@ DT_TAB   DC    AL1(31,28,31,30,31,30,31,31,30,31,30,31)
 
 MYPARMS  DSECT
 P_EYE    DC    CL8'MYDATA'       *Eyecatcher
+DW_FJSON DS    X
 P_SMFREC DS    A                 * Input SMF Record Address
 P_TABLE  DS    A                 * Mapping Table Address
 P_JSONBUF DS   A                 * Output JSON Buffer Address

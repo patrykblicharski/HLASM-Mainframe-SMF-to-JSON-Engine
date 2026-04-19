@@ -69,6 +69,8 @@ DO_SRB   EQU   *
          OPEN  (SMFFILE,INPUT)
          OPEN  (JSONOUT,OUTPUT)
 
+         MVI   DW_FJSON,X'01'   *Initialize first object flag
+
 *--- JSON Header (Array Start) ---*
          MVI   BUF_DATA,C'['    * SET CLOSING BRACKET AT DATA START
          LHI   R1,5             * R1 = 5 (TOTAL RECORD LENGTH)
@@ -110,7 +112,17 @@ NO_80    J     NEXT_SMF
 JSONOBJ  EQU   *
 
          LARL  R5,BUF_DATA       * New Ligne R5=BUF_DATA
-         LA    R1,MYPARMS        * Parameter block for SRB/TCB
+
+         CLI   DW_FJSON,X'01'    * First JSON Objet ?
+         BE    FJSONOBJ
+
+         MVI   0(R5),C','        * Close JSON object
+         LA    R5,1(,R5)
+         B     STARTOBJ
+
+FJSONOBJ MVI   DW_FJSON,X'00'    *Initialize first object flag
+
+STARTOBJ LA    R1,MYPARMS        * Parameter block for SRB/TCB
          ST    R9,P_SMFREC       * Input SMF record pointer
          ST    R8,P_TABLE        * Mapping table pointer
          ST    R5,P_JSONBUF      * Output buffer pointer
@@ -133,9 +145,7 @@ JSONOBJ  EQU   *
          L     R4,P_JSONBUF
          AR    R5,R4             * Point to end of generated JSON
 
-* --- End of JSON Object ---
-         MVI   0(R5),C'}'        * Close JSON object
-         LA    R5,1(,R5)
+
 * --- Update to RDW for Next Line---
          LA    R0,BUF_DATA       * Load start address of data
          SR    R5,R0             * R5 = R5 (end) - R0 (start)
@@ -192,6 +202,7 @@ PARM_ADDR_SAVE DS   A
 * ==================================================================
 MYPARMS  DS    0F
 P_EYE    DC    CL8'MYDATA'      *Eyecatcher
+DW_FJSON DS X
 * Used by SRB Dispatcher
 P_SMFREC DS    A                * Input SMF Record Address
 P_TABLE  DS    A                * Mapping Table Address
