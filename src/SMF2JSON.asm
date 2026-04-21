@@ -23,7 +23,7 @@ R15      EQU   15
 
       
          COPY  CONFIG         * System-wide configuration
-         IFASMFR (30,80)      * IBM SMF Record Mappings
+         IFASMFR (30,80,89)      * IBM SMF Record Mappings
 
          
          AIF   (&USEZIIP EQ 0).NOZIIP    Check if zIIP mode
@@ -106,7 +106,12 @@ NO_30    EQU   *
          BNE    NO_80            * If Yes Skip-it : Next
          LARL  R8,TABLE80        * Load Table
          J     JSONOBJ
-NO_80    J     NEXT_SMF
+NO_80    EQU   *
+         CLI   5(R9),89          * type 89 record  ?
+         BNE    NO_89
+         LARL  R8,TABLE89
+         J     JSONOBJ
+NO_89    J     NEXT_SMF
          
 
 JSONOBJ  EQU   *
@@ -264,7 +269,8 @@ JSONOUT  DCB   DDNAME=JSONOUT,                                         X
 *--- Mapping Tables ---*
          DS    0F                  * Alignement
          COPY  MAP30
-         COPY  MAP80   
+         COPY  MAP80 
+         COPY  MAP89  
 
 DYNAMIC_WORK DSECT
 DW_SAVEAREA  DS    18F
