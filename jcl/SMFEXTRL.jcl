@@ -1,14 +1,13 @@
-//SMFEXTRT JOB (DBA),'SMF EXTRACT',CLASS=A,MSGCLASS=X
+//SMFEXTRL JOB (DBA),'SMF LOGSTREAM',CLASS=A,MSGCLASS=X
 //*
 //*-------------------------------------------------------------------*
-//* SUMMARY: SMF DATA EXTRACTION UTILITY                              *
-//* PURPOSE: EXTRACT SPECIFIC SMF RECORDS (ex: 30, 101) FROM SYSTEM       *
-//* MAN DATASETS TO A FLAT FILE FOR JSON PROCESSING.         *
+//* SUMMARY: SMF DATA EXTRACTION FROM LOGSTREAM                       *
+//* PURPOSE: EXTRACT RECORDS FROM SYSTEM LOGGER FOR JSON PROCESSING    *
 //*-------------------------------------------------------------------*
 //* CONFIGURATION
 //*-------------------------------------------------------------------*
-// SET OUTFILE='IBMUSER.SMF.FILE'
-// SET MAN='SYS1.MAN1'
+// SET OUTFILE='IBMUSER.SMF.LOG.FILE'
+// SET LSNAME='IFASMF.DEFAULT'           
 //*-------------------------------------------------------------------*
 //* STEP 0: CLEANUP PREVIOUS OUTPUT FILE
 //*-------------------------------------------------------------------*
@@ -19,15 +18,17 @@
   SET MAXCC = 0
 /*
 //*-------------------------------------------------------------------*
-//* STEP 1: DUMP AND FILTER SMF RECORDS
+//* STEP 1: EXTRACT FROM LOGSTREAM USING IFASMFDL
 //*-------------------------------------------------------------------*
-//STEP1    EXEC PGM=IFASMFDP
-//DUMPIN   DD  DISP=SHR,DSN=&MAN
+//STEP1    EXEC PGM=IFASMFDL
 //DUMPOUT  DD  DSN=&OUTFILE,DISP=(NEW,CATLG),UNIT=SYSDA,
 //             SPACE=(CYL,(10,10),RLSE),
 //             DCB=(RECFM=VBS,LRECL=32760)
 //SYSPRINT DD  SYSOUT=*
 //SYSIN    DD  *
-  INDD(DUMPIN,OPTIONS(ALL))
+  LSNAME(&LSNAME,TRUE)
   OUTDD(DUMPOUT,TYPE(30,80,101,102))
+  /* Optional: Time filter to limit size */
+  /* DATE(2026111,2026111) */
+  /* START(0800) END(1200)  */
 /*
