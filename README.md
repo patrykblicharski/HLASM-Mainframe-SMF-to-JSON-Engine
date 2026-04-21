@@ -20,9 +20,9 @@ Raw SMF records are stored in complex binary formats (triplets, offsets, and rel
 
 The engine is built with a dual-mode execution architecture:
 - **Standard Mode (TCB):** Runs as a standard task, compatible with any z/OS environment.
-- **Offload-Ready (SRB):** The core conversion logic is **fully reentrant** and thread-safe, designed to be dispatched for *zIIP Offloading*.
+- **Offload-Ready (SRB):** The core logic is **fully reentrant** and thread-safe, architectured to be dispatched via Service Request Blocks (SRB) within a WLM Enclave
 
-> **Note:** The public version of this repository is configured for TCB mode. The high-level SRB dispatcher and WLM Enclave management modules for *zIIP Offloading* are part of the Enterprise edition.
+> **Note:** The public version of this repository is configured for TCB mode. The SRB dispatcher and WLM management modules used for performance testing on experimental environments are not included in this public release.
 
 ## New: Data-Driven Architecture
 The engine has been refactored to use Master Mapping Tables. This allows developers to choose exactly which fields to export to JSON by simply editing a table, without modifying the core logic.
