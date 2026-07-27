@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 99 SUBTYPE 1 — System-level / SRM / resource groups
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE99_1 SMF_START
 

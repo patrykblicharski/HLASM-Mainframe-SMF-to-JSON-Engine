@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 79 SUBTYPE 7 — Enqueue contention data
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE79_7 SMF_START
 

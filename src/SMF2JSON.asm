@@ -1,6 +1,6 @@
 *---------------------------------------------------------------------*
 * PROGRAM: SMF2JSON                                                   *
-* PURPOSE: CONVERT SMF RECORDS (30/70/71/72/73/74/75/76/77/78/79/80/89/99/113) TO JSON *
+* PURPOSE: CONVERT SMF RECORDS (14/15/30/42/70/71/72/73/74/75/76/77/78/79/80/89/99/113/119) TO JSON *
 * FEATURES: SUPPORTS STANDARD TCB MODE OR zIIP SRB OFFLOAD            *
 *---------------------------------------------------------------------*
 * --- Register definitions ---
@@ -23,7 +23,7 @@ R15      EQU   15
 
       
          COPY  CONFIG         * System-wide configuration
-         IFASMFR (30,70,71,72,73,74,75,76,77,78,79,80,89,99,113)  * IBM SMF Record Mappings
+         IFASMFR (14,15,30,42,70,71,72,73,74,75,76,77,78,79,80,89,99,113,119)  * IBM SMF Record Mappings
 
          
          AIF   (&USEZIIP EQ 0).NOZIIP    Check if zIIP mode
@@ -389,6 +389,165 @@ T113_DEF EQU   *
          J     NEXT_SMF          * unsupported subtype
 NO_113   EQU   *
 
+* ---  TYPE 14 ---
+         CLI   5(R9),14
+         BNE   NO_14
+         LARL  R8,TABLE14
+         J     JSONOBJ
+NO_14   EQU   *
+
+* ---  TYPE 15 ---
+         CLI   5(R9),15
+         BNE   NO_15
+         LARL  R8,TABLE15
+         J     JSONOBJ
+NO_15   EQU   *
+
+* ---  TYPE 42 ---
+         CLI   5(R9),42
+         BNE   NO_42
+         LH    R1,22(,R9)        * subtype halfword
+T42_1    CHI   R1,1
+         BNE   T42_2
+         LARL  R8,TABLE42_1
+         J     JSONOBJ
+T42_2    CHI   R1,2
+         BNE   T42_3
+         LARL  R8,TABLE42_2
+         J     JSONOBJ
+T42_3    CHI   R1,3
+         BNE   T42_4
+         LARL  R8,TABLE42_3
+         J     JSONOBJ
+T42_4    CHI   R1,4
+         BNE   T42_5
+         LARL  R8,TABLE42_4
+         J     JSONOBJ
+T42_5    CHI   R1,5
+         BNE   T42_6
+         LARL  R8,TABLE42_5
+         J     JSONOBJ
+T42_6    CHI   R1,6
+         BNE   T42_9
+         LARL  R8,TABLE42_6
+         J     JSONOBJ
+T42_9    CHI   R1,9
+         BNE   T42_10
+         LARL  R8,TABLE42_9
+         J     JSONOBJ
+T42_10   CHI   R1,10
+         BNE   T42_11
+         LARL  R8,TABLE42_10
+         J     JSONOBJ
+T42_11   CHI   R1,11
+         BNE   T42_15
+         LARL  R8,TABLE42_11
+         J     JSONOBJ
+T42_15   CHI   R1,15
+         BNE   T42_16
+         LARL  R8,TABLE42_15
+         J     JSONOBJ
+T42_16   CHI   R1,16
+         BNE   T42_17
+         LARL  R8,TABLE42_16
+         J     JSONOBJ
+T42_17   CHI   R1,17
+         BNE   T42_18
+         LARL  R8,TABLE42_17
+         J     JSONOBJ
+T42_18   CHI   R1,18
+         BNE   T42_19
+         LARL  R8,TABLE42_18
+         J     JSONOBJ
+T42_19   CHI   R1,19
+         BNE   T42_20
+         LARL  R8,TABLE42_19
+         J     JSONOBJ
+T42_20   CHI   R1,20
+         BNE   T42_21
+         LARL  R8,TABLE42_20
+         J     JSONOBJ
+T42_21   CHI   R1,21
+         BNE   T42_22
+         LARL  R8,TABLE42_21
+         J     JSONOBJ
+T42_22   CHI   R1,22
+         BNE   T42_23
+         LARL  R8,TABLE42_22
+         J     JSONOBJ
+T42_23   CHI   R1,23
+         BNE   T42_24
+         LARL  R8,TABLE42_23
+         J     JSONOBJ
+T42_24   CHI   R1,24
+         BNE   T42_25
+         LARL  R8,TABLE42_24
+         J     JSONOBJ
+T42_25   CHI   R1,25
+         BNE   T42_27
+         LARL  R8,TABLE42_25
+         J     JSONOBJ
+T42_27   CHI   R1,27
+         BNE   T42_DEF
+         LARL  R8,TABLE42_27
+         J     JSONOBJ
+T42_DEF EQU   *
+         LARL  R8,TABLE42
+         J     JSONOBJ
+NO_42   EQU   *
+
+* ---  TYPE 119 ---
+         CLI   5(R9),119
+         BNE   NO_119
+         LH    R1,22(,R9)        * subtype halfword
+T119_1   CHI   R1,1
+         BNE   T119_2
+         LARL  R8,TABLE119_1
+         J     JSONOBJ
+T119_2   CHI   R1,2
+         BNE   T119_5
+         LARL  R8,TABLE119_2
+         J     JSONOBJ
+T119_5   CHI   R1,5
+         BNE   T119_6
+         LARL  R8,TABLE119_5
+         J     JSONOBJ
+T119_6   CHI   R1,6
+         BNE   T119_7
+         LARL  R8,TABLE119_6
+         J     JSONOBJ
+T119_7   CHI   R1,7
+         BNE   T119_8
+         LARL  R8,TABLE119_7
+         J     JSONOBJ
+T119_8   CHI   R1,8
+         BNE   T119_10
+         LARL  R8,TABLE119_8
+         J     JSONOBJ
+T119_10  CHI   R1,10
+         BNE   T119_11
+         LARL  R8,TABLE119_10
+         J     JSONOBJ
+T119_11  CHI   R1,11
+         BNE   T119_12
+         LARL  R8,TABLE119_11
+         J     JSONOBJ
+T119_12  CHI   R1,12
+         BNE   T119_20
+         LARL  R8,TABLE119_12
+         J     JSONOBJ
+T119_20  CHI   R1,20
+         BNE   T119_21
+         LARL  R8,TABLE119_20
+         J     JSONOBJ
+T119_21  CHI   R1,21
+         BNE   T119_DEF
+         LARL  R8,TABLE119_21
+         J     JSONOBJ
+T119_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_119   EQU   *
+
 * ---  TYPE 80 ---
          CLI   5(R9),80
          BNE   NO_80
@@ -565,6 +724,30 @@ JSONOUT  DCB   DDNAME=JSONOUT,                                         X
          COPY  MAP30S4
          COPY  MAP30S5
          COPY  MAP30S6
+         COPY  MAP14
+         COPY  MAP15
+         COPY  MAP42
+         COPY  MAP42S1
+         COPY  MAP42S2
+         COPY  MAP42S3
+         COPY  MAP42S4
+         COPY  MAP42S5
+         COPY  MAP42S6
+         COPY  MAP42S9
+         COPY  MAP42S10
+         COPY  MAP42S11
+         COPY  MAP42S15
+         COPY  MAP42S16
+         COPY  MAP42S17
+         COPY  MAP42S18
+         COPY  MAP42S19
+         COPY  MAP42S20
+         COPY  MAP42S21
+         COPY  MAP42S22
+         COPY  MAP42S23
+         COPY  MAP42S24
+         COPY  MAP42S25
+         COPY  MAP42S27
          COPY  MAP70S1
          COPY  MAP70S2
          COPY  MAP71S1
@@ -606,6 +789,17 @@ JSONOUT  DCB   DDNAME=JSONOUT,                                         X
          COPY  MAP99S14
          COPY  MAP113S1
          COPY  MAP113S2
+         COPY  MAP119S1
+         COPY  MAP119S2
+         COPY  MAP119S5
+         COPY  MAP119S6
+         COPY  MAP119S7
+         COPY  MAP119S8
+         COPY  MAP119S10
+         COPY  MAP119S11
+         COPY  MAP119S12
+         COPY  MAP119S20
+         COPY  MAP119S21
          COPY  MAP80
          COPY  MAP89
 

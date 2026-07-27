@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 74 SUBTYPE 9 — PCI Express based function activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE74_9 SMF_START
 
@@ -90,6 +90,27 @@ TABLE74_9 SMF_START
 
          SMF_FIELD R749FP1N-R749PFID,TRIPLET=SMF749PO-SMF74LEN,        X
                TYPE=T_DEC2,JSON=fp1n
+
+         SMF_FIELD R749PORT-R749PFID,TRIPLET=SMF749PO-SMF74LEN,        X
+               TYPE=T_DEC1,JSON=port
+
+         SMF_FIELD R749PFT-R749PFID,TRIPLET=SMF749PO-SMF74LEN,        X
+               TYPE=T_DEC1,JSON=pft
+
+         SMF_FIELD R749SIOO-R749PFID,TRIPLET=SMF749PO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=sioo
+
+         SMF_FIELD R749SION-R749PFID,TRIPLET=SMF749PO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=sion
+
+         SMF_FIELD R749RTDO-R749PFID,TRIPLET=SMF749PO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=rtdo
+
+         SMF_FIELD R749RTDN-R749PFID,TRIPLET=SMF749PO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=rtdn
+
+         SMF_FIELD R749LKID-R749PFID,TRIPLET=SMF749PO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=lkid
 
 * --- section SMF74_SUBTYPE9_PCIE_FUNCTION_TYPE_DATA_SECTION via SMF749DO ---
          SMF_FIELD R749DFMT-R749SRBF,TRIPLET=SMF749DO-SMF74LEN,        X

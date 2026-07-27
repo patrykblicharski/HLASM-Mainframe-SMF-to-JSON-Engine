@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 74 SUBTYPE 2 — XCF activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE74_2 SMF_START
 
@@ -124,6 +124,39 @@ TABLE74_2 SMF_START
 
          SMF_FIELD R742PSUS-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
                TYPE=T_DEC4,JSON=psus
+
+         SMF_FIELD R742PAPP-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=papp
+
+         SMF_FIELD R742PTCN-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_CHR8,JSON=ptcn
+
+         SMF_FIELD R742PIOT-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=piot
+
+         SMF_FIELD R742PRCT-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=prct
+
+         SMF_FIELD R742PPND-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=ppnd
+
+         SMF_FIELD R742PUSE-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=puse
+
+         SMF_FIELD R742PLIN-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=plin
+
+         SMF_FIELD R742PUSG_TIME#-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=pusgtime
+
+         SMF_FIELD R742PUSG_SIGCNT-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=pusgsigcnt
+
+         SMF_FIELD R742PUSG_PERCENT-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=pusgpercent
+
+         SMF_FIELD R742PNIB_TIME#-R742PNME,TRIPLET=SMF742PO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=pnibtime
 
 * --- section SMF74_SUBTYPE2_MEMBER_DATA via SMF742MO ---
          SMF_FIELD R742MSYS-R742MSYS,TRIPLET=SMF742MO-SMF74LEN,        X

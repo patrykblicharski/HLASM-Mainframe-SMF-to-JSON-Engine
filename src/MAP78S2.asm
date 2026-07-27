@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 78 SUBTYPE 2 — Virtual storage activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE78_2 SMF_START
 
@@ -90,5 +90,32 @@ TABLE78_2 SMF_START
 
          SMF_FIELD R782NS-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
                TYPE=T_DEC4,JSON=ns
+
+         SMF_FIELD R782ENS-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=ens
+
+         SMF_FIELD R782NL-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=nl
+
+         SMF_FIELD R782ENL-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=enl
+
+         SMF_FIELD R782LPAI-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=lpai
+
+         SMF_FIELD R782ELPI-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=elpi
+
+         SMF_FIELD R782MR-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=mr
+
+         SMF_FIELD R782EMR-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=emr
+
+         SMF_FIELD R782RUCS-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=rucs
+
+         SMF_FIELD R782ERUCS-R782PA,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=erucs
 
          SMF_END

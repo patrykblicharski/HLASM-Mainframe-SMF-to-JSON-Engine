@@ -1,0 +1,119 @@
+* ====================================================================
+* SMF TYPE 42 SUBTYPE 5 — Storage class VTOC and VVDS I/O statistics
+* From catalog/smf42 (IBM Docs scrape). Nested DS sections omitted
+* (offsets live inside job header — not fixed TRIPLET-safe).
+* ====================================================================
+TABLE42_5 SMF_START
+
+* --- Header/Self-defining section ---
+         SMF_FIELD SMF42RTY-SMF42RCL,TYPE=T_DEC1,JSON=smf_record_type
+
+         SMF_FIELD SMF42TME-SMF42RCL,TYPE=T_TME,JSON=time
+
+         SMF_FIELD SMF42DTE-SMF42RCL,TYPE=T_DTE,JSON=date
+
+         SMF_FIELD SMF42SID-SMF42RCL,TYPE=T_CHR4,JSON=smf_system_id
+
+         SMF_FIELD SMF42SSI-SMF42RCL,TYPE=T_CHR4,JSON=subsystem_id
+
+         SMF_FIELD SMF42STY-SMF42RCL,TYPE=T_DEC2,JSON=subtype
+
+* --- Storage class response time section via SMF42SRO ---
+         SMF_FIELD S42SCRNL-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=scrnl
+
+         SMF_FIELD S42SCIOR-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scior
+
+         SMF_FIELD S42SCIOC-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scioc
+
+         SMF_FIELD S42SCIOP-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=sciop
+
+         SMF_FIELD S42SCIOD-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=sciod
+
+         SMF_FIELD S42SCIOQ-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scioq
+
+         SMF_FIELD S42SCION-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scion
+
+         SMF_FIELD S42SCCND-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=sccnd
+
+         SMF_FIELD S42SCHIT-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=schit
+
+         SMF_FIELD S42SCWCN-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scwcn
+
+         SMF_FIELD S42SCWHI-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scwhi
+
+         SMF_FIELD S42SCSEQ-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scseq
+
+         SMF_FIELD S42SCRLC-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scrlc
+
+         SMF_FIELD S42SCICL-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scicl
+
+         SMF_FIELD S42SCDA0-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scda0
+
+         SMF_FIELD S42SCRDD-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scrdd
+
+         SMF_FIELD S42SCRDT-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scrdt
+
+         SMF_FIELD S42SCHRD-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=schrd
+
+         SMF_FIELD S42SCHWR-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=schwr
+
+         SMF_FIELD S42SCR1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scr1u
+
+         SMF_FIELD S42SCC1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scc1u
+
+         SMF_FIELD S42SCP1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scp1u
+
+         SMF_FIELD S42SCD1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scd1u
+
+         SMF_FIELD S42SCQ1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scq1u
+
+         SMF_FIELD S42SCA1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=sca1u
+
+         SMF_FIELD S42SCT1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=sct1u
+
+         SMF_FIELD S42SCB1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scb1u
+
+         SMF_FIELD S42SCM1U-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=scm1u
+
+         SMF_FIELD S42SCCNT-S42SCRNL,TRIPLET=SMF42SRO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=sccnt
+
+* --- Volume header section via SMF42VHO ---
+         SMF_FIELD S42VTADR-S42VTADR,TRIPLET=SMF42VHO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=vtadr
+
+         SMF_FIELD S42VTFL1-S42VTADR,TRIPLET=SMF42VHO-SMF42RCL,        X
+               TYPE=T_DEC1,JSON=vtfl1
+
+         SMF_FIELD S42VTUNC-S42VTADR,TRIPLET=SMF42VHO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=vtunc
+
+         SMF_END

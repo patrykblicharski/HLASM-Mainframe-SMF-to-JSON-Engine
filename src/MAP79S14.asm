@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 79 SUBTYPE 14 — I/O queuing activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE79_14 SMF_START
 

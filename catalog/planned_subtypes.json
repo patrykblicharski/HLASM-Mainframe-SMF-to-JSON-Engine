@@ -396,6 +396,21 @@
   ],
   "also_supported_non_gatherer": [
     {
+      "type": 14,
+      "map": "src/MAP14.asm",
+      "table": "TABLE14"
+    },
+    {
+      "type": 15,
+      "map": "src/MAP15.asm",
+      "table": "TABLE15"
+    },
+    {
+      "type": 42,
+      "map": "src/MAP42*.asm",
+      "note": "DFSMS catalog via gen_extra_maps"
+    },
+    {
       "type": 80,
       "map": "src/MAP80.asm",
       "table": "TABLE80"
@@ -404,6 +419,11 @@
       "type": 89,
       "map": "src/MAP89.asm",
       "table": "TABLE89"
+    },
+    {
+      "type": 119,
+      "map": "src/MAP119S*.asm",
+      "note": "TCP/IP via gen_extra_maps"
     }
   ]
 }

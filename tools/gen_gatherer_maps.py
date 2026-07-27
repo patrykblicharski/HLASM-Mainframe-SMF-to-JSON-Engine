@@ -95,9 +95,6 @@ def table_label(typ: int, sub: int) -> str:
     return f"TABLE{typ}_{sub}"
 
 
-MAX_FIELDS_PER_SECTION = 12
-MAX_SECTION_FIELDS_TOTAL = 48
-
 # Prefer stable JSON keys for common IBM names.
 JSON_KEY_HINTS = {
     "SMF70LPM": "lpar_name",
@@ -315,7 +312,7 @@ def section_base_label(section_props: dict) -> str | None:
 
 
 def select_section_fields(section_props: dict) -> list[tuple[str, str]]:
-    """Return list of (ibm_name, T_*) supported fields, capped."""
+    """Return list of (ibm_name, T_*) supported fields (uncapped)."""
     hinted: list[tuple[str, str]] = []
     other: list[tuple[str, str]] = []
     for key, node in section_props.items():
@@ -327,7 +324,7 @@ def select_section_fields(section_props: dict) -> list[tuple[str, str]]:
         if not t:
             continue
         (hinted if key in JSON_KEY_HINTS else other).append((key, t))
-    return (hinted + other)[:MAX_FIELDS_PER_SECTION]
+    return hinted + other
 
 
 def fixed_triplet_offsets(root_props: dict, schemas: dict) -> dict[str, str]:
@@ -409,14 +406,12 @@ def gen_rmf_style_map(typ: int, sub: int, schemas: dict, root_name: str) -> str:
     title = TITLES.get((typ, sub), f"SMF type {typ} subtype {sub}")
     props = schemas[root_name].get("properties") or {}
     used_keys: set[str] = set()
-    section_field_count = 0
 
     lines = [
         f"* ====================================================================\n"
         f"* SMF TYPE {typ} SUBTYPE {sub} — {title}\n"
         f"* Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)\n"
-        f"* Section fields capped: {MAX_FIELDS_PER_SECTION}/section, "
-        f"{MAX_SECTION_FIELDS_TOTAL} total\n"
+        f"* All supported T_* section fields (no per-section caps)\n"
         f"* ====================================================================\n"
         f"{table_label(typ, sub)} SMF_START\n\n"
     ]
@@ -429,8 +424,6 @@ def gen_rmf_style_map(typ: int, sub: int, schemas: dict, root_name: str) -> str:
 
     used_triplets: set[str] = set()
     for section_schema, offsets in walk_section_targets(props, schemas):
-        if section_field_count >= MAX_SECTION_FIELDS_TOTAL:
-            break
         # Skip pure SDS wrappers (no payload fields)
         if "SELF_DEFINING" in section_schema.upper():
             continue
@@ -449,14 +442,11 @@ def gen_rmf_style_map(typ: int, sub: int, schemas: dict, root_name: str) -> str:
         used_triplets.add(triplet)
         lines.append(f"* --- section {section_schema} via {triplet} ---\n")
         for ibm, t in fields:
-            if section_field_count >= MAX_SECTION_FIELDS_TOTAL:
-                break
             js = make_json_key(ibm, used_keys)
             lines.append(
                 field_line(f"{ibm}-{base}", t, js, f"{triplet}-{prefix}LEN")
             )
             lines.append("\n")
-            section_field_count += 1
 
     lines.append("         SMF_END\n")
     return "".join(lines)
@@ -466,6 +456,24 @@ def gen_map(typ: int, sub: int, schemas: dict, root_name: str) -> str:
     if typ == 30:
         raise RuntimeError("type 30 maps are handcrafted")
     return gen_rmf_style_map(typ, sub, schemas, root_name)
+
+
+def discover_extra_maps() -> dict[int, list[int]]:
+    """Subtype lists for maps produced by tools/gen_extra_maps.py (if present)."""
+    found: dict[int, list[int]] = {}
+    if (SRC / "MAP14.asm").exists():
+        found[14] = []
+    if (SRC / "MAP15.asm").exists():
+        found[15] = []
+    for typ in (42, 119):
+        subs = sorted(
+            int(m.group(1))
+            for p in SRC.glob(f"MAP{typ}S*.asm")
+            if (m := re.match(rf"MAP{typ}S(\d+)\.asm", p.name))
+        )
+        if subs or (typ == 42 and (SRC / "MAP42.asm").exists()):
+            found[typ] = subs
+    return found
 
 
 def gen_dispatch(pairs: list[tuple[int, int]]) -> str:
@@ -502,7 +510,34 @@ def gen_dispatch(pairs: list[tuple[int, int]]) -> str:
             out.append(f"         J     NEXT_SMF          * unsupported subtype\n")
         out.append(f"NO_{typ}   EQU   *\n\n")
 
-    # Keep non-Gatherer maps
+    # Preserve non-Gatherer maps from gen_extra_maps.py when present
+    extras = discover_extra_maps()
+    for typ in sorted(extras):
+        subs = extras[typ]
+        out.append(f"* ---  TYPE {typ} ---\n")
+        out.append(f"         CLI   5(R9),{typ}\n")
+        out.append(f"         BNE   NO_{typ}\n")
+        if not subs:
+            out.append(f"         LARL  R8,TABLE{typ}\n")
+            out.append("         J     JSONOBJ\n")
+        else:
+            out.append("         LH    R1,22(,R9)        * subtype halfword\n")
+            for i, sub in enumerate(subs):
+                label = f"T{typ}_{sub}"
+                next_label = f"T{typ}_{subs[i+1]}" if i + 1 < len(subs) else f"T{typ}_DEF"
+                out.append(f"{label:<8} CHI   R1,{sub}\n")
+                out.append(f"         BNE   {next_label}\n")
+                out.append(f"         LARL  R8,TABLE{typ}_{sub}\n")
+                out.append("         J     JSONOBJ\n")
+            out.append(f"T{typ}_DEF EQU   *\n")
+            if typ == 42 and (SRC / "MAP42.asm").exists():
+                out.append("         LARL  R8,TABLE42\n")
+                out.append("         J     JSONOBJ\n")
+            else:
+                out.append("         J     NEXT_SMF          * unsupported subtype\n")
+        out.append(f"NO_{typ}   EQU   *\n\n")
+
+    # Keep classic non-Gatherer maps
     out.append("* ---  TYPE 80 ---\n")
     out.append("         CLI   5(R9),80\n")
     out.append("         BNE   NO_80\n")
@@ -530,9 +565,22 @@ def gen_copy_list(pairs: list[tuple[int, int]]) -> str:
     for t, s in pairs:
         if t == 30:
             lines.append(f"         COPY  {map_member(t, s)}\n")
+    extras = discover_extra_maps()
+    if 14 in extras:
+        lines.append("         COPY  MAP14\n")
+    if 15 in extras:
+        lines.append("         COPY  MAP15\n")
+    if 42 in extras:
+        if (SRC / "MAP42.asm").exists():
+            lines.append("         COPY  MAP42\n")
+        for s in extras[42]:
+            lines.append(f"         COPY  MAP42S{s}\n")
     for t, s in pairs:
         if t != 30:
             lines.append(f"         COPY  {map_member(t, s)}\n")
+    if 119 in extras:
+        for s in extras[119]:
+            lines.append(f"         COPY  MAP119S{s}\n")
     lines.append("         COPY  MAP80\n")
     lines.append("         COPY  MAP89\n")
     return "".join(lines)
@@ -543,7 +591,8 @@ def patch_smf2json(dispatch: str, copy_list: str, types: list[int]) -> None:
     text = path.read_text(encoding="utf-8")
 
     # IFASMFR list
-    ifasmfr_types = sorted(set(types) | {80, 89})
+    extras = discover_extra_maps()
+    ifasmfr_types = sorted(set(types) | {80, 89} | set(extras))
     ifasmfr = "         IFASMFR (" + ",".join(str(t) for t in ifasmfr_types) + ")  * IBM SMF Record Mappings\n"
     text = re.sub(r"         IFASMFR \([^)]+\)[^\n]*\n", ifasmfr, text, count=1)
 
@@ -652,8 +701,12 @@ def main() -> int:
         ],
         "pairs": generated,
         "also_supported_non_gatherer": [
+            {"type": 14, "map": "src/MAP14.asm", "table": "TABLE14"},
+            {"type": 15, "map": "src/MAP15.asm", "table": "TABLE15"},
+            {"type": 42, "map": "src/MAP42*.asm", "note": "DFSMS catalog via gen_extra_maps"},
             {"type": 80, "map": "src/MAP80.asm", "table": "TABLE80"},
             {"type": 89, "map": "src/MAP89.asm", "table": "TABLE89"},
+            {"type": 119, "map": "src/MAP119S*.asm", "note": "TCP/IP via gen_extra_maps"},
         ],
     }
     CATALOG.mkdir(exist_ok=True)
@@ -662,7 +715,10 @@ def main() -> int:
     )
 
     # Update extract JCL TYPE lists
-    type_list = ",".join(str(t) for t in sorted(set(types) | {80, 89, 101, 102}))
+    extras = discover_extra_maps()
+    type_list = ",".join(
+        str(t) for t in sorted(set(types) | {80, 89, 101, 102} | set(extras))
+    )
     for jcl in (ROOT / "jcl" / "SMFEXTRT.jcl", ROOT / "jcl" / "SMFEXTRL.jcl"):
         text = jcl.read_text(encoding="utf-8")
         text2 = re.sub(
@@ -675,7 +731,7 @@ def main() -> int:
     print(f"Pairs: {len(pairs)}")
     print(f"Generated maps: {sum(1 for g in generated if not g['handcrafted'])}")
     print(f"Handcrafted kept: {sum(1 for g in generated if g['handcrafted'])}")
-    print(f"IFASMFR types: {types}")
+    print(f"IFASMFR types: {sorted(set(types) | {80, 89} | set(extras))}")
     return 0
 
 

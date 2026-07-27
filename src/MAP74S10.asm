@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 74 SUBTYPE 10 — EADM statistics
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE74_10 SMF_START
 
@@ -103,5 +103,11 @@ TABLE74_10 SMF_START
 
          SMF_FIELD R7410CIQC-R7410CRID,TRIPLET=SMF7410CO-SMF74LEN,        X
                TYPE=T_DEC4,JSON=ciqc
+
+         SMF_FIELD R7410CWUC-R7410CRID,TRIPLET=SMF7410CO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=cwuc
+
+         SMF_FIELD R7410CWU-R7410CRID,TRIPLET=SMF7410CO-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=cwu
 
          SMF_END

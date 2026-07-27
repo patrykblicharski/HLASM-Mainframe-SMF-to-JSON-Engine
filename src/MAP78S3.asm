@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 78 SUBTYPE 3 — I/O queuing activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE78_3 SMF_START
 
@@ -115,5 +115,26 @@ TABLE78_3 SMF_START
 
          SMF_FIELD R783SBSM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
                TYPE=T_DEC4,JSON=sbsm
+
+         SMF_FIELD R783DCTM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=dctm
+
+         SMF_FIELD R783DDTM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=ddtm
+
+         SMF_FIELD R783CSST-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=csst
+
+         SMF_FIELD R783HCNT-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=hcnt
+
+         SMF_FIELD R783HIX-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=hix
+
+         SMF_FIELD R783TMWM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=tmwm
+
+         SMF_FIELD R783TRDM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=trdm
 
          SMF_END

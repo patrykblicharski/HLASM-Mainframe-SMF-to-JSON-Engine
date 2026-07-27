@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 72 SUBTYPE 4 — Storage data
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE72_4 SMF_START
 
@@ -91,6 +91,60 @@ TABLE72_4 SMF_START
          SMF_FIELD R724DIVS-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
                TYPE=T_DEC4,JSON=divs
 
+         SMF_FIELD R724LSSA-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=lssa
+
+         SMF_FIELD R724PSSA-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=pssa
+
+         SMF_FIELD R724UPRO-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=upro
+
+         SMF_FIELD R724UDEV-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=udev
+
+         SMF_FIELD R724DPRO-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=dpro
+
+         SMF_FIELD R724DDEV-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=ddev
+
+         SMF_FIELD R724DSTO-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=dsto
+
+         SMF_FIELD R724DJES-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=djes
+
+         SMF_FIELD R724DHSM-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=dhsm
+
+         SMF_FIELD R724DXCF-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=dxcf
+
+         SMF_FIELD R724DENQ-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=denq
+
+         SMF_FIELD R724DMNT-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=dmnt
+
+         SMF_FIELD R724DMSG-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=dmsg
+
+         SMF_FIELD R724UNKN-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=unkn
+
+         SMF_FIELD R724VALD-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=vald
+
+         SMF_FIELD R724LSCT-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=lsct
+
+         SMF_FIELD R724ESCT-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=esct
+
+         SMF_FIELD R724PSCT-R724PNAM,TRIPLET=SMF72CPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=psct
+
 * --- section SMF72_SUBTYPE4_SWAP_REASON_DATA via SMF72SPS ---
          SMF_FIELD R724OR1-R724OR1,TRIPLET=SMF72SPS-SMF72LEN,        X
                TYPE=T_DEC4,JSON=or1
@@ -127,5 +181,23 @@ TABLE72_4 SMF_START
 
          SMF_FIELD R724OR13-R724OR1,TRIPLET=SMF72SPS-SMF72LEN,        X
                TYPE=T_DEC4,JSON=or13
+
+         SMF_FIELD R724OR14-R724OR1,TRIPLET=SMF72SPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=or14
+
+         SMF_FIELD R724OR15-R724OR1,TRIPLET=SMF72SPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=or15
+
+         SMF_FIELD R724OR16-R724OR1,TRIPLET=SMF72SPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=or16
+
+         SMF_FIELD R724OR17-R724OR1,TRIPLET=SMF72SPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=or17
+
+         SMF_FIELD R724OR18-R724OR1,TRIPLET=SMF72SPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=or18
+
+         SMF_FIELD R724OR7A-R724OR1,TRIPLET=SMF72SPS-SMF72LEN,        X
+               TYPE=T_DEC4,JSON=or7a
 
          SMF_END

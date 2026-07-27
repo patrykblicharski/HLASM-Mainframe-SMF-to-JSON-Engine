@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 74 SUBTYPE 8 — Enterprise disk system statistics
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE74_8 SMF_START
 

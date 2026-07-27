@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 75 SUBTYPE 1 — Page data set activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE75_1 SMF_START
 
@@ -90,5 +90,8 @@ TABLE75_1 SMF_START
 
          SMF_FIELD SMF75DEV-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
                TYPE=T_CHR8,JSON=dev
+
+         SMF_FIELD SMF75CU-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_CHR8,JSON=cu
 
          SMF_END

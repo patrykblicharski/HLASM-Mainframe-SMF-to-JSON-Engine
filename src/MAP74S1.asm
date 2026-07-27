@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 74 SUBTYPE 1 — Device activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE74_1 SMF_START
 
@@ -91,6 +91,9 @@ TABLE74_1 SMF_START
          SMF_FIELD SMF74TTM-SMF74NXT,TRIPLET=SMF74DCS-SMF74LEN,        X
                TYPE=T_CHR8,JSON=ttm
 
+         SMF_FIELD SMF74MCT-SMF74NXT,TRIPLET=SMF74DCS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=mct
+
 * --- section SMF74_SUBTYPE1_DEVICE_DATA via SMF74DDS ---
          SMF_FIELD SMF74NUM-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
                TYPE=T_HEX2,JSON=device_num
@@ -127,5 +130,77 @@ TABLE74_1 SMF_START
 
          SMF_FIELD SMF74RSV-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
                TYPE=T_DEC4,JSON=rsv
+
+         SMF_FIELD SMF74ALC-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=alc
+
+         SMF_FIELD SMF74MTP-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=mtp
+
+         SMF_FIELD SMF74NRD-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=nrd
+
+         SMF_FIELD SMF74COF-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=cof
+
+         SMF_FIELD SMF74DVB-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=dvb
+
+         SMF_FIELD SMF74SGN-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_CHR8,JSON=sgn
+
+         SMF_FIELD SMF74NDA-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=nda
+
+         SMF_FIELD SMF74DEV-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_CHR8,JSON=dev
+
+         SMF_FIELD SMF74CU-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_CHR8,JSON=cu
+
+         SMF_FIELD SMF74MTC-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=mtc
+
+         SMF_FIELD SMF74NDN-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_CHR4,JSON=ndn
+
+         SMF_FIELD SMF74HPC-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC1,JSON=hpc
+
+         SMF_FIELD SMF74NSS-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=nss
+
+         SMF_FIELD SMF74PSM-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=psm
+
+         SMF_FIELD SMF74PCT-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=pct
+
+         SMF_FIELD SMF74CMR-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=cmr
+
+         SMF_FIELD SMF74CAP-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=cap
+
+         SMF_FIELD SMF74IDT-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=idt
+
+         SMF_FIELD SMF74CUQ-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=cuq
+
+         SMF_FIELD SMF74SCS-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC1,JSON=scs
+
+         SMF_FIELD SMF74NM2-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_HEX2,JSON=nm2
+
+         SMF_FIELD SMF74ATD-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=atd
+
+         SMF_FIELD SMF74AGC-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC1,JSON=agc
+
+         SMF_FIELD SMF74AGS-SMF74NUM,TRIPLET=SMF74DDS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=ags
 
          SMF_END

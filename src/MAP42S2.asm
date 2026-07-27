@@ -1,0 +1,97 @@
+* ====================================================================
+* SMF TYPE 42 SUBTYPE 2 — Cache control units with SMS-managed devices
+* From catalog/smf42 (IBM Docs scrape). Nested DS sections omitted
+* (offsets live inside job header — not fixed TRIPLET-safe).
+* ====================================================================
+TABLE42_2 SMF_START
+
+* --- Header/Self-defining section ---
+         SMF_FIELD SMF42RTY-SMF42RCL,TYPE=T_DEC1,JSON=smf_record_type
+
+         SMF_FIELD SMF42TME-SMF42RCL,TYPE=T_TME,JSON=time
+
+         SMF_FIELD SMF42DTE-SMF42RCL,TYPE=T_DTE,JSON=date
+
+         SMF_FIELD SMF42SID-SMF42RCL,TYPE=T_CHR4,JSON=smf_system_id
+
+         SMF_FIELD SMF42SSI-SMF42RCL,TYPE=T_CHR4,JSON=subsystem_id
+
+         SMF_FIELD SMF42STY-SMF42RCL,TYPE=T_DEC2,JSON=subtype
+
+* --- Control unit cache section via SMF42CUO ---
+         SMF_FIELD SMF42SCS-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC1,JSON=scs
+
+         SMF_FIELD SMF42NCS-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC1,JSON=ncs
+
+         SMF_FIELD SMF42CID-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=cid
+
+         SMF_FIELD SMF42CSS-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=css
+
+         SMF_FIELD SMF42SSA-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=ssa
+
+         SMF_FIELD SMF42SAP-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=sap
+
+         SMF_FIELD SMF42SSU-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=ssu
+
+         SMF_FIELD SMF42NSZ-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=nsz
+
+         SMF_FIELD SMF42SPR-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=spr
+
+         SMF_FIELD SMF42LCT-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=lct
+
+         SMF_FIELD SMF42LFW-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=lfw
+
+         SMF_FIELD SMF42LRH-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=lrh
+
+         SMF_FIELD SMF42LWM-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=lwm
+
+         SMF_FIELD SMF42LYY-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=lyy
+
+         SMF_FIELD SMF42LDD-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=ldd
+
+         SMF_FIELD SMF42LTM-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=ltm
+
+         SMF_FIELD SMF42CCT-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=cct
+
+         SMF_FIELD SMF42CFW-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=cfw
+
+         SMF_FIELD SMF42CRH-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=crh
+
+         SMF_FIELD SMF42CWM-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=cwm
+
+         SMF_FIELD SMF42CYY-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=cyy
+
+         SMF_FIELD SMF42CDD-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=cdd
+
+         SMF_FIELD SMF42CTM-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC4,JSON=ctm
+
+         SMF_FIELD SMF42IHR-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=ihr
+
+         SMF_FIELD SMF42IFW-SMF42SCS,TRIPLET=SMF42CUO-SMF42RCL,        X
+               TYPE=T_DEC2,JSON=ifw
+
+         SMF_END

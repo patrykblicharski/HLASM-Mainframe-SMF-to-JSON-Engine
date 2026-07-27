@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 79 SUBTYPE 1 — Address space state data
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE79_1 SMF_START
 

@@ -1,0 +1,147 @@
+* ====================================================================
+* SMF TYPE 119 SUBTYPE 2 — TCP/IP Statistics
+* Generated from temp/smf119-app pacsys layouts. Labels: CommServer/IFASMFR.
+* ====================================================================
+TABLE119_2 SMF_START
+
+* --- header ---
+         SMF_FIELD SMF119RTY-SMF119LEN,TYPE=T_DEC1,JSON=smf_record_type
+
+         SMF_FIELD SMF119TME-SMF119LEN,TYPE=T_TME,JSON=time
+
+         SMF_FIELD SMF119DTE-SMF119LEN,TYPE=T_DTE,JSON=date
+
+         SMF_FIELD SMF119SID-SMF119LEN,TYPE=T_CHR4,JSON=smf_system_id
+
+         SMF_FIELD SMF119SSI-SMF119LEN,TYPE=T_CHR4,JSON=ssi
+
+         SMF_FIELD SMF119STY-SMF119LEN,TYPE=T_DEC2,JSON=subtype
+
+* --- section via SMF119IDOff ---
+         SMF_FIELD SMF119TI_SYSName-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=system_name
+
+         SMF_FIELD SMF119TI_SysplexName-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=sysplex_name
+
+         SMF_FIELD SMF119TI_Stack-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=stack_name
+
+         SMF_FIELD SMF119TI_ReleaseID-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=tireleaseid
+
+         SMF_FIELD SMF119TI_Comp-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=ticomp
+
+         SMF_FIELD SMF119TI_ASName-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=as_name
+
+         SMF_FIELD SMF119TI_UserID-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=user_id
+
+         SMF_FIELD SMF119TI_ASID-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_DEC2,JSON=tiasid
+
+         SMF_FIELD SMF119TI_Reason-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=tireason
+
+* --- section via SMF119S1Off ---
+         SMF_FIELD SMF119AP_TTRName-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=apttrname
+
+         SMF_FIELD SMF119AP_TTConnID-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttconnid
+
+         SMF_FIELD SMF119AP_TTTTLSCS-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=apttttlscs
+
+         SMF_FIELD SMF119AP_TTTTLSPS-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=apttttlsps
+
+         SMF_FIELD SMF119AP_TTTermCode-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=aptttermcode
+
+         SMF_FIELD SMF119AP_TTRsv2-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=apttrsv2
+
+         SMF_FIELD SMF119AP_TTSubtask-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttsubtask
+
+         SMF_FIELD SMF119AP_TTSTime-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttstime
+
+         SMF_FIELD SMF119AP_TTSDate-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DTE,JSON=apttsdate
+
+         SMF_FIELD SMF119AP_TTETime-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttetime
+
+         SMF_FIELD SMF119AP_TTEDate-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DTE,JSON=apttedate
+
+         SMF_FIELD SMF119AP_TTRPort-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC2,JSON=apttrport
+
+         SMF_FIELD SMF119AP_TTLPort-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC2,JSON=apttlport
+
+         SMF_FIELD SMF119AP_TTSWS-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttsws
+
+         SMF_FIELD SMF119AP_TTMSWS-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttmsws
+
+         SMF_FIELD SMF119AP_TTCWS-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttcws
+
+         SMF_FIELD SMF119AP_TTSMS-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttsms
+
+         SMF_FIELD SMF119AP_TTRTT-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttrtt
+
+         SMF_FIELD SMF119AP_TTRVA-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttrva
+
+         SMF_FIELD SMF119AP_TTStatus-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=apttstatus
+
+         SMF_FIELD SMF119AP_TTTOS-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=aptttos
+
+         SMF_FIELD SMF119AP_TTXRT-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC2,JSON=apttxrt
+
+         SMF_FIELD SMF119AP_TTDupAcksRcvd-SMF119AP_TTRName,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=apttdupacksrcvd
+
+* --- section via SMF119S2Off ---
+         SMF_FIELD SMF119AP_TTTelLUName-SMF119AP_TTTelLUName,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=aptttelluname
+
+         SMF_FIELD SMF119AP_TTTelAppl-SMF119AP_TTTelLUName,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=aptttelappl
+
+         SMF_FIELD SMF119AP_TTTelLogmode-SMF119AP_TTTelLUName,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=aptttellogmode
+
+         SMF_FIELD SMF119AP_TTTelStatus-SMF119AP_TTTelLUName,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptttelstatus
+
+         SMF_FIELD SMF119AP_TTTelTermCode-SMF119AP_TTTelLUName,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=apttteltermcode
+
+* --- section via SMF119S3Off ---
+         SMF_FIELD SMF119AP_TTTTLSSP-SMF119AP_TTTTLSSP,TRIPLET=SMF119S3Off-SMF119LEN,        X
+               TYPE=T_DEC2,JSON=apttttlssp
+
+         SMF_FIELD SMF119AP_TTTTLSNC-SMF119AP_TTTTLSSP,TRIPLET=SMF119S3Off-SMF119LEN,        X
+               TYPE=T_CHR2,JSON=apttttlsnc
+
+         SMF_FIELD SMF119AP_TTTTLSST-SMF119AP_TTTTLSSP,TRIPLET=SMF119S3Off-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=apttttlsst
+
+         SMF_FIELD SMF119AP_TTTTLSUID-SMF119AP_TTTTLSSP,TRIPLET=SMF119S3Off-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=apttttlsuid
+
+         SMF_END

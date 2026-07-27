@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 77 SUBTYPE 1 — Enqueue activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE77_1 SMF_START
 
@@ -90,5 +90,50 @@ TABLE77_1 SMF_START
 
          SMF_FIELD SMF77SHX-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
                TYPE=T_DEC2,JSON=shx
+
+         SMF_FIELD SMF77EVT-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=evt
+
+         SMF_FIELD SMF77RLN-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC1,JSON=rln
+
+         SMF_FIELD SMF77DOW-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=dow
+
+         SMF_FIELD SMF77DWR-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=dwr
+
+         SMF_FIELD SMF77DO1-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=do1
+
+         SMF_FIELD SMF77DO2-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=do2
+
+         SMF_FIELD SMF77DW1-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=dw1
+
+         SMF_FIELD SMF77DW2-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=dw2
+
+         SMF_FIELD SMF77SY1-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=sy1
+
+         SMF_FIELD SMF77SY2-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=sy2
+
+         SMF_FIELD SMF77SY3-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=sy3
+
+         SMF_FIELD SMF77SY4-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=sy4
+
+         SMF_FIELD SMF77AQL-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC4,JSON=aql
+
+         SMF_FIELD SMF77CSC-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC4,JSON=csc
+
+         SMF_FIELD SMF77NOD-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC4,JSON=nod
 
          SMF_END

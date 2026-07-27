@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 76 SUBTYPE 1 — Trace activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE76_1 SMF_START
 

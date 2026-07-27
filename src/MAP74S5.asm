@@ -1,7 +1,7 @@
 * ====================================================================
 * SMF TYPE 74 SUBTYPE 5 — Cache subsystem device activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
-* Section fields capped: 12/section, 48 total
+* All supported T_* section fields (no per-section caps)
 * ====================================================================
 TABLE74_5 SMF_START
 
@@ -128,6 +128,9 @@ TABLE74_5 SMF_START
 
          SMF_FIELD R745SPND-R745SVOL,TRIPLET=SMF745SO-SMF74LEN,        X
                TYPE=T_DEC4,JSON=spnd
+
+         SMF_FIELD R745SSID-R745SVOL,TRIPLET=SMF745SO-SMF74LEN,        X
+               TYPE=T_HEX2,JSON=ssid
 
 * --- section SMF74_SUBTYPE5_RAID_RANK_DATA_SECTION via SMF7451O ---
          SMF_FIELD R7451DVN-R7451DVN,TRIPLET=SMF7451O-SMF74LEN,        X
