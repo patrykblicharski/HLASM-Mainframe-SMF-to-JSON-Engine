@@ -1,0 +1,855 @@
+{
+  "source": "https://www.ibm.com/docs/en/SSLTBW_3.2.0/com.ibm.zos.v3r2.ieag200/rec42.htm",
+  "scraped_at": "2026-07-27T01:49:51.320Z",
+  "pages": 97,
+  "total_fields": 3106,
+  "pages_with_fields": [
+    {
+      "file": "iea3g2_Header_Self-defining_section32.htm",
+      "title": "Header/Self-defining section",
+      "fields": 162
+    },
+    {
+      "file": "iea3g2_Product_section6.htm",
+      "title": "Product section",
+      "fields": 7
+    },
+    {
+      "file": "iea3g2_BMF_Totals_section.htm",
+      "title": "BMF totals section",
+      "fields": 10
+    },
+    {
+      "file": "iea3g2_Storage_class_summary_section.htm",
+      "title": "Storage class summary section",
+      "fields": 6
+    },
+    {
+      "file": "iea3g2_Control_unit_cache_section.htm",
+      "title": "Control unit cache section",
+      "fields": 25
+    },
+    {
+      "file": "iea3g2_Volume_status_section.htm",
+      "title": "Volume status section",
+      "fields": 4
+    },
+    {
+      "file": "iea3g2_Event_audit_section.htm",
+      "title": "Event audit section",
+      "fields": 15
+    },
+    {
+      "file": "iea3g2_Concurrent_copy_session_section.htm",
+      "title": "Concurrent copy session section",
+      "fields": 13
+    },
+    {
+      "file": "iea3g2_Concurrent_copy_SSID_header_section.htm",
+      "title": "Concurrent copy SSID header section",
+      "fields": 9
+    },
+    {
+      "file": "iea3g2_Concurrent_copy_volume_section.htm",
+      "title": "Concurrent copy volume section",
+      "fields": 9
+    },
+    {
+      "file": "iea3g2_Extended_format_data_set_section.htm",
+      "title": "Extended format data set section",
+      "fields": 9
+    },
+    {
+      "file": "iea3g2_vccss.htm",
+      "title": "Virtual concurrent copy (VCC) session section",
+      "fields": 15
+    },
+    {
+      "file": "iea3g2_Storage_class_response_time_section.htm",
+      "title": "Storage class response time section",
+      "fields": 34
+    },
+    {
+      "file": "iea3g2_Volume_header_section.htm",
+      "title": "Volume header section",
+      "fields": 23
+    },
+    {
+      "file": "iea3g2_Volume_header_section_-_VTOC_data_component_I_O_statistics.htm",
+      "title": "Volume header section - VTOC data component I/O statistics",
+      "fields": 28
+    },
+    {
+      "file": "iea3g2_Volume_header_section_-_VTOC_index_component_I_O_statistics.htm",
+      "title": "Volume header section - VTOC index component I/O statistics",
+      "fields": 28
+    },
+    {
+      "file": "iea3g2_Volume_header_section_-_VVDS_component_I_O_statistics.htm",
+      "title": "Volume header section - VVDS component I/O statistics",
+      "fields": 28
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section.htm",
+      "title": "Synchronous I/O section 1",
+      "fields": 22
+    },
+    {
+      "file": "smf42-5-volmetsec.htm",
+      "title": "Volume metrics section",
+      "fields": 27
+    },
+    {
+      "file": "smf42-5-sysiosec.htm",
+      "title": "System I/O section",
+      "fields": 6
+    },
+    {
+      "file": "smf42-5-sysiostatsec.htm",
+      "title": "System I/O statistics section",
+      "fields": 10
+    },
+    {
+      "file": "smf42-5-sysiohrtsec.htm",
+      "title": "System I/O high response time section",
+      "fields": 11
+    },
+    {
+      "file": "smf42-5-volbgact.htm",
+      "title": "Volume background activity",
+      "fields": 3
+    },
+    {
+      "file": "smf42-5-volcloudactsec.htm",
+      "title": "Volume cloud activity section",
+      "fields": 6
+    },
+    {
+      "file": "iea3g2_Self-Defining_Section5.htm",
+      "title": "Self-Defining Section",
+      "fields": 14
+    },
+    {
+      "file": "iea3g2_Processor_Storage_Plot_Section.htm",
+      "title": "Processor Storage Plot Section",
+      "fields": 7
+    },
+    {
+      "file": "iea3g2_Central_Storage_Plot_Section.htm",
+      "title": "Central storage plot section",
+      "fields": 7
+    },
+    {
+      "file": "iea3g2_Plot_With_Three_Curves_-_Point_Entry_Section.htm",
+      "title": "Plot with three curves - Point entry section",
+      "fields": 4
+    },
+    {
+      "file": "iea3g2_Job_header_section__data_set_statistics_.htm",
+      "title": "Job header section (data set statistics)",
+      "fields": 17
+    },
+    {
+      "file": "iea3g2_Data_set_header_section.htm",
+      "title": "Data set header section",
+      "fields": 29
+    },
+    {
+      "file": "iea3g2_Data_Set_I_O_statistics_section.htm",
+      "title": "Data set I/O statistics section",
+      "fields": 38
+    },
+    {
+      "file": "iea3g2_Access_method_statistics_section.htm",
+      "title": "Data access method statistics section",
+      "fields": 18
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section2.htm",
+      "title": "Synchronous I/O section 2",
+      "fields": 28
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section3.htm",
+      "title": "Synchronous I/O section 3",
+      "fields": 19
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section4.htm",
+      "title": "Synchronous I/O section 4",
+      "fields": 20
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section5.htm",
+      "title": "Synchronous I/O section 5",
+      "fields": 22
+    },
+    {
+      "file": "iea3g2_B37_D37_E37_Abend_Data_Section.htm",
+      "title": "B37/D37/E37 abend data section",
+      "fields": 18
+    },
+    {
+      "file": "iea3g2_SMS_Data_Section.htm",
+      "title": "SMS Data Section",
+      "fields": 3
+    },
+    {
+      "file": "iea3g2_Volume_Selection_Failure_Section.htm",
+      "title": "Volume Selection Failure Section",
+      "fields": 15
+    },
+    {
+      "file": "iea3g2_Extended_Remote_Copy__XRC__Session_Section.htm",
+      "title": "Extended Remote Copy (XRC) Session Section",
+      "fields": 5
+    },
+    {
+      "file": "iea3g2_XRC_SSID_Data_Section.htm",
+      "title": "XRC SSID Data Section",
+      "fields": 13
+    },
+    {
+      "file": "iea3g2_Sysplex-Wide_Storage_Class_Summary_Data_Section_for_Below_the_Bar.htm",
+      "title": "Sysplex-wide storage class summary data section for below the bar",
+      "fields": 216
+    },
+    {
+      "file": "iea3g2_SC__CF__SYS_summary_section_for_below_the_bar.htm",
+      "title": "SC, CF, SYS summary section for below the bar",
+      "fields": 220
+    },
+    {
+      "file": "iea3g2_Sysplex-Wide_Storage_Class_Summary_Data_Section_for_Above_the_Bar.htm",
+      "title": "Sysplex-wide storage class summary data section for above the bar",
+      "fields": 216
+    },
+    {
+      "file": "iea3g2_SC__CF__SYS_summary_section_for_above_the_bar.htm",
+      "title": "SC, CF, SYS summary section for above the bar",
+      "fields": 220
+    },
+    {
+      "file": "iea3g2_Sysplex-Wide_Data_Set_summary_section_for_below_the_bar.htm",
+      "title": "Sysplex-wide data set summary section for below the bar",
+      "fields": 230
+    },
+    {
+      "file": "iea3g2_Data_Set__CF__SYS_summary_section_for_below_the_bar.htm",
+      "title": "Data Set, CF, SYS summary section for below the bar",
+      "fields": 232
+    },
+    {
+      "file": "iea3g2_Sysplex-Wide_Data_Set_summary_section_for_above_the_bar.htm",
+      "title": "Sysplex-wide data set summary section for above the bar",
+      "fields": 230
+    },
+    {
+      "file": "iea3g2_Data_Set__CF__SYS_summary_section_for_above_the_bar.htm",
+      "title": "Data Set, CF, SYS summary section for above the bar",
+      "fields": 232
+    },
+    {
+      "file": "iea3g2_MVS_System_CF_Lock_Structure_Activity_Totals_Section.htm",
+      "title": "MVS system CF lock structure activity totals section",
+      "fields": 50
+    },
+    {
+      "file": "iea3g2_Lock_Structure_summary_section.htm",
+      "title": "Lock structure summary section",
+      "fields": 51
+    },
+    {
+      "file": "iea3g2_CF_cache_partition_summary_section.htm",
+      "title": "CF cache partition summary section",
+      "fields": 36
+    },
+    {
+      "file": "iea3g2_CF_Cache_partition_summary_section__directory_element_ratio_data.htm",
+      "title": "CF Cache partition summary section, directory/element ratio data",
+      "fields": 12
+    },
+    {
+      "file": "iea3g2_Sysplex_totals_local_buffer_manager_LRU_statistics_summary_for_below_the_bar.htm",
+      "title": "Sysplex totals local buffer manager LRU statistics summary for below the bar",
+      "fields": 75
+    },
+    {
+      "file": "iea3g2_System_local_buffer_manager_LRU_statistics_summary_for_below_the_bar.htm",
+      "title": "System local buffer manager LRU statistics summary for below the bar",
+      "fields": 64
+    },
+    {
+      "file": "iea3g2_Sysplex_totals_local_buffer_manager_lru_statistics_summary_for_above_the_bar.htm",
+      "title": "Sysplex totals local buffer manager LRU statistics summary for above the bar",
+      "fields": 75
+    },
+    {
+      "file": "iea3g2_System_local_buffer_manager_LRU_statistics_summary_for_above_the_bar.htm",
+      "title": "System local buffer manager LRU statistics summary for above the bar",
+      "fields": 64
+    },
+    {
+      "file": "iea3g2_Job_and_data_set_information.htm",
+      "title": "Job and data set information",
+      "fields": 5
+    },
+    {
+      "file": "iea3g2_User_information.htm",
+      "title": "User information",
+      "fields": 1
+    },
+    {
+      "file": "iea3g2_Job_and_data_set_information1.htm",
+      "title": "Job and data set information",
+      "fields": 8
+    },
+    {
+      "file": "iea3g2_Alias_names_deleted_in_sympathy.htm",
+      "title": "Alias names deleted in sympathy",
+      "fields": 2
+    },
+    {
+      "file": "iea3g2_User_Information1.htm",
+      "title": "User Information",
+      "fields": 1
+    },
+    {
+      "file": "iea3g2_DFSMSrmm_audit_records_section.htm",
+      "title": "DFSMSrmm audit records section",
+      "fields": 21
+    },
+    {
+      "file": "iea3g2_DFSMSrmm_security_records_section.htm",
+      "title": "DFSMSrmm security records section",
+      "fields": 18
+    },
+    {
+      "file": "iea3g2_Job_and_data_set_information2.htm",
+      "title": "Job and data set information",
+      "fields": 8
+    },
+    {
+      "file": "iea3g2_Alias_names_deleted_in_sympathy1.htm",
+      "title": "Alias names deleted in sympathy",
+      "fields": 2
+    },
+    {
+      "file": "iea3g2_User_information2.htm",
+      "title": "User information",
+      "fields": 1
+    },
+    {
+      "file": "iea3g2_Job_and_data_set_information3.htm",
+      "title": "Job and data set information",
+      "fields": 7
+    },
+    {
+      "file": "iea3g2_Original_member_name.htm",
+      "title": "Original member name",
+      "fields": 2
+    },
+    {
+      "file": "iea3g2_User_information3.htm",
+      "title": "User information",
+      "fields": 1
+    },
+    {
+      "file": "smf42-27_header.htm",
+      "title": "VTOC update header section",
+      "fields": 16
+    },
+    {
+      "file": "smf42-27_dscb.htm",
+      "title": "DSCB change section",
+      "fields": 3
+    }
+  ],
+  "all": [
+    {
+      "file": "rec42.htm",
+      "title": "Record type 42 (X'2A') — DFSMS statistics and configuration",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Record_environment25.htm",
+      "title": "Record environment",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Record_mapping33.htm",
+      "title": "Record mapping",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_11.htm",
+      "title": "Subtype 1",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_21.htm",
+      "title": "Subtype 2",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_3.htm",
+      "title": "Subtype 3",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_4.htm",
+      "title": "Subtype 4",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_5.htm",
+      "title": "Subtype 5 — Plot with three curves",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_6.htm",
+      "title": "Subtype 6",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_9.htm",
+      "title": "Subtype 9",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_10.htm",
+      "title": "Subtype 10",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_111.htm",
+      "title": "Subtype 11",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_15_____VSAM_RLS_Storage_Class_Response_Time_Summary.htm",
+      "title": "Subtype 15 — VSAM RLS Storage Class Response Time Summary",
+      "fields": 0
+    },
+    {
+      "file": "r42sub16.htm",
+      "title": "Subtype 16 — VSAM RLS Data Set Response Time Summary",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_17_____VSAM_RLS_Coupling_Facility_Lock_Structure_Usage.htm",
+      "title": "Subtype 17 — VSAM RLS Coupling Facility Lock Structure Usage",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_18_____VSAM_RLS_CF_cache_partition_usage.htm",
+      "title": "Subtype 18 — VSAM RLS CF cache partition usage",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_19_____VSAM_RLS_local_buffer_manager_LRU_statistics_summary.htm",
+      "title": "Subtype 19 — VSAM RLS local buffer manager LRU statistics summary",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_20_____STOW_initialize.htm",
+      "title": "Subtype 20 — STOW initialize",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_21_____Member_delete.htm",
+      "title": "Subtype 21 — Member delete",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_22_____DFSMSrmm_audit_records_.htm",
+      "title": "Subtype 22 — DFSMSrmm audit records",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_23_____DFSMSrmm_security_records.htm",
+      "title": "Subtype 23 — DFSMSrmm security records",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_24_____Member_Add_Replace.htm",
+      "title": "Subtype 24 — Member Add/Replace",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Subtype_25_____Member_rename.htm",
+      "title": "Subtype 25 — Member rename",
+      "fields": 0
+    },
+    {
+      "file": "smf42-27.htm",
+      "title": "Subtype 27 — VTOC audit log",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_Header_Self-defining_section32.htm",
+      "title": "Header/Self-defining section",
+      "fields": 162
+    },
+    {
+      "file": "iea3g2_Product_section6.htm",
+      "title": "Product section",
+      "fields": 7
+    },
+    {
+      "file": "iea3g2_BMF_Totals_section.htm",
+      "title": "BMF totals section",
+      "fields": 10
+    },
+    {
+      "file": "iea3g2_Storage_class_summary_section.htm",
+      "title": "Storage class summary section",
+      "fields": 6
+    },
+    {
+      "file": "iea3g2_Control_unit_cache_section.htm",
+      "title": "Control unit cache section",
+      "fields": 25
+    },
+    {
+      "file": "iea3g2_Volume_status_section.htm",
+      "title": "Volume status section",
+      "fields": 4
+    },
+    {
+      "file": "iea3g2_Event_audit_section.htm",
+      "title": "Event audit section",
+      "fields": 15
+    },
+    {
+      "file": "iea3g2_Concurrent_copy_session_section.htm",
+      "title": "Concurrent copy session section",
+      "fields": 13
+    },
+    {
+      "file": "iea3g2_Concurrent_copy_SSID_header_section.htm",
+      "title": "Concurrent copy SSID header section",
+      "fields": 9
+    },
+    {
+      "file": "iea3g2_Concurrent_copy_volume_section.htm",
+      "title": "Concurrent copy volume section",
+      "fields": 9
+    },
+    {
+      "file": "iea3g2_Extended_format_data_set_section.htm",
+      "title": "Extended format data set section",
+      "fields": 9
+    },
+    {
+      "file": "iea3g2_vccss.htm",
+      "title": "Virtual concurrent copy (VCC) session section",
+      "fields": 15
+    },
+    {
+      "file": "iea3g2_Storage_class_response_time_section.htm",
+      "title": "Storage class response time section",
+      "fields": 34
+    },
+    {
+      "file": "iea3g2_Volume_header_section.htm",
+      "title": "Volume header section",
+      "fields": 23
+    },
+    {
+      "file": "iea3g2_Volume_header_section_-_VTOC_data_component_I_O_statistics.htm",
+      "title": "Volume header section - VTOC data component I/O statistics",
+      "fields": 28
+    },
+    {
+      "file": "iea3g2_Volume_header_section_-_VTOC_index_component_I_O_statistics.htm",
+      "title": "Volume header section - VTOC index component I/O statistics",
+      "fields": 28
+    },
+    {
+      "file": "iea3g2_Volume_header_section_-_VVDS_component_I_O_statistics.htm",
+      "title": "Volume header section - VVDS component I/O statistics",
+      "fields": 28
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section.htm",
+      "title": "Synchronous I/O section 1",
+      "fields": 22
+    },
+    {
+      "file": "smf42-5-volmetsec.htm",
+      "title": "Volume metrics section",
+      "fields": 27
+    },
+    {
+      "file": "smf42-5-sysiosec.htm",
+      "title": "System I/O section",
+      "fields": 6
+    },
+    {
+      "file": "smf42-5-sysiostatsec.htm",
+      "title": "System I/O statistics section",
+      "fields": 10
+    },
+    {
+      "file": "smf42-5-sysiohrtsec.htm",
+      "title": "System I/O high response time section",
+      "fields": 11
+    },
+    {
+      "file": "smf42-5-volbgact.htm",
+      "title": "Volume background activity",
+      "fields": 3
+    },
+    {
+      "file": "smf42-5-volcloudactsec.htm",
+      "title": "Volume cloud activity section",
+      "fields": 6
+    },
+    {
+      "file": "iea3g2_Self-Defining_Section5.htm",
+      "title": "Self-Defining Section",
+      "fields": 14
+    },
+    {
+      "file": "iea3g2_Processor_Storage_Plot_Section.htm",
+      "title": "Processor Storage Plot Section",
+      "fields": 7
+    },
+    {
+      "file": "iea3g2_Central_Storage_Plot_Section.htm",
+      "title": "Central storage plot section",
+      "fields": 7
+    },
+    {
+      "file": "iea3g2_Plot_With_Three_Curves_-_Point_Entry_Section.htm",
+      "title": "Plot with three curves - Point entry section",
+      "fields": 4
+    },
+    {
+      "file": "iea3g2_Job_header_section__data_set_statistics_.htm",
+      "title": "Job header section (data set statistics)",
+      "fields": 17
+    },
+    {
+      "file": "iea3g2_Data_set_header_section.htm",
+      "title": "Data set header section",
+      "fields": 29
+    },
+    {
+      "file": "iea3g2_Data_Set_I_O_statistics_section.htm",
+      "title": "Data set I/O statistics section",
+      "fields": 38
+    },
+    {
+      "file": "iea3g2_Access_method_statistics_section.htm",
+      "title": "Data access method statistics section",
+      "fields": 18
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section2.htm",
+      "title": "Synchronous I/O section 2",
+      "fields": 28
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section3.htm",
+      "title": "Synchronous I/O section 3",
+      "fields": 19
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section4.htm",
+      "title": "Synchronous I/O section 4",
+      "fields": 20
+    },
+    {
+      "file": "iea3g2_Synchronous_I_O_Section5.htm",
+      "title": "Synchronous I/O section 5",
+      "fields": 22
+    },
+    {
+      "file": "iea3g2_B37_D37_E37_Abend_Data_Section.htm",
+      "title": "B37/D37/E37 abend data section",
+      "fields": 18
+    },
+    {
+      "file": "iea3g2_SMS_Data_Section.htm",
+      "title": "SMS Data Section",
+      "fields": 3
+    },
+    {
+      "file": "iea3g2_Volume_Selection_Failure_Section.htm",
+      "title": "Volume Selection Failure Section",
+      "fields": 15
+    },
+    {
+      "file": "iea3g2_Extended_Remote_Copy__XRC__Session_Section.htm",
+      "title": "Extended Remote Copy (XRC) Session Section",
+      "fields": 5
+    },
+    {
+      "file": "iea3g2_XRC_SSID_Data_Section.htm",
+      "title": "XRC SSID Data Section",
+      "fields": 13
+    },
+    {
+      "file": "iea3g2_Sysplex-Wide_Storage_Class_Summary_Data_Section_for_Below_the_Bar.htm",
+      "title": "Sysplex-wide storage class summary data section for below the bar",
+      "fields": 216
+    },
+    {
+      "file": "iea3g2_SC__CF__SYS_summary_section_for_below_the_bar.htm",
+      "title": "SC, CF, SYS summary section for below the bar",
+      "fields": 220
+    },
+    {
+      "file": "iea3g2_Sysplex-Wide_Storage_Class_Summary_Data_Section_for_Above_the_Bar.htm",
+      "title": "Sysplex-wide storage class summary data section for above the bar",
+      "fields": 216
+    },
+    {
+      "file": "iea3g2_SC__CF__SYS_summary_section_for_above_the_bar.htm",
+      "title": "SC, CF, SYS summary section for above the bar",
+      "fields": 220
+    },
+    {
+      "file": "iea3g2_Sysplex-Wide_Data_Set_summary_section_for_below_the_bar.htm",
+      "title": "Sysplex-wide data set summary section for below the bar",
+      "fields": 230
+    },
+    {
+      "file": "iea3g2_Data_Set__CF__SYS_summary_section_for_below_the_bar.htm",
+      "title": "Data Set, CF, SYS summary section for below the bar",
+      "fields": 232
+    },
+    {
+      "file": "iea3g2_Sysplex-Wide_Data_Set_summary_section_for_above_the_bar.htm",
+      "title": "Sysplex-wide data set summary section for above the bar",
+      "fields": 230
+    },
+    {
+      "file": "iea3g2_Data_Set__CF__SYS_summary_section_for_above_the_bar.htm",
+      "title": "Data Set, CF, SYS summary section for above the bar",
+      "fields": 232
+    },
+    {
+      "file": "iea3g2_MVS_System_CF_Lock_Structure_Activity_Totals_Section.htm",
+      "title": "MVS system CF lock structure activity totals section",
+      "fields": 50
+    },
+    {
+      "file": "iea3g2_Lock_Structure_summary_section.htm",
+      "title": "Lock structure summary section",
+      "fields": 51
+    },
+    {
+      "file": "iea3g2_CF_cache_partition_activity_totals_section.htm",
+      "title": "IBM Documentation",
+      "fields": 0
+    },
+    {
+      "file": "iea3g2_CF_cache_partition_summary_section.htm",
+      "title": "CF cache partition summary section",
+      "fields": 36
+    },
+    {
+      "file": "iea3g2_CF_Cache_partition_summary_section__directory_element_ratio_data.htm",
+      "title": "CF Cache partition summary section, directory/element ratio data",
+      "fields": 12
+    },
+    {
+      "file": "iea3g2_Sysplex_totals_local_buffer_manager_LRU_statistics_summary_for_below_the_bar.htm",
+      "title": "Sysplex totals local buffer manager LRU statistics summary for below the bar",
+      "fields": 75
+    },
+    {
+      "file": "iea3g2_System_local_buffer_manager_LRU_statistics_summary_for_below_the_bar.htm",
+      "title": "System local buffer manager LRU statistics summary for below the bar",
+      "fields": 64
+    },
+    {
+      "file": "iea3g2_Sysplex_totals_local_buffer_manager_lru_statistics_summary_for_above_the_bar.htm",
+      "title": "Sysplex totals local buffer manager LRU statistics summary for above the bar",
+      "fields": 75
+    },
+    {
+      "file": "iea3g2_System_local_buffer_manager_LRU_statistics_summary_for_above_the_bar.htm",
+      "title": "System local buffer manager LRU statistics summary for above the bar",
+      "fields": 64
+    },
+    {
+      "file": "iea3g2_Job_and_data_set_information.htm",
+      "title": "Job and data set information",
+      "fields": 5
+    },
+    {
+      "file": "iea3g2_User_information.htm",
+      "title": "User information",
+      "fields": 1
+    },
+    {
+      "file": "iea3g2_Job_and_data_set_information1.htm",
+      "title": "Job and data set information",
+      "fields": 8
+    },
+    {
+      "file": "iea3g2_Alias_names_deleted_in_sympathy.htm",
+      "title": "Alias names deleted in sympathy",
+      "fields": 2
+    },
+    {
+      "file": "iea3g2_User_Information1.htm",
+      "title": "User Information",
+      "fields": 1
+    },
+    {
+      "file": "iea3g2_DFSMSrmm_audit_records_section.htm",
+      "title": "DFSMSrmm audit records section",
+      "fields": 21
+    },
+    {
+      "file": "iea3g2_DFSMSrmm_security_records_section.htm",
+      "title": "DFSMSrmm security records section",
+      "fields": 18
+    },
+    {
+      "file": "iea3g2_Job_and_data_set_information2.htm",
+      "title": "Job and data set information",
+      "fields": 8
+    },
+    {
+      "file": "iea3g2_Alias_names_deleted_in_sympathy1.htm",
+      "title": "Alias names deleted in sympathy",
+      "fields": 2
+    },
+    {
+      "file": "iea3g2_User_information2.htm",
+      "title": "User information",
+      "fields": 1
+    },
+    {
+      "file": "iea3g2_Job_and_data_set_information3.htm",
+      "title": "Job and data set information",
+      "fields": 7
+    },
+    {
+      "file": "iea3g2_Original_member_name.htm",
+      "title": "Original member name",
+      "fields": 2
+    },
+    {
+      "file": "iea3g2_User_information3.htm",
+      "title": "User information",
+      "fields": 1
+    },
+    {
+      "file": "smf42-27_header.htm",
+      "title": "VTOC update header section",
+      "fields": 16
+    },
+    {
+      "file": "smf42-27_dscb.htm",
+      "title": "DSCB change section",
+      "fields": 3
+    }
+  ]
+}

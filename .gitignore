@@ -2,3 +2,6 @@
 __pycache__/
 temp/
 .venv/
+
+# IBM Docs scraper deps (local)
+tools/ibm_docs/node_modules/

@@ -1,0 +1,270 @@
+{
+  "smf_type": 42,
+  "title": "DFSMS statistics and configuration",
+  "source_manual": "SA38-0667 / IBM Docs ieag200 Record type 42",
+  "source_url": "https://www.ibm.com/docs/en/SSLTBW_3.2.0/com.ibm.zos.v3r2.ieag200/rec42.htm",
+  "scrape": {
+    "tool": "tools/ibm_docs/crawl_smf42.mjs",
+    "pages_scraped": 97,
+    "pages_with_field_tables": 72,
+    "raw_field_rows": 3106,
+    "raw_dir": "catalog/smf42/raw/"
+  },
+  "subtypes_documented": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    9,
+    10,
+    11,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    27
+  ],
+  "subtypes": {
+    "1": {
+      "title": "BMF cache summary / storage-class buffer manager hits",
+      "field_count": 178,
+      "status_counts": {
+        "todo": 39,
+        "skip_meta": 137,
+        "needs_engine": 2
+      },
+      "sections": 3,
+      "file": "subtype_1.json"
+    },
+    "2": {
+      "title": "Cache control units with SMS-managed devices",
+      "field_count": 191,
+      "status_counts": {
+        "todo": 52,
+        "skip_meta": 137,
+        "needs_engine": 2
+      },
+      "sections": 3,
+      "file": "subtype_2.json"
+    },
+    "3": {
+      "title": "SMS configuration changed",
+      "field_count": 177,
+      "status_counts": {
+        "todo": 33,
+        "skip_meta": 137,
+        "needs_engine": 7
+      },
+      "sections": 2,
+      "file": "subtype_3.json"
+    },
+    "4": {
+      "title": "System Data Mover session statistics",
+      "field_count": 217,
+      "status_counts": {
+        "todo": 53,
+        "skip_meta": 140,
+        "needs_engine": 24
+      },
+      "sections": 6,
+      "file": "subtype_4.json"
+    },
+    "5": {
+      "title": "Storage class VTOC and VVDS I/O statistics",
+      "field_count": 420,
+      "status_counts": {
+        "todo": 238,
+        "skip_meta": 165,
+        "needs_engine": 17
+      },
+      "sections": 18,
+      "file": "subtype_5.json"
+    },
+    "6": {
+      "title": "Data set level I/O statistics",
+      "field_count": 353,
+      "status_counts": {
+        "todo": 185,
+        "skip_meta": 156,
+        "needs_engine": 12
+      },
+      "sections": 9,
+      "file": "subtype_6.json"
+    },
+    "9": {
+      "title": "B37/D37/E37 abend information",
+      "field_count": 183,
+      "status_counts": {
+        "todo": 37,
+        "skip_meta": 137,
+        "needs_engine": 9
+      },
+      "sections": 3,
+      "file": "subtype_9.json"
+    },
+    "10": {
+      "title": "Volume selection failure",
+      "field_count": 177,
+      "status_counts": {
+        "todo": 34,
+        "skip_meta": 137,
+        "needs_engine": 6
+      },
+      "sections": 2,
+      "file": "subtype_10.json"
+    },
+    "11": {
+      "title": "Extended remote copy session statistics",
+      "field_count": 180,
+      "status_counts": {
+        "todo": 37,
+        "skip_meta": 140,
+        "needs_engine": 3
+      },
+      "sections": 3,
+      "file": "subtype_11.json"
+    },
+    "15": {
+      "title": "VSAM RLS CF storage class response time",
+      "field_count": 1034,
+      "status_counts": {
+        "todo": 733,
+        "skip_meta": 137,
+        "needs_engine": 164
+      },
+      "sections": 5,
+      "file": "subtype_15.json"
+    },
+    "16": {
+      "title": "VSAM RLS CF data set response time",
+      "field_count": 1086,
+      "status_counts": {
+        "todo": 764,
+        "skip_meta": 137,
+        "needs_engine": 185
+      },
+      "sections": 5,
+      "file": "subtype_16.json"
+    },
+    "17": {
+      "title": "VSAM RLS CF lock structure usage",
+      "field_count": 263,
+      "status_counts": {
+        "todo": 114,
+        "skip_meta": 137,
+        "needs_engine": 12
+      },
+      "sections": 3,
+      "file": "subtype_17.json"
+    },
+    "18": {
+      "title": "VSAM RLS CF cache partition usage",
+      "field_count": 210,
+      "status_counts": {
+        "todo": 66,
+        "skip_meta": 137,
+        "needs_engine": 7
+      },
+      "sections": 3,
+      "file": "subtype_18.json"
+    },
+    "19": {
+      "title": "VSAM RLS buffer manager LRU activity",
+      "field_count": 440,
+      "status_counts": {
+        "todo": 268,
+        "skip_meta": 137,
+        "needs_engine": 35
+      },
+      "sections": 5,
+      "file": "subtype_19.json"
+    },
+    "20": {
+      "title": "STOW initialize",
+      "field_count": 168,
+      "status_counts": {
+        "todo": 27,
+        "skip_meta": 137,
+        "needs_engine": 4
+      },
+      "sections": 3,
+      "file": "subtype_20.json"
+    },
+    "21": {
+      "title": "Member delete",
+      "field_count": 173,
+      "status_counts": {
+        "todo": 30,
+        "skip_meta": 137,
+        "needs_engine": 6
+      },
+      "sections": 4,
+      "file": "subtype_21.json"
+    },
+    "22": {
+      "title": "DFSMSrmm audit records",
+      "field_count": 183,
+      "status_counts": {
+        "todo": 35,
+        "skip_meta": 137,
+        "needs_engine": 11
+      },
+      "sections": 2,
+      "file": "subtype_22.json"
+    },
+    "23": {
+      "title": "DFSMSrmm security records",
+      "field_count": 180,
+      "status_counts": {
+        "todo": 36,
+        "skip_meta": 137,
+        "needs_engine": 7
+      },
+      "sections": 2,
+      "file": "subtype_23.json"
+    },
+    "24": {
+      "title": "Member add/replace",
+      "field_count": 173,
+      "status_counts": {
+        "todo": 30,
+        "skip_meta": 137,
+        "needs_engine": 6
+      },
+      "sections": 4,
+      "file": "subtype_24.json"
+    },
+    "25": {
+      "title": "Member rename",
+      "field_count": 172,
+      "status_counts": {
+        "todo": 29,
+        "skip_meta": 137,
+        "needs_engine": 6
+      },
+      "sections": 4,
+      "file": "subtype_25.json"
+    },
+    "27": {
+      "title": "VTOC DSCB audit record",
+      "field_count": 181,
+      "status_counts": {
+        "todo": 35,
+        "skip_meta": 137,
+        "needs_engine": 9
+      },
+      "sections": 3,
+      "file": "subtype_27.json"
+    }
+  },
+  "note": "Field layouts scraped from IBM Docs section tables via Playwright. Assembler labels must still be verified against IFASMFR before MAP42*.asm wiring. Type 42 is NOT in Gatherer OpenAPI."
+}

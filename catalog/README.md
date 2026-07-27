@@ -48,5 +48,25 @@ See Cursor skill `zsmf-catalog`.
 See `catalog/planned_subtypes.json` — all OpenAPI type/subtype pairs (47) plus MAP80/MAP89.
 
 - Handcrafted richer maps: 30.1–30.6, 70.1–70.2, 71.1, 72.3  
-- Auto-generated header (+ RMF product section where present): remaining pairs  
+- Auto-generated header + section samples: remaining pairs  
 - Regenerate: `python3 tools/gen_gatherer_maps.py`
+
+## SMF type 42 output (`catalog/smf42/`) — DFSMS
+
+Not in Gatherer OpenAPI. Scraped from IBM Docs (SA38-0667 / `ieag200`) with Playwright:
+
+| File | Contents |
+| --- | --- |
+| `summary.json` | Subtype inventory + status tallies |
+| `subtype_*.json` | Fields per subtype (sections + Offsets/Name/Length/Format/Description) |
+| `priority.json` / `priority_suggested.asm` | First-wave HLASM candidates |
+| `raw/all_pages.json` | Raw scrape pages/tables |
+
+```bash
+# refresh scrape (needs Chrome + npm deps in tools/ibm_docs)
+node tools/ibm_docs/crawl_smf42.mjs /tmp/smf42-out
+cp /tmp/smf42-out/_all_pages.json catalog/smf42/raw/all_pages.json
+python3 tools/build_smf42_catalog.py
+```
+
+See `tools/ibm_docs/README.md`.
