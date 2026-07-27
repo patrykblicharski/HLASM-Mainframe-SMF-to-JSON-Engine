@@ -1,6 +1,7 @@
 * ====================================================================
 * SMF TYPE 74 SUBTYPE 7 — FICON director statistics
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
+* Section fields capped: 12/section, 48 total
 * ====================================================================
 TABLE74_7 SMF_START
 
@@ -16,10 +17,74 @@ TABLE74_7 SMF_START
 
          SMF_FIELD SMF74STY-SMF74LEN,TYPE=T_DEC2,JSON=subtype
 
+* --- section SMF74_SUBTYPE7_PRODUCT_SECTION via SMF74PRS ---
          SMF_FIELD SMF74PRD-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
                TYPE=T_CHR8,JSON=product_name
 
+         SMF_FIELD SMF74DAT-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_DTE,JSON=interval_date
+
+         SMF_FIELD SMF74SAM-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=sample_count
+
          SMF_FIELD SMF74MVS-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
                TYPE=T_CHR8,JSON=mvs_level
+
+         SMF_FIELD SMF74SRL-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_DEC1,JSON=rmf_release
+
+         SMF_FIELD SMF74RAO-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_DEC4,JSON=rao
+
+         SMF_FIELD SMF74RAL-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=ral
+
+         SMF_FIELD SMF74RAN-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=ran
+
+         SMF_FIELD SMF74OIL-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=oil
+
+         SMF_FIELD SMF74SYN-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=syn
+
+         SMF_FIELD SMF74XNM-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_CHR8,JSON=sysplex_name
+
+         SMF_FIELD SMF74SNM-SMF74MFV,TRIPLET=SMF74PRS-SMF74LEN,        X
+               TYPE=T_CHR8,JSON=system_name
+
+* --- section SMF74_SUBTYPE7_GLOBAL_DATA_SECTION via SMF747GO ---
+         SMF_FIELD R747GNFD-R747GCFL,TRIPLET=SMF747GO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=gnfd
+
+         SMF_FIELD R747GISF-R747GCFL,TRIPLET=SMF747GO-SMF74LEN,        X
+               TYPE=T_CHR2,JSON=gisf
+
+         SMF_FIELD R747GICT-R747GCFL,TRIPLET=SMF747GO-SMF74LEN,        X
+               TYPE=T_CHR8,JSON=gict
+
+* --- section SMF74_SUBTYPE7_SWITCH_DATA_SECTION via SMF747SO ---
+         SMF_FIELD R747SDEV-R747SDEV,TRIPLET=SMF747SO-SMF74LEN,        X
+               TYPE=T_HEX2,JSON=sdev
+
+         SMF_FIELD R747SNSP-R747SDEV,TRIPLET=SMF747SO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=snsp
+
+         SMF_FIELD R747SNIP-R747SDEV,TRIPLET=SMF747SO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=snip
+
+* --- section SMF74_SUBTYPE7_PORT_DATA_SECTION via SMF747PO ---
+         SMF_FIELD R747PCU-R747PNUM,TRIPLET=SMF747PO-SMF74LEN,        X
+               TYPE=T_HEX2,JSON=pcu
+
+         SMF_FIELD R747PCUN-R747PNUM,TRIPLET=SMF747PO-SMF74LEN,        X
+               TYPE=T_DEC1,JSON=pcun
+
+         SMF_FIELD R747PNPC-R747PNUM,TRIPLET=SMF747PO-SMF74LEN,        X
+               TYPE=T_DEC1,JSON=pnpc
+
+         SMF_FIELD R747PXPC-R747PNUM,TRIPLET=SMF747PO-SMF74LEN,        X
+               TYPE=T_DEC2,JSON=pxpc
 
          SMF_END

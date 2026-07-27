@@ -403,7 +403,6 @@ NO_80    EQU   *
          J     JSONOBJ
 NO_89    J     NEXT_SMF
 * --- END GENERATED DISPATCH ---
-
 JSONOBJ  EQU   *
 
          LARL  R5,BUF_DATA       * New Ligne R5=BUF_DATA

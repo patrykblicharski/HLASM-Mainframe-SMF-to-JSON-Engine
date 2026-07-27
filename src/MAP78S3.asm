@@ -1,6 +1,7 @@
 * ====================================================================
 * SMF TYPE 78 SUBTYPE 3 — I/O queuing activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
+* Section fields capped: 12/section, 48 total
 * ====================================================================
 TABLE78_3 SMF_START
 
@@ -16,10 +17,103 @@ TABLE78_3 SMF_START
 
          SMF_FIELD SMF78STY-SMF78LEN,TYPE=T_DEC2,JSON=subtype
 
+* --- section SMF78_SUBTYPE3_PRODUCT_SECTION via SMF78PRS ---
          SMF_FIELD SMF78PRD-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
                TYPE=T_CHR8,JSON=product_name
 
+         SMF_FIELD SMF78DAT-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_DTE,JSON=interval_date
+
+         SMF_FIELD SMF78SAM-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=sample_count
+
          SMF_FIELD SMF78MVS-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
                TYPE=T_CHR8,JSON=mvs_level
+
+         SMF_FIELD SMF78SRL-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_DEC1,JSON=rmf_release
+
+         SMF_FIELD SMF78RAO-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=rao
+
+         SMF_FIELD SMF78RAL-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=ral
+
+         SMF_FIELD SMF78RAN-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=ran
+
+         SMF_FIELD SMF78OIL-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=oil
+
+         SMF_FIELD SMF78SYN-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=syn
+
+         SMF_FIELD SMF78XNM-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_CHR8,JSON=sysplex_name
+
+         SMF_FIELD SMF78SNM-SMF78MFV,TRIPLET=SMF78PRS-SMF78LEN,        X
+               TYPE=T_CHR8,JSON=system_name
+
+* --- section SMF78_SUBTYPE3_GLOBAL_SECTION via SMF78QDS ---
+         SMF_FIELD R783GNTR-R783GFLG,TRIPLET=SMF78QDS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=gntr
+
+         SMF_FIELD R783TSR-R783GFLG,TRIPLET=SMF78QDS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=tsr
+
+         SMF_FIELD R783TOT-R783GFLG,TRIPLET=SMF78QDS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=tot
+
+         SMF_FIELD R783NXT-R783GFLG,TRIPLET=SMF78QDS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=nxt
+
+         SMF_FIELD R783CSS-R783GFLG,TRIPLET=SMF78QDS-SMF78LEN,        X
+               TYPE=T_DEC1,JSON=css
+
+         SMF_FIELD R783TSF-R783GFLG,TRIPLET=SMF78QDS-SMF78LEN,        X
+               TYPE=T_CHR2,JSON=tsf
+
+         SMF_FIELD R783TDT-R783GFLG,TRIPLET=SMF78QDS-SMF78LEN,        X
+               TYPE=T_CHR8,JSON=tdt
+
+         SMF_FIELD R783TTM-R783GFLG,TRIPLET=SMF78QDS-SMF78LEN,        X
+               TYPE=T_CHR8,JSON=ttm
+
+* --- section SMF78_SUBTYPE3_DATA_SECTION via SMF78DCS ---
+         SMF_FIELD R783ID2-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=id2
+
+         SMF_FIELD R783QSM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=qsm
+
+         SMF_FIELD R783QCT-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=qct
+
+         SMF_FIELD R783MCMN-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=mcmn
+
+         SMF_FIELD R783MCMX-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=mcmx
+
+         SMF_FIELD R783MCDF-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC2,JSON=mcdf
+
+         SMF_FIELD R783PTM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=ptm
+
+         SMF_FIELD R783DPBM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=dpbm
+
+         SMF_FIELD R783CUBM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=cubm
+
+         SMF_FIELD R783CBTM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=cbtm
+
+         SMF_FIELD R783CMRM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=cmrm
+
+         SMF_FIELD R783SBSM-R783ID2,TRIPLET=SMF78DCS-SMF78LEN,        X
+               TYPE=T_DEC4,JSON=sbsm
 
          SMF_END

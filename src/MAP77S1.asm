@@ -1,6 +1,7 @@
 * ====================================================================
 * SMF TYPE 77 SUBTYPE 1 — Enqueue activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
+* Section fields capped: 12/section, 48 total
 * ====================================================================
 TABLE77_1 SMF_START
 
@@ -16,10 +17,78 @@ TABLE77_1 SMF_START
 
          SMF_FIELD SMF77STY-SMF77LEN,TYPE=T_DEC2,JSON=subtype
 
+* --- section SMF77_SUBTYPE1_PRODUCT_SECTION via SMF77PRS ---
          SMF_FIELD SMF77PRD-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
                TYPE=T_CHR8,JSON=product_name
 
+         SMF_FIELD SMF77DAT-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_DTE,JSON=interval_date
+
+         SMF_FIELD SMF77SAM-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_DEC4,JSON=sample_count
+
          SMF_FIELD SMF77MVS-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
                TYPE=T_CHR8,JSON=mvs_level
+
+         SMF_FIELD SMF77SRL-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_DEC1,JSON=rmf_release
+
+         SMF_FIELD SMF77RAO-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_DEC4,JSON=rao
+
+         SMF_FIELD SMF77RAL-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=ral
+
+         SMF_FIELD SMF77RAN-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=ran
+
+         SMF_FIELD SMF77OIL-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=oil
+
+         SMF_FIELD SMF77SYN-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=syn
+
+         SMF_FIELD SMF77XNM-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=sysplex_name
+
+         SMF_FIELD SMF77SNM-SMF77MFV,TRIPLET=SMF77PRS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=system_name
+
+* --- section SMF77_SUBTYPE1_ENQUEUE_DATA_SECTION via SMF77EDS ---
+         SMF_FIELD SMF77QNM-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_CHR8,JSON=major_name
+
+         SMF_FIELD SMF77WTM-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC4,JSON=wait_min
+
+         SMF_FIELD SMF77WTX-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC4,JSON=wait_max
+
+         SMF_FIELD SMF77WTT-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC4,JSON=wait_total
+
+         SMF_FIELD SMF77QL1-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=ql1
+
+         SMF_FIELD SMF77QL2-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=ql2
+
+         SMF_FIELD SMF77QL3-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=ql3
+
+         SMF_FIELD SMF77QL4-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=ql4
+
+         SMF_FIELD SMF77EXM-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=exm
+
+         SMF_FIELD SMF77EXX-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=exx
+
+         SMF_FIELD SMF77SHM-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=shm
+
+         SMF_FIELD SMF77SHX-SMF77QNM,TRIPLET=SMF77EDS-SMF77LEN,        X
+               TYPE=T_DEC2,JSON=shx
 
          SMF_END

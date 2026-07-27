@@ -1,6 +1,7 @@
 * ====================================================================
 * SMF TYPE 75 SUBTYPE 1 — Page data set activity
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
+* Section fields capped: 12/section, 48 total
 * ====================================================================
 TABLE75_1 SMF_START
 
@@ -16,10 +17,78 @@ TABLE75_1 SMF_START
 
          SMF_FIELD SMF75STY-SMF75LEN,TYPE=T_DEC2,JSON=subtype
 
+* --- section SMF75_SUBTYPE1_PRODUCT_SECTION via SMF75PRS ---
          SMF_FIELD SMF75PRD-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
                TYPE=T_CHR8,JSON=product_name
 
+         SMF_FIELD SMF75DAT-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_DTE,JSON=interval_date
+
+         SMF_FIELD SMF75SAM-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=sample_count
+
          SMF_FIELD SMF75MVS-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
                TYPE=T_CHR8,JSON=mvs_level
+
+         SMF_FIELD SMF75SRL-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_DEC1,JSON=rmf_release
+
+         SMF_FIELD SMF75RAO-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=rao
+
+         SMF_FIELD SMF75RAL-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_DEC2,JSON=ral
+
+         SMF_FIELD SMF75RAN-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_DEC2,JSON=ran
+
+         SMF_FIELD SMF75OIL-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_DEC2,JSON=oil
+
+         SMF_FIELD SMF75SYN-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_DEC2,JSON=syn
+
+         SMF_FIELD SMF75XNM-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_CHR8,JSON=sysplex_name
+
+         SMF_FIELD SMF75SNM-SMF75MFV,TRIPLET=SMF75PRS-SMF75LEN,        X
+               TYPE=T_CHR8,JSON=system_name
+
+* --- section SMF75_SUBTYPE1_PAGE_DATA_SET_DATA_SECTION via SMF75PSS ---
+         SMF_FIELD SMF75CHA-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_HEX2,JSON=cha
+
+         SMF_FIELD SMF75SCS-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_CHR1,JSON=scs
+
+         SMF_FIELD SMF75SLA-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=sla
+
+         SMF_FIELD SMF75MXU-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=mxu
+
+         SMF_FIELD SMF75MNU-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=mnu
+
+         SMF_FIELD SMF75AVU-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=avu
+
+         SMF_FIELD SMF75BDS-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=bds
+
+         SMF_FIELD SMF75USE-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=use
+
+         SMF_FIELD SMF75REQ-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=req
+
+         SMF_FIELD SMF75SIO-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=sio
+
+         SMF_FIELD SMF75PGX-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_DEC4,JSON=pgx
+
+         SMF_FIELD SMF75DEV-SMF75DSN,TRIPLET=SMF75PSS-SMF75LEN,        X
+               TYPE=T_CHR8,JSON=dev
 
          SMF_END

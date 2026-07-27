@@ -95,6 +95,35 @@ def table_label(typ: int, sub: int) -> str:
     return f"TABLE{typ}_{sub}"
 
 
+MAX_FIELDS_PER_SECTION = 12
+MAX_SECTION_FIELDS_TOTAL = 48
+
+# Prefer stable JSON keys for common IBM names.
+JSON_KEY_HINTS = {
+    "SMF70LPM": "lpar_name",
+    "SMF70CID": "cpu_id",
+    "SMF70TYP": "cpu_type",
+    "SMF74NUM": "device_num",
+    "SMF74LCU": "lcu_num",
+    "SMF74SSC": "ssch_count",
+    "SMF74CNN": "connect_time",
+    "SMF74PEN": "pending_time",
+    "SMF77QNM": "major_name",
+    "SMF77WTM": "wait_min",
+    "SMF77WTX": "wait_max",
+    "SMF77WTT": "wait_total",
+    "SMF71PIN": "page_ins",
+    "SMF71POT": "page_outs",
+    "SMF71SIN": "swap_ins",
+    "SMF71SOT": "swap_outs",
+    "SMF71AVF": "avg_frames",
+    "R723MCNM": "class_name",
+    "R723MCPG": "period_count",
+    "R723CPER": "period_number",
+    "R723CCDE": "cpu_delay",
+}
+
+
 def field_line(off: str, typ: str, js: str, triplet: str | None = None) -> str:
     if triplet:
         return (
@@ -104,127 +133,336 @@ def field_line(off: str, typ: str, js: str, triplet: str | None = None) -> str:
     return f"         SMF_FIELD {off},TYPE={typ},JSON={js}\n"
 
 
+def hlasm_type_for(node: dict) -> str | None:
+    dt = (node.get("x-zml-datatype") or "").upper()
+    sz = node.get("x-zml-size")
+    fmt = node.get("format")
+    try:
+        sz_i = int(sz) if sz is not None else None
+    except (TypeError, ValueError):
+        sz_i = None
+    if dt == "CHARACTER":
+        return {1: "T_CHR1", 2: "T_CHR2", 4: "T_CHR4", 8: "T_CHR8", 20: "T_CHR20"}.get(sz_i)
+    if dt in {"UNSIGNED", "SIGNED"}:
+        if fmt == "time" and sz_i == 4:
+            return "T_TME"
+        return {1: "T_DEC1", 2: "T_DEC2", 4: "T_DEC4"}.get(sz_i)
+    if dt == "PACKED_DATE_2":
+        return "T_DTE"
+    if dt == "HEX_STR" and sz_i == 2:
+        return "T_HEX2"
+    return None
+
+
+# Common RMF/product suffix → stable JSON key (after stripping SMFnn/Rnnn prefix).
+SUFFIX_KEY_HINTS = {
+    "PRD": "product_name",
+    "MVS": "mvs_level",
+    "SNM": "system_name",
+    "XNM": "sysplex_name",
+    "SAM": "sample_count",
+    "SRL": "rmf_release",
+    "DAT": "interval_date",
+}
+
+
+def make_json_key(ibm: str, used: set[str]) -> str:
+    if ibm in JSON_KEY_HINTS:
+        key = JSON_KEY_HINTS[ibm]
+    else:
+        tail = re.sub(r"^(SMF\d+|R\d+)", "", ibm)
+        tail = re.sub(r"[^A-Za-z0-9]", "", tail) or ibm
+        key = SUFFIX_KEY_HINTS.get(tail.upper(), tail.lower())[:16]
+        if not re.match(r"^[a-z]", key):
+            key = ("f" + key)[:16]
+    base = key[:16]
+    if base not in used:
+        used.add(base)
+        return base
+    n = 2
+    while True:
+        suffix = str(n)
+        cand = (base[: 16 - len(suffix)] + suffix)[:16]
+        if cand not in used:
+            used.add(cand)
+            return cand
+        n += 1
+
+
+def iter_section_schemas(props: dict) -> list[tuple[str, str]]:
+    """Return (prop_name, schema_name) for section objects / maps."""
+    out = []
+    for key, node in props.items():
+        if not isinstance(node, dict):
+            continue
+        if "$ref" in node:
+            out.append((key, node["$ref"].rsplit("/", 1)[-1]))
+        elif node.get("type") == "object":
+            ap = node.get("additionalProperties")
+            if isinstance(ap, dict) and "$ref" in ap:
+                out.append((key, ap["$ref"].rsplit("/", 1)[-1]))
+        elif node.get("type") == "array" and isinstance(node.get("items"), dict):
+            items = node["items"]
+            if "$ref" in items:
+                out.append((key, items["$ref"].rsplit("/", 1)[-1]))
+    return out
+
+
+def offset_triplet_fields(props: dict) -> dict[str, str]:
+    """Map offset-field name -> description for meta OFFSET TO ... fields."""
+    found = {}
+    for key, node in props.items():
+        if not isinstance(node, dict) or "$ref" in node:
+            continue
+        desc = (node.get("description") or "").upper()
+        if node.get("x-zdg-is-meta") and "OFFSET" in desc:
+            found[key] = desc
+    return found
+
+
+_GENERIC_OFFSET_STOP = {
+    "OFFSET",
+    "TO",
+    "THE",
+    "FROM",
+    "BEGINNING",
+    "OF",
+    "RECORD",
+    "INCLUDING",
+    "RDW",
+    "A",
+    "AN",
+    "SECTION",
+    "SECTIONS",
+}
+
+
+def offset_content_tokens(desc: str) -> set[str]:
+    tokens = set(re.findall(r"[A-Z]+", desc.upper())) - _GENERIC_OFFSET_STOP
+    if tokens & {"CNTL", "CTRL"}:
+        tokens.add("CONTROL")
+    return tokens
+
+
+def match_triplet(section_schema: str, offsets: dict[str, str]) -> str | None:
+    """Best-effort OFFSET-field match for a section schema name."""
+    name_u = section_schema.upper()
+    if "PRODUCT" in name_u:
+        for name, desc in offsets.items():
+            if name.endswith("PRS") or "PRODUCT" in desc.upper():
+                return name
+
+    # Type 99/113: OpenAPI "header" ≈ SDS generic "data section" triplet only.
+    if "HEADER" in name_u and "SELF" not in name_u:
+        for name, desc in offsets.items():
+            content = offset_content_tokens(desc)
+            if content == {"DATA"} or content == {"DATA", "SECTION"}:
+                return name
+            # 113: "OFFSET OF DATA SECTION FROM BEGINNING OF RECORD"
+            if content == {"DATA"}:
+                return name
+
+    tokens = set(
+        t
+        for t in re.findall(r"[A-Z]+", name_u)
+        if t not in {"SMF", "SUBTYPE", "SECTION", "AREA", "SELF", "DEFINING"}
+        and not t.isdigit()
+    )
+    has_control = bool(tokens & {"CONTROL", "CNTL", "CTRL"})
+    has_data = "DATA" in tokens
+
+    best_name = None
+    best_score = 0
+    for name, desc in offsets.items():
+        content = offset_content_tokens(desc)
+        # Generic SDS "data section" must not match every *DATA* payload schema.
+        if content <= {"DATA"}:
+            continue
+
+        score = len(tokens & content)
+        desc_is_control = bool(content & {"CONTROL", "CNTL", "CTRL"})
+        desc_is_data = "DATA" in content and not desc_is_control
+
+        if has_control:
+            if desc_is_control:
+                score += 3
+            elif desc_is_data:
+                score -= 2
+        elif has_data:
+            if desc_is_data:
+                score += 3
+            elif desc_is_control:
+                score -= 2
+
+        if score > best_score:
+            best_score = score
+            best_name = name
+    return best_name if best_score >= 1 else None
+
+
+def section_base_label(section_props: dict) -> str | None:
+    """First DSECT field name (IFASMFR section start), including meta/packed heads."""
+    for key, node in section_props.items():
+        if not isinstance(node, dict) or "$ref" in node:
+            continue
+        if isinstance(node.get("additionalProperties"), dict):
+            continue
+        # Nested OpenAPI object without a leaf datatype is not a DSECT field
+        if node.get("type") == "object" and not node.get("x-zml-datatype"):
+            continue
+        return key
+    return None
+
+
+def select_section_fields(section_props: dict) -> list[tuple[str, str]]:
+    """Return list of (ibm_name, T_*) supported fields, capped."""
+    hinted: list[tuple[str, str]] = []
+    other: list[tuple[str, str]] = []
+    for key, node in section_props.items():
+        if not isinstance(node, dict) or "$ref" in node:
+            continue
+        if node.get("x-zdg-is-meta"):
+            continue
+        t = hlasm_type_for(node)
+        if not t:
+            continue
+        (hinted if key in JSON_KEY_HINTS else other).append((key, t))
+    return (hinted + other)[:MAX_FIELDS_PER_SECTION]
+
+
+def fixed_triplet_offsets(root_props: dict, schemas: dict) -> dict[str, str]:
+    """
+    OFFSET fields stored at a compile-time-fixed place in the record.
+
+    Root SDS triplets (RMF) and type 99/113 self-defining section triplets are
+    safe for SMF_FIELD TRIPLET=label-SMFxxLEN. Triplets that live inside a
+    relocatable section are not — the engine reads them via a fixed AL4 offset.
+    """
+    pool = offset_triplet_fields(root_props)
+    for _prop, section_schema in iter_section_schemas(root_props):
+        if "SELF_DEFINING" not in section_schema.upper():
+            continue
+        section_props = schemas.get(section_schema, {}).get("properties") or {}
+        pool.update(offset_triplet_fields(section_props))
+    return pool
+
+
+def walk_section_targets(
+    root_props: dict, schemas: dict
+) -> list[tuple[str, dict[str, str]]]:
+    """BFS over OpenAPI sections; every target shares the fixed triplet pool."""
+    fixed = fixed_triplet_offsets(root_props, schemas)
+    queue: list[str] = []
+    for _prop, section_schema in iter_section_schemas(root_props):
+        queue.append(section_schema)
+
+    seen: set[str] = set()
+    ordered: list[tuple[str, dict[str, str]]] = []
+    while queue:
+        section_schema = queue.pop(0)
+        if section_schema in seen:
+            continue
+        seen.add(section_schema)
+        section_props = schemas.get(section_schema, {}).get("properties") or {}
+        ordered.append((section_schema, fixed))
+        # Discover nested payload schemas (type 99/113), but do not adopt their
+        # inner OFFSET metas as TRIPLET sources.
+        for _prop, child in iter_section_schemas(section_props):
+            queue.append(child)
+    return ordered
+
+
+def header_field_specs(typ: int, props: dict) -> list[tuple[str, str, str, str]]:
+    """Common SMF header JSON fields for a type."""
+    prefix = f"SMF{typ}"
+    specs = [
+        (f"{prefix}RTY", f"{prefix}LEN", "T_DEC1", "smf_record_type"),
+        (f"{prefix}SID", f"{prefix}LEN", "T_CHR4", "smf_system_id"),
+        (f"{prefix}TME", f"{prefix}LEN", "T_TME", "time"),
+        (f"{prefix}DTE", f"{prefix}LEN", "T_DTE", "date"),
+    ]
+    if typ == 99:
+        specs.extend(
+            [
+                ("SMF99SSID", "SMF99LEN", "T_CHR4", "subsystem_id"),
+                ("SMF99TID", "SMF99LEN", "T_DEC2", "subtype"),
+            ]
+        )
+    elif typ == 113:
+        specs.extend(
+            [
+                ("SMF113WID", "SMF113LEN", "T_CHR4", "subsystem_id"),
+                ("SMF113STY", "SMF113LEN", "T_DEC2", "subtype"),
+            ]
+        )
+    else:
+        if f"{prefix}SSI" in props:
+            specs.append((f"{prefix}SSI", f"{prefix}LEN", "T_CHR4", "subsystem_id"))
+        if f"{prefix}STY" in props:
+            specs.append((f"{prefix}STY", f"{prefix}LEN", "T_DEC2", "subtype"))
+    return specs
+
+
 def gen_rmf_style_map(typ: int, sub: int, schemas: dict, root_name: str) -> str:
-    """Header + optional product section for RMF-like records (70-79)."""
+    """Header + product + supported fields from mapped sections."""
     prefix = f"SMF{typ}"
     title = TITLES.get((typ, sub), f"SMF type {typ} subtype {sub}")
     props = schemas[root_name].get("properties") or {}
+    used_keys: set[str] = set()
+    section_field_count = 0
 
     lines = [
         f"* ====================================================================\n"
         f"* SMF TYPE {typ} SUBTYPE {sub} — {title}\n"
         f"* Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)\n"
+        f"* Section fields capped: {MAX_FIELDS_PER_SECTION}/section, "
+        f"{MAX_SECTION_FIELDS_TOTAL} total\n"
         f"* ====================================================================\n"
         f"{table_label(typ, sub)} SMF_START\n\n"
     ]
 
-    # Header fields present in schema
-    header_specs = [
-        (f"{prefix}RTY", f"{prefix}LEN", "T_DEC1", "smf_record_type", None),
-        (f"{prefix}SID", f"{prefix}LEN", "T_CHR4", "smf_system_id", None),
-        (f"{prefix}TME", f"{prefix}LEN", "T_TME", "time", None),
-        (f"{prefix}DTE", f"{prefix}LEN", "T_DTE", "date", None),
-    ]
-    if f"{prefix}SSI" in props:
-        header_specs.append(
-            (f"{prefix}SSI", f"{prefix}LEN", "T_CHR4", "subsystem_id", None)
-        )
-    if f"{prefix}STY" in props:
-        header_specs.append(
-            (f"{prefix}STY", f"{prefix}LEN", "T_DEC2", "subtype", None)
-        )
-
-    for ibm, base, t, js, _ in header_specs:
+    for ibm, base, t, js in header_field_specs(typ, props):
         if ibm in props:
+            used_keys.add(js)
             lines.append(field_line(f"{ibm}-{base}", t, js))
             lines.append("\n")
 
-    # Product section via SMFxxPRS / SMFxxMFV
-    prs = f"{prefix}PRS"
-    mfv = f"{prefix}MFV"
-    prd = f"{prefix}PRD"
-    mvs = f"{prefix}MVS"
-    product_schema = None
-    for k, v in props.items():
-        if isinstance(v, dict) and "$ref" in v and "PRODUCT" in v["$ref"].upper():
-            product_schema = v["$ref"].rsplit("/", 1)[-1]
+    used_triplets: set[str] = set()
+    for section_schema, offsets in walk_section_targets(props, schemas):
+        if section_field_count >= MAX_SECTION_FIELDS_TOTAL:
             break
-    if prs in props and product_schema:
-        pprops = schemas.get(product_schema, {}).get("properties") or {}
-        # section base = first real field name if MFV absent
-        base = mfv if mfv in pprops else next(iter(pprops), mfv)
-        if prd in pprops:
+        # Skip pure SDS wrappers (no payload fields)
+        if "SELF_DEFINING" in section_schema.upper():
+            continue
+        section_props = schemas.get(section_schema, {}).get("properties") or {}
+        if not section_props:
+            continue
+        triplet = match_triplet(section_schema, offsets)
+        if not triplet or triplet in used_triplets:
+            continue
+        base = section_base_label(section_props)
+        if not base:
+            continue
+        fields = select_section_fields(section_props)
+        if not fields:
+            continue
+        used_triplets.add(triplet)
+        lines.append(f"* --- section {section_schema} via {triplet} ---\n")
+        for ibm, t in fields:
+            if section_field_count >= MAX_SECTION_FIELDS_TOTAL:
+                break
+            js = make_json_key(ibm, used_keys)
             lines.append(
-                field_line(f"{prd}-{base}", "T_CHR8", "product_name", f"{prs}-{prefix}LEN")
+                field_line(f"{ibm}-{base}", t, js, f"{triplet}-{prefix}LEN")
             )
             lines.append("\n")
-        if mvs in pprops:
-            lines.append(
-                field_line(f"{mvs}-{base}", "T_CHR8", "mvs_level", f"{prs}-{prefix}LEN")
-            )
-            lines.append("\n")
+            section_field_count += 1
 
-    lines.append("         SMF_END\n")
-    return "".join(lines)
-
-
-def gen_99_map(typ: int, sub: int, schemas: dict, root_name: str) -> str:
-    title = TITLES.get((typ, sub), f"SMF type {typ} subtype {sub}")
-    props = schemas[root_name].get("properties") or {}
-    lines = [
-        f"* ====================================================================\n"
-        f"* SMF TYPE {typ} SUBTYPE {sub} — {title}\n"
-        f"* Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)\n"
-        f"* ====================================================================\n"
-        f"{table_label(typ, sub)} SMF_START\n\n"
-    ]
-    specs = [
-        ("SMF99RTY", "SMF99LEN", "T_DEC1", "smf_record_type"),
-        ("SMF99SID", "SMF99LEN", "T_CHR4", "smf_system_id"),
-        ("SMF99TME", "SMF99LEN", "T_TME", "time"),
-        ("SMF99DTE", "SMF99LEN", "T_DTE", "date"),
-        ("SMF99SSID", "SMF99LEN", "T_CHR4", "subsystem_id"),
-        ("SMF99TID", "SMF99LEN", "T_DEC2", "subtype"),
-    ]
-    for ibm, base, t, js in specs:
-        if ibm in props:
-            lines.append(field_line(f"{ibm}-{base}", t, js))
-            lines.append("\n")
-    lines.append("         SMF_END\n")
-    return "".join(lines)
-
-
-def gen_113_map(typ: int, sub: int, schemas: dict, root_name: str) -> str:
-    title = TITLES.get((typ, sub), f"SMF type {typ} subtype {sub}")
-    props = schemas[root_name].get("properties") or {}
-    lines = [
-        f"* ====================================================================\n"
-        f"* SMF TYPE {typ} SUBTYPE {sub} — {title}\n"
-        f"* Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)\n"
-        f"* ====================================================================\n"
-        f"{table_label(typ, sub)} SMF_START\n\n"
-    ]
-    specs = [
-        ("SMF113RTY", "SMF113LEN", "T_DEC1", "smf_record_type"),
-        ("SMF113SID", "SMF113LEN", "T_CHR4", "smf_system_id"),
-        ("SMF113TME", "SMF113LEN", "T_TME", "time"),
-        ("SMF113DTE", "SMF113LEN", "T_DTE", "date"),
-        ("SMF113WID", "SMF113LEN", "T_CHR4", "subsystem_id"),
-        ("SMF113STY", "SMF113LEN", "T_DEC2", "subtype"),
-    ]
-    for ibm, base, t, js in specs:
-        if ibm in props:
-            lines.append(field_line(f"{ibm}-{base}", t, js))
-            lines.append("\n")
     lines.append("         SMF_END\n")
     return "".join(lines)
 
 
 def gen_map(typ: int, sub: int, schemas: dict, root_name: str) -> str:
-    if typ == 99:
-        return gen_99_map(typ, sub, schemas, root_name)
-    if typ == 113:
-        return gen_113_map(typ, sub, schemas, root_name)
     if typ == 30:
         raise RuntimeError("type 30 maps are handcrafted")
     return gen_rmf_style_map(typ, sub, schemas, root_name)

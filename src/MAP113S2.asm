@@ -1,6 +1,7 @@
 * ====================================================================
 * SMF TYPE 113 SUBTYPE 2 — Hardware event counters
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
+* Section fields capped: 12/section, 48 total
 * ====================================================================
 TABLE113_2 SMF_START
 
@@ -15,5 +16,47 @@ TABLE113_2 SMF_START
          SMF_FIELD SMF113WID-SMF113LEN,TYPE=T_CHR4,JSON=subsystem_id
 
          SMF_FIELD SMF113STY-SMF113LEN,TYPE=T_DEC2,JSON=subtype
+
+* --- section SMF113_SUBTYPE2_SUBSYSTEM_SECTION via SMF113SOF ---
+         SMF_FIELD SMF113RVN-SMF113RVN,TRIPLET=SMF113SOF-SMF113LEN,        X
+               TYPE=T_CHR2,JSON=rvn
+
+         SMF_FIELD SMF113PNM-SMF113RVN,TRIPLET=SMF113SOF-SMF113LEN,        X
+               TYPE=T_CHR8,JSON=pnm
+
+         SMF_FIELD SMF113OSL-SMF113RVN,TRIPLET=SMF113SOF-SMF113LEN,        X
+               TYPE=T_CHR8,JSON=osl
+
+* --- section SMF113_SUBTYPE2_IDENTIFICATION_SECTION via SMF113IOF ---
+         SMF_FIELD SMF113JBN-SMF113JBN,TRIPLET=SMF113IOF-SMF113LEN,        X
+               TYPE=T_CHR8,JSON=jbn
+
+         SMF_FIELD SMF113RST-SMF113JBN,TRIPLET=SMF113IOF-SMF113LEN,        X
+               TYPE=T_TME,JSON=rst
+
+         SMF_FIELD SMF113RSD-SMF113JBN,TRIPLET=SMF113IOF-SMF113LEN,        X
+               TYPE=T_DTE,JSON=rsd
+
+         SMF_FIELD SMF113STP-SMF113JBN,TRIPLET=SMF113IOF-SMF113LEN,        X
+               TYPE=T_CHR8,JSON=stp
+
+* --- section SMF113_SUBTYPE2_HEADER_SECTION via SMF113DOF ---
+         SMF_FIELD SMF113_2_CPUPROCCLASS-SMF113_2_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC1,JSON=f2cpuprocclass
+
+         SMF_FIELD SMF113_2_CTRVN1-SMF113_2_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC2,JSON=f2ctrvn1
+
+         SMF_FIELD SMF113_2_CTRVN2-SMF113_2_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC2,JSON=f2ctrvn2
+
+         SMF_FIELD SMF113_2_CPSP-SMF113_2_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC4,JSON=f2cpsp
+
+         SMF_FIELD SMF113_2_MACHTYPE-SMF113_2_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_CHR4,JSON=f2machtype
+
+         SMF_FIELD SMF113_2_CPUID-SMF113_2_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC2,JSON=f2cpuid
 
          SMF_END

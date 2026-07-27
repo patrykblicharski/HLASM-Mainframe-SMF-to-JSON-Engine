@@ -1,6 +1,7 @@
 * ====================================================================
 * SMF TYPE 113 SUBTYPE 1 — Hardware capacity / scavenging counters
 * Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
+* Section fields capped: 12/section, 48 total
 * ====================================================================
 TABLE113_1 SMF_START
 
@@ -15,5 +16,53 @@ TABLE113_1 SMF_START
          SMF_FIELD SMF113WID-SMF113LEN,TYPE=T_CHR4,JSON=subsystem_id
 
          SMF_FIELD SMF113STY-SMF113LEN,TYPE=T_DEC2,JSON=subtype
+
+* --- section SMF113_SUBTYPE1_SUBSYSTEM_SECTION via SMF113SOF ---
+         SMF_FIELD SMF113RVN-SMF113RVN,TRIPLET=SMF113SOF-SMF113LEN,        X
+               TYPE=T_CHR2,JSON=rvn
+
+         SMF_FIELD SMF113PNM-SMF113RVN,TRIPLET=SMF113SOF-SMF113LEN,        X
+               TYPE=T_CHR8,JSON=pnm
+
+         SMF_FIELD SMF113OSL-SMF113RVN,TRIPLET=SMF113SOF-SMF113LEN,        X
+               TYPE=T_CHR8,JSON=osl
+
+* --- section SMF113_SUBTYPE1_IDENTIFICATION_SECTION via SMF113IOF ---
+         SMF_FIELD SMF113JBN-SMF113JBN,TRIPLET=SMF113IOF-SMF113LEN,        X
+               TYPE=T_CHR8,JSON=jbn
+
+         SMF_FIELD SMF113RST-SMF113JBN,TRIPLET=SMF113IOF-SMF113LEN,        X
+               TYPE=T_TME,JSON=rst
+
+         SMF_FIELD SMF113RSD-SMF113JBN,TRIPLET=SMF113IOF-SMF113LEN,        X
+               TYPE=T_DTE,JSON=rsd
+
+         SMF_FIELD SMF113STP-SMF113JBN,TRIPLET=SMF113IOF-SMF113LEN,        X
+               TYPE=T_CHR8,JSON=stp
+
+* --- section SMF113_SUBTYPE1_HEADER_SECTION via SMF113DOF ---
+         SMF_FIELD SMF113_1_CPUID-SMF113_1_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC2,JSON=f1cpuid
+
+         SMF_FIELD SMF113_1_CPUPROCCLASS-SMF113_1_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC1,JSON=f1cpuprocclass
+
+         SMF_FIELD SMF113_1_CPUSPEED-SMF113_1_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC4,JSON=f1cpuspeed
+
+         SMF_FIELD SMF113_1_MACHTYPE-SMF113_1_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_CHR4,JSON=f1machtype
+
+         SMF_FIELD SMF113_1_CTRVERSION0-SMF113_1_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC2,JSON=f1ctrversion0
+
+         SMF_FIELD SMF113_1_CTRVERSION1-SMF113_1_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC2,JSON=f1ctrversion1
+
+         SMF_FIELD SMF113_1_CTRVERSION2-SMF113_1_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC2,JSON=f1ctrversion2
+
+         SMF_FIELD SMF113_1_COREID-SMF113_1_CTS,TRIPLET=SMF113DOF-SMF113LEN,        X
+               TYPE=T_DEC2,JSON=f1coreid
 
          SMF_END
