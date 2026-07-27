@@ -65,19 +65,18 @@ Engine advances with `LA R8,28(,R8)`.
 
 | Type | Map | Notes |
 | ---: | :--- | :--- |
-| 30 | `MAP30` | Header + subsystem / identification / processor triplets |
+| 30 | `MAP30` + `MAP30S1`…`S6` | Subtype dispatch via `SMF30STP` @ +22 |
+| 70 | `MAP70S1`, `MAP70S2` | RMF CPU / crypto |
+| 71 | `MAP71S1` | Paging |
+| 72 | `MAP72S3` | WLM workload |
 | 80 | `MAP80` | Header + RS tags 1, 17 |
 | 89 | `MAP89` | Header-only template |
 
-Roadmap types (README): 14/15, 42, 110, 101/102.
+Datatype EQU: `src/TYPES.asm`. Planned list: `catalog/planned_subtypes.json`.
 
-## Subtypes (important gap)
+## Subtypes
 
-IBM SMF types often have **subtypes** (e.g. type 30: 1=job start … 5=job end; field `SMF30STP`).
-
-**Today the engine dispatches only on record type**, not subtype. One `TABLEnn` applies to all subtypes of that type. Missing sections yield empty JSON strings `""` (triplet offset 0).
-
-For subtype-specific maps later, see skill `zsmf-add-type`.
+Dispatch reads halfword at offset 22 (`SMF30STP` / `SMFxxSTY`) after type match, then `LARL` the subtype table. Unknown 30 subtype → `TABLE30`. Missing sections → `""`.
 
 ## Mode notes
 

@@ -1,0 +1,76 @@
+{
+  "note": "First 10 planned type/subtype pairs wired in HLASM maps + dispatch",
+  "engine_types_added": ["T_CHR20", "T_HEX2"],
+  "pairs": [
+    {
+      "type": 30,
+      "subtype": 1,
+      "table": "TABLE30_1",
+      "map": "src/MAP30S1.asm",
+      "title": "Job start / start of other work unit"
+    },
+    {
+      "type": 30,
+      "subtype": 2,
+      "table": "TABLE30_2",
+      "map": "src/MAP30S2.asm",
+      "title": "Interval activity"
+    },
+    {
+      "type": 30,
+      "subtype": 3,
+      "table": "TABLE30_3",
+      "map": "src/MAP30S3.asm",
+      "title": "Last interval before step end"
+    },
+    {
+      "type": 30,
+      "subtype": 4,
+      "table": "TABLE30_4",
+      "map": "src/MAP30S4.asm",
+      "title": "Step total"
+    },
+    {
+      "type": 30,
+      "subtype": 5,
+      "table": "TABLE30_5",
+      "map": "src/MAP30S5.asm",
+      "title": "Job termination"
+    },
+    {
+      "type": 30,
+      "subtype": 6,
+      "table": "TABLE30_6",
+      "map": "src/MAP30S6.asm",
+      "title": "System address space"
+    },
+    {
+      "type": 70,
+      "subtype": 1,
+      "table": "TABLE70_1",
+      "map": "src/MAP70S1.asm",
+      "title": "CPU, PR/SM, and ICF activity"
+    },
+    {
+      "type": 70,
+      "subtype": 2,
+      "table": "TABLE70_2",
+      "map": "src/MAP70S2.asm",
+      "title": "Cryptographic hardware activity"
+    },
+    {
+      "type": 71,
+      "subtype": 1,
+      "table": "TABLE71_1",
+      "map": "src/MAP71S1.asm",
+      "title": "Paging activity"
+    },
+    {
+      "type": 72,
+      "subtype": 3,
+      "table": "TABLE72_3",
+      "map": "src/MAP72S3.asm",
+      "title": "Workload activity (WLM)"
+    }
+  ]
+}

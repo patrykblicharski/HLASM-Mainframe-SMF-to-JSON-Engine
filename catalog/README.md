@@ -42,3 +42,7 @@ python3 tools/build_smf_catalog.py
 5. Re-run the generator so status flips to `mapped`.
 
 See Cursor skill `zsmf-catalog`.
+
+## Planned subtype maps (first 10)
+
+See `catalog/planned_subtypes.json` for the HLASM tables currently wired in `SMF2JSON.asm` (30.1–30.6, 70.1–70.2, 71.1, 72.3).

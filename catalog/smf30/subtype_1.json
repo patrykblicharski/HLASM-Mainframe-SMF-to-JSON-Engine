@@ -6,8 +6,8 @@
   "status_counts": {
     "skip_meta": 91,
     "todo": 182,
-    "needs_engine": 184,
-    "mapped": 14,
+    "needs_engine": 183,
+    "mapped": 15,
     "unknown": 8
   },
   "fields": [
@@ -2096,9 +2096,9 @@
       "openapi_size": 20,
       "is_meta": false,
       "explorer_name": null,
-      "hlasm_type": null,
+      "hlasm_type": "T_CHR20",
       "json_key": "user_name",
-      "status": "needs_engine",
+      "status": "mapped",
       "priority": true
     },
     {

@@ -166,14 +166,31 @@ def load_json(path: Path) -> Any:
         return json.load(fh)
 
 
-def parse_map30(path: Path) -> dict[str, dict[str, str]]:
-    """Return ibm_field -> {json, type, triplet?} from MAP30.asm."""
-    text = path.read_text(encoding="utf-8", errors="replace")
+def parse_map_asm(path: Path) -> dict[str, dict[str, str]]:
+    """Return ibm_field -> {json, type, triplet?} from a MAP*.asm (follows COPY)."""
     mapped: dict[str, dict[str, str]] = {}
-    # Join continued lines ending with X in col 72-ish / trailing X
-    logical = []
+    if not path.exists():
+        return mapped
+
+    def expand(p: Path) -> list[str]:
+        lines: list[str] = []
+        for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
+            mcopy = re.match(r"\s*COPY\s+(\S+)", line, re.I)
+            if mcopy:
+                name = mcopy.group(1).strip().strip("'").upper()
+                # HLASM member name without extension
+                cand = p.parent / f"{name}.asm"
+                if not cand.exists():
+                    cand = p.parent / name
+                if cand.exists():
+                    lines.extend(expand(cand))
+                continue
+            lines.append(line)
+        return lines
+
+    logical: list[str] = []
     buf = ""
-    for line in text.splitlines():
+    for line in expand(path):
         if not line.strip() or line.lstrip().startswith("*"):
             continue
         if line.rstrip().endswith("X"):
@@ -185,41 +202,26 @@ def parse_map30(path: Path) -> dict[str, dict[str, str]]:
     if buf:
         logical.append(buf)
 
-    field_re = re.compile(
-        r"SMF_FIELD\s+(SMF30[A-Z0-9_]+)-([A-Z0-9]+)"
-        r"(?:,\s*TRIPLET=(SMF30[A-Z0-9_]+)-([A-Z0-9]+))?"
-        r".*?TYPE=(T_[A-Z0-9_]+).*?JSON=([A-Za-z0-9_]+)",
-        re.I,
-    )
     for line in logical:
-        m = field_re.search(line.replace(" ", ""))
-        if not m:
-            # looser: search tokens
-            m2 = re.search(
-                r"SMF_FIELD\s+(SMF30[A-Z0-9]+)-",
-                line,
-                re.I,
-            )
-            if not m2:
-                continue
-            ibm = m2.group(1).upper()
-            typ = re.search(r"TYPE=(T_[A-Z0-9_]+)", line)
-            js = re.search(r"JSON=([A-Za-z0-9_]+)", line)
-            trip = re.search(r"TRIPLET=(SMF30[A-Z0-9]+)-", line)
-            if typ and js:
-                mapped[ibm] = {
-                    "json": js.group(1),
-                    "type": typ.group(1),
-                    "triplet": trip.group(1) if trip else "",
-                }
+        m2 = re.search(r"SMF_FIELD\s+([A-Z0-9]+)-", line, re.I)
+        if not m2:
             continue
-        ibm = m.group(1).upper()
-        mapped[ibm] = {
-            "json": m.group(5),
-            "type": m.group(4),
-            "triplet": m.group(3) or "",
-        }
+        ibm = m2.group(1).upper()
+        typ = re.search(r"TYPE=(T_[A-Z0-9_]+)", line)
+        js = re.search(r"JSON=([A-Za-z0-9_]+)", line)
+        trip = re.search(r"TRIPLET=([A-Z0-9]+)-", line)
+        if typ and js:
+            mapped[ibm] = {
+                "json": js.group(1),
+                "type": typ.group(1),
+                "triplet": trip.group(1) if trip else "",
+            }
     return mapped
+
+
+def parse_map30(path: Path) -> dict[str, dict[str, str]]:
+    """Compatibility wrapper — prefer MAP30CMN via COPY inside MAP30.asm."""
+    return parse_map_asm(path)
 
 
 def suggest_hlasm_type(datatype: str | None, size: int | None) -> tuple[str | None, str]:
@@ -235,7 +237,13 @@ def suggest_hlasm_type(datatype: str | None, size: int | None) -> tuple[str | No
             return "T_CHR4", "supported"
         if sz == 8:
             return "T_CHR8", "supported"
-        return None, "needs_engine"  # longer strings
+        if sz == 20:
+            return "T_CHR20", "supported"
+        return None, "needs_engine"  # other lengths
+    if dt in {"HEX_STR"}:
+        if sz == 2:
+            return "T_HEX2", "supported"
+        return None, "needs_engine"
     if dt in {"UNSIGNED", "SIGNED"}:
         if sz == 1:
             return "T_DEC1", "supported"

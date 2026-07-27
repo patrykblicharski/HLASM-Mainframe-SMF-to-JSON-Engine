@@ -6,8 +6,8 @@
   "status_counts": {
     "skip_meta": 92,
     "todo": 186,
-    "needs_engine": 201,
-    "mapped": 15,
+    "needs_engine": 199,
+    "mapped": 17,
     "unknown": 8
   },
   "fields": [
@@ -2172,9 +2172,9 @@
       "openapi_size": 20,
       "is_meta": false,
       "explorer_name": null,
-      "hlasm_type": null,
+      "hlasm_type": "T_CHR20",
       "json_key": "user_name",
-      "status": "needs_engine",
+      "status": "mapped",
       "priority": true
     },
     {
@@ -2932,9 +2932,9 @@
       "openapi_size": 2,
       "is_meta": false,
       "explorer_name": null,
-      "hlasm_type": null,
+      "hlasm_type": "T_HEX2",
       "json_key": "step_comp_code",
-      "status": "needs_engine",
+      "status": "mapped",
       "priority": true
     },
     {

@@ -22,6 +22,8 @@ Constants are defined in `MAP30.asm` (shared via COPY order). RS tag ids are loc
 | `T_DTE` | 8 | packed `0cyydddF` | `GET_DATE` | `"YYYY-MM-DD"` |
 | `T_TME` | 9 | binary 1/100s | `GET_TIME` | `"HH:MM:SS"` |
 | `T_RS_STR` | 10 | RS tag-len-data | `GET_RS_STR` | EBCDIC string |
+| `T_CHR20` | 11 | EBCDIC 20 | `GET_CHR` | string |
+| `T_HEX2` | 12 | binary 2 | `GET_HEX2` | `"XXXX"` hex |
 
 Source of truth: `SMF2ZIIP.asm` `BTAB` / `CASEn`. README’s “T_BIN1 → Number” is **aspirational** — code 0 currently skips.
 

@@ -12,9 +12,9 @@
 * already mapped: SMF30JBN -> job_name
 * already mapped: SMF30PGM -> program_name
 * already mapped: SMF30STM -> step_name
-* skip SMF30USR: status=needs_engine type=None
+* already mapped: SMF30USR -> user_name
 * already mapped: SMF30JNM -> jes_job_num
 * already mapped: SMF30CPT -> cpu_step_time
 * already mapped: SMF30CPS -> srb_time
-* skip SMF30SCC: status=needs_engine type=None
+* already mapped: SMF30SCC -> step_comp_code
 * already mapped: SMF30ARC -> abend_reason

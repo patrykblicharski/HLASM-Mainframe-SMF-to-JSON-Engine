@@ -1,6 +1,6 @@
 *---------------------------------------------------------------------*
 * PROGRAM: SMF2JSON                                                   *
-* PURPOSE: CONVERT SMF RECORDS (TYPE 30, 80) TO JSON FORMAT           *
+* PURPOSE: CONVERT SMF RECORDS (30/70/71/72/80/89) TO JSON FORMAT     *
 * FEATURES: SUPPORTS STANDARD TCB MODE OR zIIP SRB OFFLOAD            *
 *---------------------------------------------------------------------*
 * --- Register definitions ---
@@ -23,7 +23,7 @@ R15      EQU   15
 
       
          COPY  CONFIG         * System-wide configuration
-         IFASMFR (30,80,89)      * IBM SMF Record Mappings
+         IFASMFR (30,70,71,72,80,89)  * IBM SMF Record Mappings
 
          
          AIF   (&USEZIIP EQ 0).NOZIIP    Check if zIIP mode
@@ -95,20 +95,83 @@ RDW_OK   CLI   5(R9),X'02'        * type 2 record ?
          CLI   5(R9),X'03'        * type 3 record  ?
          BE    NEXT_SMF           * If Yes Skip-it : Next
 
-* ---  TYPE 30 ---
-         CLI   5(R9),30          * type 30 record  ?
-         BNE    NO_30            * If Yes Skip-it : Next
-         LARL  R8,TABLE30        * Load Table
+* ---  TYPE 30 (subtype at SMF30STP / offset 22) ---
+         CLI   5(R9),30
+         BNE   NO_30
+         LH    R1,22(,R9)        * SMF30STP
+         CHI   R1,1
+         BNE   T30_2
+         LARL  R8,TABLE30_1
+         J     JSONOBJ
+T30_2    CHI   R1,2
+         BNE   T30_3
+         LARL  R8,TABLE30_2
+         J     JSONOBJ
+T30_3    CHI   R1,3
+         BNE   T30_4
+         LARL  R8,TABLE30_3
+         J     JSONOBJ
+T30_4    CHI   R1,4
+         BNE   T30_5
+         LARL  R8,TABLE30_4
+         J     JSONOBJ
+T30_5    CHI   R1,5
+         BNE   T30_6
+         LARL  R8,TABLE30_5
+         J     JSONOBJ
+T30_6    CHI   R1,6
+         BNE   T30_DEF
+         LARL  R8,TABLE30_6
+         J     JSONOBJ
+T30_DEF  LARL  R8,TABLE30        * unknown subtype -> default map
          J     JSONOBJ
 NO_30    EQU   *
+
+* ---  TYPE 70 (RMF CPU / crypto; subtype SMF70STY) ---
+         CLI   5(R9),70
+         BNE   NO_70
+         LH    R1,22(,R9)
+         CHI   R1,1
+         BNE   T70_2
+         LARL  R8,TABLE70_1
+         J     JSONOBJ
+T70_2    CHI   R1,2
+         BNE   T70_DEF
+         LARL  R8,TABLE70_2
+         J     JSONOBJ
+T70_DEF  J     NEXT_SMF          * unsupported 70 subtype
+NO_70    EQU   *
+
+* ---  TYPE 71 SUBTYPE 1 (paging) ---
+         CLI   5(R9),71
+         BNE   NO_71
+         LH    R1,22(,R9)
+         CHI   R1,1
+         BNE   NO_71
+         LARL  R8,TABLE71_1
+         J     JSONOBJ
+NO_71    EQU   *
+
+* ---  TYPE 72 SUBTYPE 3 (WLM workload) ---
+         CLI   5(R9),72
+         BNE   NO_72
+         LH    R1,22(,R9)
+         CHI   R1,3
+         BNE   NO_72
+         LARL  R8,TABLE72_3
+         J     JSONOBJ
+NO_72    EQU   *
+
 * ---  TYPE 80 ---
-         CLI   5(R9),80          * type 80 record  ?
-         BNE    NO_80            * If Yes Skip-it : Next
-         LARL  R8,TABLE80        * Load Table
+         CLI   5(R9),80
+         BNE   NO_80
+         LARL  R8,TABLE80
          J     JSONOBJ
 NO_80    EQU   *
-         CLI   5(R9),89          * type 89 record  ?
-         BNE    NO_89
+
+* ---  TYPE 89 ---
+         CLI   5(R9),89
+         BNE   NO_89
          LARL  R8,TABLE89
          J     JSONOBJ
 NO_89    J     NEXT_SMF
@@ -268,9 +331,20 @@ JSONOUT  DCB   DDNAME=JSONOUT,                                         X
 
 *--- Mapping Tables ---*
          DS    0F                  * Alignement
-         COPY  MAP30
-         COPY  MAP80 
-         COPY  MAP89  
+         COPY  TYPES               * T_* datatype constants
+         COPY  MAP30               * type 30 default
+         COPY  MAP30S1
+         COPY  MAP30S2
+         COPY  MAP30S3
+         COPY  MAP30S4
+         COPY  MAP30S5
+         COPY  MAP30S6
+         COPY  MAP70S1
+         COPY  MAP70S2
+         COPY  MAP71S1
+         COPY  MAP72S3
+         COPY  MAP80
+         COPY  MAP89
 
 DYNAMIC_WORK DSECT
 DW_SAVEAREA  DS    18F

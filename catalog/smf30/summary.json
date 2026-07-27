@@ -13,10 +13,12 @@
     "SMF30PNM",
     "SMF30RTY",
     "SMF30RVN",
+    "SMF30SCC",
     "SMF30SID",
     "SMF30STM",
     "SMF30STP",
     "SMF30TME",
+    "SMF30USR",
     "SMF30WID"
   ],
   "subtypes": {
@@ -25,8 +27,8 @@
       "status_counts": {
         "skip_meta": 91,
         "todo": 182,
-        "needs_engine": 184,
-        "mapped": 14,
+        "needs_engine": 183,
+        "mapped": 15,
         "unknown": 8
       },
       "file": "subtype_1.json"
@@ -36,8 +38,8 @@
       "status_counts": {
         "skip_meta": 91,
         "todo": 186,
-        "needs_engine": 184,
-        "mapped": 14,
+        "needs_engine": 183,
+        "mapped": 15,
         "unknown": 8
       },
       "file": "subtype_2.json"
@@ -47,8 +49,8 @@
       "status_counts": {
         "skip_meta": 91,
         "todo": 186,
-        "needs_engine": 184,
-        "mapped": 14,
+        "needs_engine": 183,
+        "mapped": 15,
         "unknown": 8
       },
       "file": "subtype_3.json"
@@ -58,8 +60,8 @@
       "status_counts": {
         "skip_meta": 92,
         "todo": 186,
-        "needs_engine": 201,
-        "mapped": 15,
+        "needs_engine": 199,
+        "mapped": 17,
         "unknown": 8
       },
       "file": "subtype_4.json"
@@ -69,8 +71,8 @@
       "status_counts": {
         "skip_meta": 92,
         "todo": 186,
-        "needs_engine": 201,
-        "mapped": 15,
+        "needs_engine": 199,
+        "mapped": 17,
         "unknown": 8
       },
       "file": "subtype_5.json"
