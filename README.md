@@ -60,6 +60,16 @@ Relocate Sections field (Example SMF 80) :
          SMF_FIELD SMF80REL-SMF80LEN,TYPE=T_RS_STR,TAG=T_RS_17,JSON=class_name
 ```
 
+## Mapping Catalog (SMF 30)
+
+Field inventory for extending maps lives in `catalog/smf30/` (generated from Gatherer OpenAPI in `ref/`).
+
+```bash
+python3 tools/build_smf_catalog.py
+```
+
+See `catalog/README.md` for status meanings and the add-field workflow.
+
 ## How To: Add New Mappings
 
 Contributions to Mapping Tables are highly encouraged! Any new mapping added to the library automatically benefits from the engine conversion logic and is designed to be thread-safe for future performance upgrades
