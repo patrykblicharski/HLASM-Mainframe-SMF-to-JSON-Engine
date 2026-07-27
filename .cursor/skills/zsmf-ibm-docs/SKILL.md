@@ -58,6 +58,8 @@ Triplet blurb pattern:
 ## Web / tooling tips
 
 - Prefer IBM Docs search: `SMF record type 30 SMF30CPT` or `SMF30SOF triplet`.
+- IBM Docs HTML is an SPA: use Playwright + classic `ieag200` package URLs (see `tools/ibm_docs/`) when scraping field tables. Carbon topic IDs can collide (e.g. `configuration-subtype-1`).
+- Type 42 DFSMS catalog: `catalog/smf42/` from `tools/ibm_docs/crawl_smf42.mjs` + `tools/build_smf42_catalog.py`.
 - If HTML 403/blocked in the agent environment, use the PDF (`ieag200_v3r1.pdf` or current z/OS edition) and `rg` over extracted text.
 - Cross-check label spelling against existing maps (`MAP30`/`MAP80`) and `IFASMFR` assembly listings when available.
 - Db2 101/102 may need **Db2** manuals / `DSNxxx` MACLIB in addition to SA38-0667.
