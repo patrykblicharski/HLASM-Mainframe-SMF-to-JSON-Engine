@@ -63,20 +63,20 @@ Engine advances with `LA R8,28(,R8)`.
 
 ## Current type coverage
 
-| Type | Map | Notes |
-| ---: | :--- | :--- |
-| 30 | `MAP30` + `MAP30S1`…`S6` | Subtype dispatch via `SMF30STP` @ +22 |
-| 70 | `MAP70S1`, `MAP70S2` | RMF CPU / crypto |
-| 71 | `MAP71S1` | Paging |
-| 72 | `MAP72S3` | WLM workload |
-| 80 | `MAP80` | Header + RS tags 1, 17 |
-| 89 | `MAP89` | Header-only template |
+Gatherer OpenAPI set (47 pairs) + 80/89 — see `catalog/planned_subtypes.json`.
 
-Datatype EQU: `src/TYPES.asm`. Planned list: `catalog/planned_subtypes.json`.
+| Family | Maps | Notes |
+| :--- | :--- | :--- |
+| 30.1–30.6 | `MAP30S*` + `MAP30CMN` | Rich handcrafted fields |
+| 70–79, 72.4–5, 73… | `MAPxxSy.asm` | Header + product (generated) |
+| 99.*, 113.* | `MAP99S*` / `MAP113S*` | Header |
+| 80 / 89 | `MAP80` / `MAP89` | Non-Gatherer |
+
+Datatype EQU: `src/TYPES.asm`. Generator: `tools/gen_gatherer_maps.py`.
 
 ## Subtypes
 
-Dispatch reads halfword at offset 22 (`SMF30STP` / `SMFxxSTY`) after type match, then `LARL` the subtype table. Unknown 30 subtype → `TABLE30`. Missing sections → `""`.
+Generated dispatch in `SMF2JSON.asm` reads halfword @ +22 after type match, then `LARL` `TABLExx_y`. Unknown 30 subtype → `TABLE30`. Missing sections → `""`.
 
 ## Mode notes
 

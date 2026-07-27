@@ -70,8 +70,8 @@ python3 tools/build_smf_catalog.py
 
 See `catalog/README.md` for status meanings and the add-field workflow.
 
-First 10 wired subtype tables (dispatch by type + subtype halfword @ +22):  
-`30.1–30.6`, `70.1`, `70.2`, `71.1`, `72.3` — see `catalog/planned_subtypes.json`.
+All **47** Gatherer OpenAPI type/subtype pairs are wired (plus MAP80/MAP89), with dispatch by type + subtype halfword @ +22.  
+Regenerate maps/dispatch: `python3 tools/gen_gatherer_maps.py` — inventory in `catalog/planned_subtypes.json`.
 
 ## How To: Add New Mappings
 
