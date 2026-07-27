@@ -43,6 +43,10 @@ python3 tools/build_smf_catalog.py
 
 See Cursor skill `zsmf-catalog`.
 
-## Planned subtype maps (first 10)
+## Planned subtype maps (Gatherer coverage)
 
-See `catalog/planned_subtypes.json` for the HLASM tables currently wired in `SMF2JSON.asm` (30.1–30.6, 70.1–70.2, 71.1, 72.3).
+See `catalog/planned_subtypes.json` — all OpenAPI type/subtype pairs (47) plus MAP80/MAP89.
+
+- Handcrafted richer maps: 30.1–30.6, 70.1–70.2, 71.1, 72.3  
+- Auto-generated header (+ RMF product section where present): remaining pairs  
+- Regenerate: `python3 tools/gen_gatherer_maps.py`
