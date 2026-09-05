@@ -1,0 +1,161 @@
+"""Auto-generated layouts for SMF 119 subtype 12 (from PACSYS offset tables)."""
+from __future__ import annotations
+
+from ..layout import (
+    BYTES,
+    CHAR,
+    IPV4,
+    IPV6MAPPED,
+    RES,
+    U8,
+    U16,
+    U32,
+    U64,
+    VAR_EBCDIC,
+    build_layout,
+)
+from ..registry import SectionSlot
+
+SS_SA_S1 = build_layout(
+    "SMF119SS_SA_S1",
+    [
+        U64("SMF119SS_SAIntervalDuration", "Duration of recording interval in microseconds, where bit 51 is equivalent to 1 microsecond."),
+        U8("SMF119SS_SAEvent_Type", "Event type: 1. Summary interval record 2. zERT aggregation function enabled event record 3. zERT aggregation function disabled event record"),
+        U8("SMF119SS_SAFlags", "Flags: X'80': The session uses IPv6 addresses X’40’: The local socket of this session is acting as the server (only meaningful when SMF119SS_SAIPProto indicates TCP) X’20’: The local socket of this session is acting as the client (only mean"),
+        U8("SMF119SS_SASecProtos", "Cryptographic security protocol. Only one value is set. Possible values are: X'00': No recognized cryptographic protection X'80': TLS/SSL X'40': SSH X'20': IPSec"),
+        CHAR("SMF119SS_SAJobname", 8, "Jobname that is associated with the socket."),
+        CHAR("SMF119SS_SAUserID", 8, "z/OS® user ID associated with the socket Note The value *FTPUSR* is specified when this security session represents an aggregation of FTP data connections and we are reporting at the FTP server (SMF119SS_SAFlags = x’40."),
+        U8("SMF119SS_SAIPProto", "IP Protocol value. Possible values are: 6: TCP 17: UDP"),
+        IPV6MAPPED("SMF119SS_SASrvIP", "Server IP address. If SMF119SS_Flags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field."),
+        IPV6MAPPED("SMF119SS_SACltIP", "Client IP address. If SMF119SS_Flags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field."),
+        U16("SMF119SS_SASrvPortStart", "Starting value for server port range. For information on this field, see How does zERT aggregation determine the server port? in z/OS Communications Server: IP Configuration Guide."),
+        U16("SMF119SS_SASrvPortEnd", "Ending value for server port range. If this security session represents a single-server port, then the ending value equals the starting value for the port range."),
+        CHAR("SMF119SS_SASessionID", 42, "Session identifier that uniquely identifies a security session based on the server and client endpoints plus the significant security attributes for the session. The session identifier is in the form p-value, where p represents the cryptogr"),
+        RES("_rsv_106", 2),
+        U32("SMF119SS_SAInitLifeConnCnt", "Count of connections for the life of this security session at the beginning of the summary interval."),
+        U32("SMF119SS_SAInitLifePartialConnCnt", "Count of the partial connections for the life of this security session at the beginning of the summary interval. This is a subset of the connections reported in SMF119SS_SAInitLifeConnCnt. A connection is considered to be a “partial connect"),
+        U32("SMF119SS_SAInitLifeShortConnCnt", "Count of short connections for the life of this security session at the beginning of the summary interval. Short connections are connections that last less than 10 seconds. This value is only meaningful when SMF119SS_SAIPProto indicates TCP"),
+        U32("SMF119SS_SAInitActiveConnCnt", "Number of active connections that are associated with this security session at the beginning of the summary interval."),
+        U64("SMF119SS_SAInitLifeInBytes", "Inbound byte count for the life of this security session at the beginning of the summary interval."),
+        U64("SMF119SS_SAInitLifeOutBytes", "Outbound byte count for the life of this security session at the beginning of the summary interval."),
+        U64("SMF119SS_SAInitLifeInSegDG", "Inbound TCP segment or UDP datagram count for the life of this security session at the beginning of the summary interval."),
+        U64("SMF119SS_SAInitLifeOutSegDG", "Outbound TCP segment or UDP datagram count for the life of this security session at the beginning of the summary interval."),
+        U32("SMF119SS_SAEndLifeConnCnt", "Count of connections for the life of this security session at the end of the summary interval."),
+        U32("SMF119SS_SAEndLifePartialConnCnt", "Count of partial connections for the life of this security session at the end of the summary interval. This is a subset of the connections reported in SMF119SS_SAEndLifeConnCnt that were associated with the security session for only part of"),
+        U32("SMF119SS_SAEndLifeShortConnCnt", "Count of short connections for the life of this security session at the end of the summary interval. Short connections are ones that last less than 10 seconds. This value is only meaningful when SMF119SS_SAIPProto indicates TCP."),
+        U32("SMF119SS_SAEndActiveConnCnt", "Number of active connections that are associated with this security session at the end of the summary interval."),
+        U64("SMF119SS_SAEndLifeInBytes", "Inbound byte count for the life of this security session at the end of the summary interval."),
+        U64("SMF119SS_SAEndLifeOutBytes", "Outbound byte count for the life of this security session at the end of the summary interval."),
+        U64("SMF119SS_SAEndLifeInSegDG", "Inbound TCP segment or UDP datagram count for the life of this security session at the end of the summary interval."),
+        U64("SMF119SS_SAEndLifeOutSegDG", "Outbound TCP segment or UDP datagram count for the life of this security session at the end of the summary interval."),
+    ],
+    description="SMF119SS_SA_S1",
+)
+
+SS_TLS_S2 = build_layout(
+    "SMF119SS_TLS_S2",
+    [
+        U8("SMF119SS_TLS_Source", "Source of the information in this record. Can be one of the following values: X'01': Stream observation X'02': Cryptographic protocol provider"),
+        U8("SMF119SS_TLS_CryptoFlags", "Cryptographic operations flags: X'80': Encrypt-then-MAC processing is used"),
+        U16("SMF119SS_TLS_Prot_Ver", "Protocol version: X'0000': Unknown version X'0200': SSLv2 X'0300': SSLv3 X'0301': TLSv1.0 X'0302': TLSv1.1 X'0303': TLSv1.2"),
+        CHAR("SMF119SS_TLS_Neg_Cipher", 6, "Negotiated cipher suite identifier. If the TLS version is SSLv3 or higher, this is a four character value in the first 4 bytes of this field, padded with trailing blanks. Refer to the TLS Cipher Suite registry for a complete list of the 4-h"),
+        U16("SMF119SS_TLS_CS_Enc_Alg", "The symmetric encryption algorithm used by the cipher suite: X'0000': Unknown X'0001': None X'0002': DES X'0003': DES 40 X'0004': 3DES X'0005': RC2 40 X'0006': RC2 128 X'0007': RC2 X'0008': RC4 40 X'0009': RC4 128 X'000A': RC4 256 X'000B': "),
+        U16("SMF119SS_TLS_CS_Msg_Auth", "The message authentication algorithm used by the cipher suite: X'0000': Unknown X'0001': No message authentication, or uses authenticated encryption algorithm like AES-GCM X'0002': MD2 X'0003': HMAC-MD5 X'0004': HMAC-SHA1 X'0005': HMAC-SHA2"),
+        U16("SMF119SS_TLS_CS_Kex_Alg", "The key exchange algorithm used by the cipher suite: X'0000': Unknown X'0001': None X'0002': RSA X'0003': RSA_EXPORT X'0004': RSA_PSK X'0005': DH_RSA X'0006': DH_RSA_EXPORT X'0007': DH_DSS X'0008': DH_ANON X'0009': DH_ANON_EXPORT X'000A': D"),
+        U16("SMF119SS_TLS_SCert_Signature_Method", "Server certificate signature method: X'0000': Unknown X'0001': None X'0002': RSA with MD2 X'0003': RSA with MD5 X'0004': RSA with SHA1 X'0005': DSA with SHA1 X'0006': RSA with SHA-224 X'0007': RSA with SHA-256 X'0008': RSA with SHA-384 X'00"),
+        U16("SMF119SS_TLS_SCert_Enc_Method", "Server certificate encryption method: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': ECDSA"),
+        U16("SMF119SS_TLS_SCert_Digest_Alg", "Server certificate digest algorithm: X'0000': Unknown X'0001': None X'0002': MD2 X'0003': MD5 X'0004': SHA1 X'0005': SHA-224 X'0006': SHA-256 X'0007': SHA-384 X'0008': SHA-512"),
+        U16("SMF119SS_TLS_SCert_Key_Type", "Server certificate key type: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': Diffie-Hellman (DH) X'0005': Elliptic Curve Cryptography (ECC)"),
+        U16("SMF119SS_TLS_SCert_Key_Len", "Server certificate key length"),
+        U16("SMF119SS_TLS_CCert_Signature_Method", "Client certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method."),
+        U16("SMF119SS_TLS_CCert_Enc_Method", "Client certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method."),
+        U16("SMF119SS_TLS_CCert_Digest_Alg", "Client certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg."),
+        U16("SMF119SS_TLS_CCert_Key_Type", "Client certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type."),
+        U16("SMF119SS_TLS_CCert_Key_Len", "Client certificate key length"),
+    ],
+    description="SMF119SS_TLS_S2",
+)
+
+SS_SSH_S3 = build_layout(
+    "SMF119SS_SSH_S3",
+    [
+        U8("SMF119SS_SSH_Source", "Source of the information in this record. Can be one of the following values: X'01': Stream observation X'02': Cryptographic protocol provider 1 1 1 Unused"),
+        RES("_pad_1", 1),
+        U8("SMF119SS_SSH_Prot_Ver", "Protocol version : 1 Protocol version 1 2 Protocol version 2"),
+        U8("SMF119SS_SSH_CryptoFlags", "Cryptographic operations flags: X'80': Encrypt-then-MAC processing is used for inbound traffic X'40': Encrypt-then-MAC processing is used for outbound traffic"),
+        U16("SMF119SS_SSH_Auth_Method", "First or only peer authentication method that is used for this security session: X'0000': Unknown X'0001': None X'0002': Password X'0003': Public key X'0004': Host-based X'0005': Rhosts X'0006': RhostsRSA X'0007': RSA X'0008': Keyboard-inte"),
+        U16("SMF119SS_SSH_Auth_Method2", "If not 0, the last of multiple authentication methods used for this connection. Values are the same as those for SMF119SS_SSH_Auth_Method"),
+        U16("SMF119SS_SSH_In_Enc_Alg", "Encryption algorithm for inbound traffic. Same values as SMF119SS_TLS_CS_Enc_Alg."),
+        U16("SMF119SS_SSH_In_Msg_Auth", "Message authentication algorithm for inbound traffic. Same values as SMF119SS_TLS_CS_Msg_Auth."),
+        U16("SMF119SS_SSH_Kex_Method", "Key exchange method. X'0000' Unknown X'0001' None X'0002' Diffie-Hellman-group-exchangeSHA256 X'0003' Diffie-Hellman-group-exchangeSHA1 X'0004' Diffie-Hellman-group14-SHA1 X'0005' Diffie-Hellman-group1-SHA1 X'0006' ECDH-SHA2-NISTP256 X'0007"),
+        U16("SMF119SS_SSH_Out_Enc_Alg", "Encryption algorithm for outbound traffic. Same values as SMF119SS_TLS_CS_Enc_Alg."),
+        U16("SMF119SS_SSH_Out_Msg_Auth", "Message authentication algorithm for outbound traffic. Same values as SMF119SS_TLS_CS_Msg_Auth."),
+        U16("SMF119SS_SSH_SKey_Type", "Type of raw server key: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': Diffie-Hellman (DH) X'0005': Elliptic Curve Cryptography (ECC) X'0006': RSA1 (SSHV1 only) X'0007': RSA_CERT (from OpenSSH certificate) X'0008': DSA_CE"),
+        U16("SMF119SS_SSH_SKey_Len", "Length of raw server key in bits."),
+        U16("SMF119SS_SSH_CKey_Type", "Type of raw client key. Same values as SMF119SS_SSH_Server_Key_Type."),
+        U16("SMF119SS_SSH_CKey_Len", "Length of raw client key in bits."),
+        U16("SMF119SS_SSH_SCert_Signature_Method", "Server certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method."),
+        U16("SMF119SS_SSH_SCert_Enc_Method", "Server certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method."),
+        U16("SMF119SS_SSH_SCert_Digest_Alg", "Server certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg."),
+        U16("SMF119SS_SSH_SCert_Key_Type", "Server certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type."),
+        U16("SMF119SS_SSH_SCert_Key_Len", "Server certificate key length"),
+        U16("SMF119SS_SSH_CCert_Signature_Method", "Client certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method."),
+        U16("SMF119SS_SSH_CCert_Enc_Method", "Client certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method."),
+        U16("SMF119SS_SSH_CCert_Digest_Alg", "Client certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg."),
+        U16("SMF119SS_SSH_CCert_Key_Type", "Client certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type."),
+        U16("SMF119SS_SSH_CCert_Key_Len", "Client certificate key length"),
+    ],
+    description="SMF119SS_SSH_S3",
+)
+
+SS_IPSec_S4 = build_layout(
+    "SMF119SS_IPSec_S4",
+    [
+        U8("SMF119SS_IPSec_IKEMajVer", "Major version of the IKE protocol in use. Only the low-order 4 bits are used."),
+        U8("SMF119SS_IPSec_IKEMinVer", "Minor version of the IKE protocol in use. Only the low-order 4 bits are used."),
+        IPV6MAPPED("SMF119SS_IPSec_IKETunLclEndpt", "Local IP address of tunnel endpoint. If SMF119SS_SAFlags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field."),
+        IPV6MAPPED("SMF119SS_IPSec_IKETunRmtEndpt", "Remote IP address of tunnel endpoint. If SMF119SS_SAFlags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field."),
+        U16("SMF119SS_IPSec_IKETunLclAuthMeth", "The authentication method for the local endpoint. One of the following values: X'00': Unknown or manual tunnel X'01': None X'02': RSA signature X'03': Preshared key X'04': ECDSA-256 signature X'05': ECDSA-384 signature X'06': ECDSA-521 sign"),
+        U16("SMF119SS_IPSec_IKETunRmtAuthMeth", "The authentication method for the remote endpoint. Same values as SMF119SS_IPSec_IKETunLclAuthMeth."),
+        U16("SMF119SS_IPSec_IKETunAuthAlg", "Tunnel authentication algorithm. Same values as SMF119SS_TLS_CS_Msg_Auth."),
+        U16("SMF119SS_IPSec_IKETunEncAlg", "Tunnel encryption algorithm. Same values as SMF119SS_TLS_CS_Enc_Alg."),
+        U16("SMF119SS_IPSec_IKETunDHGroup", "Diffie-Hellman group that is used to generate the keying material for this IKE tunnel. One of the following values: X'00': Unknown or manual tunnel X'01': Group1 X'02': Group 2 X'05': Group 5 X'0E': Group 14 X'13': Group 19 X'14': Group 20 "),
+        U16("SMF119SS_IPSec_IKETunPseudoRandFunc", "Pseudo-random function that is used for seeding keying material. One of the following values: X'00': Unknown or manual tunnel X'01': None X'02': HMAC-SHA2-256 X'03': HMAC-SHA2-384 X'04': HMAC-SHA2-512 X'05': AES-128-XCBC X'06': HMAC-MD5 X'0"),
+        U16("SMF119SS_IPSec_LclCert_Sign_Meth", "Local IKE certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method."),
+        U16("SMF119SS_IPSec_LclCert_Enc_Meth", "Local IKE certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method."),
+        U16("SMF119SS_IPSec_LclCert_Digest_Alg", "Local IKE certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg."),
+        U16("SMF119SS_IPSec_LclCert_Key_Type", "Local IKE certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type."),
+        U16("SMF119SS_IPSec_LclCert_Key_Len", "Local IKE certificate key length in bits"),
+        U16("SMF119SS_IPSec_RmtCert_Sign_Meth", "Remote IKE certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method."),
+        U16("SMF119SS_IPSec_RmtCert_Enc_Meth", "Remote IKE certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method."),
+        U16("SMF119SS_IPSec_RmtCert_Digest_Alg", "Remote IKE certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg."),
+        U16("SMF119SS_IPSec_RmtCert_Key_Type", "Remote IKE certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type."),
+        U16("SMF119SS_IPSec_RmtCert_Key_Len", "Remote IKE certificate key length in bits"),
+        U16("SMF119SS_IPSec_PFSGroup", "Diffie-Hellman group that is used for perfect forward secrecy. Same values as SMF119SS_IPSec_IKETunDHGroup."),
+        U8("SMF119SS_IPSec_EncapMode", "Tunnel encapsulation mode. One of the following values: X'01': Tunnel Mode X'02': Transport Mode"),
+        U8("SMF119SS_IPSec_AuthProto", "The protocol that is used for message authentication. One of the following values: 50 Encapsulating Security Payload (ESP) 51: Authentication Header (AH)"),
+        U16("SMF119SS_IPSec_AuthAlg", "The tunnel authentication algorithms. Same values as SMF119SS_TLS_CS_Msg_Auth."),
+        U16("SMF119SS_IPSec_EncAlg", "The tunnel encryption algorithms. Same values as !!119SS_TLS_CS_Enc_Alg."),
+    ],
+    description="SMF119SS_IPSec_S4",
+)
+
+SS_DN_S5 = build_layout(
+    "SMF119SS_DN_S5",
+    [
+        U16("SMF119SS_DN_Len", "Length of the DN structure (includes the length of SMF119SS_DN_Len, SMF119SS_DN_Type, and SMF119SS_DN)"),
+        U16("SMF119SS_DN_Type", "Type of Distinguished Name: X'0001': IPSec Local Certificate Subject DN X'0002': IPSec Local Certificate Issuer DN X'0003': IPSec Remote Certificate Subject DN X'0004': IPSec Remote Certificate Issuer DN X'0005': TLS Server Certificate Subj"),
+        CHAR("SMF119SS_DN", 1024, "The variable length DN value (up to 1024)"),
+    ],
+    description="SMF119SS_DN_S5",
+)
+
+SECTION_SLOTS = [
+    SectionSlot(triplet_index=1, key='S1', layout=SS_SA_S1),
+    SectionSlot(triplet_index=2, key='S2', layout=SS_TLS_S2, optional=True),
+    SectionSlot(triplet_index=3, key='S3', layout=SS_SSH_S3, optional=True),
+    SectionSlot(triplet_index=4, key='S4', layout=SS_IPSec_S4, optional=True),
+    SectionSlot(triplet_index=5, key='S5', layout=SS_DN_S5, optional=True),
+]
+
+__all__ = ['SS_SA_S1', 'SS_TLS_S2', 'SS_SSH_S3', 'SS_IPSec_S4', 'SS_DN_S5', "SECTION_SLOTS"]

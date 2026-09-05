@@ -1,0 +1,1589 @@
+{
+  "subtype": 5,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word). See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicator Bit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators* 7 System is running in PR/SM mode.*See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 (X'77').",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record. A triplet is a set of three SMF fields (offset/length/number values) that defines a section of the record. The offset is the offset from the RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119IDOff",
+          "length": "4",
+          "format": "binary",
+          "description": "Offset to TCP/IP identification section from RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119IDLen",
+          "length": "2",
+          "format": "binary",
+          "description": "Length of TCP/IP identification section.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119IDNum",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of TCP/IP identification sections.",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to first data section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of first data section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of first data sections",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119S2Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119S2Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119S2Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 2nd data sections",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119S3Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 3rd data section",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119S3Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 3rd data section",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119S3Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 3rd data sections",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119S4Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 4th data section",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119S4Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 4th data section",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119S4Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 4th data sections",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119S5Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 5th data section",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119S5Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 5th data section",
+          "reserved": false
+        },
+        {
+          "offset": 74,
+          "name": "SMF119S5Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 5th data sections",
+          "reserved": false
+        },
+        {
+          "offset": 76,
+          "name": "SMF119S6Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 6th data section",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119S6Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 6th data section",
+          "reserved": false
+        },
+        {
+          "offset": 82,
+          "name": "SMF119S6Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 6th data sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TI_SYSName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name from SYSNAME in IEASYSxx",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TI_SysplexName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Sysplex name from SYSPLEX in COUPLExx",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TI_Stack",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP stack name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TI_ReleaseID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS Communications Server TCP/IP release identifier",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TI_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP subcomponent (right padded with blanks): FTPC FTP Client FTPS FTP server IP IP layer STACK Entire TCP/IP stack TCP TCP layer TN3270C TN3270 Client TN3270S TN3270 server UDP UDP layer",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TI_ASName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Started task qualifier or address space name of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119TI_UserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User ID of security context under which this SMF record is written",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "_rsv_56",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 58,
+          "name": "SMF119TI_ASID",
+          "length": "2",
+          "format": "Binary",
+          "description": "ASID of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119TI_Reason",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason for writing this SMF record: X'08' Event record X'C0' Interval statistics record, more records follow X'80' Interval statistics record, last record in set X'60' End-of-statistics record, more records follow X'20' End-of-statistics re",
+          "reserved": false
+        },
+        {
+          "offset": 61,
+          "name": "_rsv_61",
+          "length": "3",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TSIPDuration",
+          "length": "8",
+          "format": "Binary",
+          "description": "Duration of recording interval in microseconds, where bit 51 is equivalent to one microsecond",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TSIPRecData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of datagrams received",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119AP_TSIPAttFwdData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of attempts to forward datagrams",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119AP_TSIPDlvData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of datagrams delivered",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119AP_TSIPXData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of datagrams transmitted",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119AP_TSIPXDscOth",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound transmitted datagrams discarded, due to reasons other than no route being available",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119AP_TSIPXDscRoute",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound transmitted datagrams discarded, due to no route being available",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119AP_TSIPTimeouts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of reassembly timeouts",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119AP_TSIPRecDRsbm",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received datagrams requiring assembly",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119AP_TSIPRsmb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of datagrams reassembled",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119AP_TSIPFailRsmb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of failed reassembly attempts",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119AP_TSIPRecFgmt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of fragmented datagrams received",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119AP_TSIPDscDFgmt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of discarded datagrams due to fragmentation failures",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119AP_TSIPXFgmt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of fragments generated",
+          "reserved": false
+        },
+        {
+          "offset": 76,
+          "name": "SMF119AP_TSIPRouteDisc",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of routing discards",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119AP_TSIPMaxRsmb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Maximum active number of reassemblies",
+          "reserved": false
+        },
+        {
+          "offset": 84,
+          "name": "SMF119AP_TSIPCurRsmb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of currently active reassemblies",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119AP_TSIPRsmbFlags",
+          "length": "4",
+          "format": "Binary",
+          "description": "Reassembly flags",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119AP_TSIPInCalls",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound calls from device layer",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119AP_TSIPInUerrs",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received frame unpacking",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119AP_TSIPIDMem",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of discarded datagrams, due to memory shortages",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119AP_TSIPODSync",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transmitted datagrams discarded, due to Sync errors",
+          "reserved": false
+        },
+        {
+          "offset": 108,
+          "name": "SMF119AP_TSIPODAsyn",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transmitted datagrams discarded, due to Async errors",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119AP_TSIPODMem",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transmitted datagrams discarded due to memory shortages",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S2Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TSTCDuration",
+          "length": "8",
+          "format": "Binary",
+          "description": "Duration of recording interval in microseconds, where bit 51 is equivalent to one microsecond",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TSTCAlg",
+          "length": "4",
+          "format": "Binary",
+          "description": "Retransmission algorithm",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119AP_TSTCMinRet",
+          "length": "4",
+          "format": "Binary",
+          "description": "Minimum retransmission time, in milliseconds",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119AP_TSTCMxRet",
+          "length": "4",
+          "format": "Binary",
+          "description": "Maximum retransmission time, in milliseconds",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119AP_TSTCMxCon",
+          "length": "4",
+          "format": "Binary",
+          "description": "Maximum TCP connections",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119AP_TSTCOpenConn",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of active open connections",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119AP_TSTCPassConn",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of passive open connections",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119AP_TSTCOFails",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of open connection failures",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119AP_TSTCConReset",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of connection resets",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119AP_TSTCEstab",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of current establishments",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119AP_TSTCInSegs",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of input TCP segments",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119AP_TSTCOSegs",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of output TCP segments",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119AP_TSTCRxSegs",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of retransmitted segments",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119AP_TSTCInErrs",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of input errors",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119AP_TSTCReset",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of resets",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119AP_TSTCConCls",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of TCP connections closed",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119AP_TSTCConAttD",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of TCP connection attempts discarded",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119AP_TSTCTWRef",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of TCP Timewait connections refused",
+          "reserved": false
+        },
+        {
+          "offset": 76,
+          "name": "SMF119AP_TSTCHOKAck",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of header predictions (OK for ACK)",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119AP_TSTCHOKDat",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of header predictions (OK for Data)",
+          "reserved": false
+        },
+        {
+          "offset": 84,
+          "name": "SMF119AP_TSTCIDupAck",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of duplicate ACKs received",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119AP_TSTCDscChecksum",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received packets discarded due to bad checksum values",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119AP_TSTCDscLen",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received packets discarded due to bad header length",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119AP_TSTCDscInsData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received packets discarded due to insufficient data",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119AP_TSTCDscOldTime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received packets discarded due to old timestamp information",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119AP_TSTCICmpDupSeg",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received complete duplicate segments",
+          "reserved": false
+        },
+        {
+          "offset": 108,
+          "name": "SMF119AP_TSTCIPartDupSeg",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received partial duplicate segments",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119AP_TSTCICmpSegsWin",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of complete segments received after window closure",
+          "reserved": false
+        },
+        {
+          "offset": 116,
+          "name": "SMF119AP_TSTCIPartSegsWin",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of partial segments received after window closure",
+          "reserved": false
+        },
+        {
+          "offset": 120,
+          "name": "SMF119AP_TSTCIOOrder",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of out of order segments received",
+          "reserved": false
+        },
+        {
+          "offset": 124,
+          "name": "SMF119AP_TSTCISegCls",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of segments received after the TCP connection closed",
+          "reserved": false
+        },
+        {
+          "offset": 128,
+          "name": "SMF119AP_TSTCIWinPr",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received window probes",
+          "reserved": false
+        },
+        {
+          "offset": 132,
+          "name": "SMF119AP_TSTCIWinUp",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received window updates",
+          "reserved": false
+        },
+        {
+          "offset": 136,
+          "name": "SMF119AP_TSTCOWinPr",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transmitted window probes",
+          "reserved": false
+        },
+        {
+          "offset": 140,
+          "name": "SMF119AP_TSTCOWinUp",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transmitted window updates",
+          "reserved": false
+        },
+        {
+          "offset": 144,
+          "name": "SMF119AP_TSTCODlAck",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transmitted delayed ACKs",
+          "reserved": false
+        },
+        {
+          "offset": 148,
+          "name": "SMF119AP_TSTCOKApr",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transmitted keepalive probes",
+          "reserved": false
+        },
+        {
+          "offset": 152,
+          "name": "SMF119AP_TSTCRxTim",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of retransmitted timeouts",
+          "reserved": false
+        },
+        {
+          "offset": 156,
+          "name": "SMF119AP_TSTCRxMTU",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of retransmitted Path MTU discovery packets",
+          "reserved": false
+        },
+        {
+          "offset": 160,
+          "name": "SMF119AP_TSTCPathM",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of Path MTUs beyond retransmit limit",
+          "reserved": false
+        },
+        {
+          "offset": 164,
+          "name": "SMF119AP_TSTCDropPr",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of TCP connections dropped due to probes",
+          "reserved": false
+        },
+        {
+          "offset": 168,
+          "name": "SMF119AP_TSTCDropKA",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of TCP connections dropped while in KeepAlive state",
+          "reserved": false
+        },
+        {
+          "offset": 172,
+          "name": "SMF119AP_TSTCDropF2",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of TCP connections dropped while in FINWAIT2 state",
+          "reserved": false
+        },
+        {
+          "offset": 176,
+          "name": "SMF119AP_TSTCDropRx",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of TCP connections dropped due to retransmits",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S3Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TSUDDuration",
+          "length": "8",
+          "format": "Binary",
+          "description": "Duration of recording interval in microseconds, where bit 51 is equivalent to one microsecond",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TSUDRecData",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of UDP datagrams received",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119AP_TSUDRecNoPort",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of UDP datagrams received with no port defined",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119AP_TSUDNoRec",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of other UDP datagrams not received",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119AP_TSUDXmtData",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of UDP datagrams sent",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S4Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TSICDuration",
+          "length": "8",
+          "format": "Binary",
+          "description": "Duration of recording interval in microseconds, where bit 51 is equivalent to one microsecond",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TSICInMsg",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP messages",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119AP_TSICInError",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP error messages",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119AP_TSICInDstUnreach",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP destination unreachable messages",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119AP_TSICInTimeExcd",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP time exceeded messages",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119AP_TSICInParmProb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP parameter problem messages",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119AP_TSICInSrcQuench",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP source quench messages",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119AP_TSICInRedirect",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP redirect messages",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119AP_TSICInEcho",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP echo request messages",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119AP_TSICInEchoRep",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP echo reply messages",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119AP_TSICInTstamp",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP timestamp request messages",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119AP_TSICInTstampRep",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP timestamp reply messages",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119AP_TSICInAddrMask",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP address mask request messages",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119AP_TSICInAddrMRep",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound ICMP address mask reply messages",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119AP_TSICOutMsg",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP messages",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119AP_TSICOutError",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP error messages",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119AP_TSICOutDstUnreach",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP destination unreachable messages",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119AP_TSICOutTimeExcd",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP time exceeded messages",
+          "reserved": false
+        },
+        {
+          "offset": 76,
+          "name": "SMF119AP_TSICOutParmProb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP parameter problem messages",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119AP_TSICOutSrcQuench",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP source quench messages",
+          "reserved": false
+        },
+        {
+          "offset": 84,
+          "name": "SMF119AP_TSICOutRedirect",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP redirect messages",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119AP_TSICOutEcho",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP echo request messages",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119AP_TSICOutEchoRep",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP echo reply messages",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119AP_TSICOutTstamp",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP timestamp request messages",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119AP_TSICOutTstampRep",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP timestamp reply messages",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119AP_TSICOutAddrMask",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP address mask request messages",
+          "reserved": false
+        },
+        {
+          "offset": 108,
+          "name": "SMF119AP_TSICOutAddrMRep",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound ICMP address mask reply messages",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S5Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TSP6Duration",
+          "length": "8",
+          "format": "Binary",
+          "description": "Duration of recording interval in microseconds, where bit 51 is equivalent to one microsecond",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TSP6RecData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 datagrams received",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119AP_TSP6AttFwdData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of attempts to forward IPv6 datagrams",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119AP_TSP6DlvData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 datagrams delivered",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119AP_TSP6XData",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 datagrams transmitted",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119AP_TSP6XDscOth",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 outbound datagrams discarded, due to reasons other than no route being available",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119AP_TSP6XDscRoute",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 outbound datagrams discarded, due to no route being available",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119AP_TSP6Timeouts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 reassembly timeouts",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119AP_TSP6RecDRsmb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received IPv6 datagrams requiring reassembly",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119AP_TSP6Rsmb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of received IPv6 datagrams reassembled",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119AP_TSP6FailRsmb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of failed reassembly attempts on IPv6 datagrams",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119AP_TSP6RecFgmt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of fragmented IPv6 datagrams received",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119AP_TSP6DscDFgmt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 datagrams discarded due to fragmentation failure",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119AP_TSP6XFgmt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 datagram fragments generated",
+          "reserved": false
+        },
+        {
+          "offset": 76,
+          "name": "SMF119AP_TSP6RouteDisc",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of IPv6 routing discards",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S6Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TSC6Duration",
+          "length": "8",
+          "format": "Binary",
+          "description": "Duration of recording interval in microseconds, where bit 51 is equivalent to one microsecond",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TSC6InMsg",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP messages",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119AP_TSC6InError",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP error messages",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119AP_TSC6InDstUnreach",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP destination unreachable messages",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119AP_TSC6InTimeExcd",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP time exceeded messages",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119AP_TSC6InParmProb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP parameter problem messages",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119AP_TSC6InAdmProhib",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP administratively prohibited messages",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119AP_TSC6InPktTooBig",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP packet too big messages",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119AP_TSC6InEcho",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP echo request messages",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119AP_TSC6InEchoRep",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP echo reply messages",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119AP_TSC6InRtSolicit",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP router solicitation messages",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119AP_TSC6InRtAdv",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP router advertisement messages",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119AP_TSC6InNbSolicit",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP neighbor solicitation messages",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119AP_TSC6InNbAdv",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP neighbor advertisement messages",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119AP_TSC6InRedirect",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP redirect messages",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119AP_TSC6InGrpMemQry",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP multicast listener discovery membership query messages",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119AP_TSC6InGrpMemRsp",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP multicast listener discovery membership reply messages",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119AP_TSC6InGrpMemRed",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound IPv6 ICMP multicast listener discovery membership reduction messages",
+          "reserved": false
+        },
+        {
+          "offset": 76,
+          "name": "SMF119AP_TSC6OutMsg",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP messages",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119AP_TSC6OutError",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP error messages",
+          "reserved": false
+        },
+        {
+          "offset": 84,
+          "name": "SMF119AP_TSC6OutDstUnrch",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP destination unreachable messages",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119AP_TSC6OutTimeExcd",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP time exceeded messages",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119AP_TSC6OutParmProb",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP parameter problem messages",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119AP_TSC6OutAdmProhib",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP administratively prohibited messages",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119AP_TSC6OutPktTooBig",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP packet too big messages",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119AP_TSC6OutEcho",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP echo request messages",
+          "reserved": false
+        },
+        {
+          "offset": 108,
+          "name": "SMF119AP_TSC6OutEchoRep",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP echo reply messages",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119AP_TSC6OutRtSolicit",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP router solicitation messages",
+          "reserved": false
+        },
+        {
+          "offset": 116,
+          "name": "SMF119AP_TSC6OutRtAdv",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP router advertisement messages",
+          "reserved": false
+        },
+        {
+          "offset": 120,
+          "name": "SMF119AP_TSC6OutNbSolicit",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP neighbor solicitation messages",
+          "reserved": false
+        },
+        {
+          "offset": 124,
+          "name": "SMF119AP_TSC6OutNbAdv",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP neighbor advertisement messages",
+          "reserved": false
+        },
+        {
+          "offset": 128,
+          "name": "SMF119AP_TSC6OutRedirect",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP redirect messages",
+          "reserved": false
+        },
+        {
+          "offset": 132,
+          "name": "SMF119AP_TSC6OutGrpMemQry",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP multicast listener discovery membership query messages",
+          "reserved": false
+        },
+        {
+          "offset": 136,
+          "name": "SMF119AP_TSC6OutGrpMemRsp",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP multicast listener discovery membership report messages",
+          "reserved": false
+        },
+        {
+          "offset": 140,
+          "name": "SMF119AP_TSC6OutGrpMemRed",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound IPv6 ICMP multicast listener discovery membership reduction messages",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}

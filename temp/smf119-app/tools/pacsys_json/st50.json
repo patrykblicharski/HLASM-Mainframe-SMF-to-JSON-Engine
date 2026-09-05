@@ -1,0 +1,579 @@
+{
+  "subtype": 50,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119S50_LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word). See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119S50_SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119S50_FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicator Bit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators* 7 System is running in PR/SM mode.*See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119S50_RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 77').",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119S50_TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119S50_DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119S50_SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119S50_SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119S50_STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119S50_TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record. A triplet is a set of three SMF fields (offset/length/number values) that defines a section of the record. The offset is the offset from the RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119S50_IDOff",
+          "length": "4",
+          "format": "binary",
+          "description": "Offset to TCP/IP identification section from RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119S50_IDLen",
+          "length": "2",
+          "format": "binary",
+          "description": "Length of TCP/IP identification section.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119S50_IDNum",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of TCP/IP identification sections.",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S50_S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to CSSMTP common information section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S50_S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of CSSMTP common information section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S50_S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of CSSMTP common information sections",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119S50_S2Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to spool identification section",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119S50_S2Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of spool identification section",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119S50_S2Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of spool identification sections",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119S50_S3Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to mail data section",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119S50_S3Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of mail data section",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119S50_S3Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of mail data sections",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119S50_S4Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to mail header section",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119S50_S4Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of mail header section",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119S50_S4Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of mail header sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S50_IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119ML_CI",
+          "length": "36",
+          "format": "STRUCTURE",
+          "description": "CSSMTP common information",
+          "reserved": false
+        },
+        {
+          "offset": 0,
+          "name": "SMF119ML_CI_JMR",
+          "length": "24",
+          "format": "STRUCTURE",
+          "description": "Job Management Record. See Standard SMF Record Header in z/OS MVS System Management Facilities (SMF) for detailed information about Job Management Record format.",
+          "reserved": false
+        },
+        {
+          "offset": 0,
+          "name": "SMF119ML_CI_JOB",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Jobname",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119ML_CI_Entry",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time since midnight, in hundredths of a second, that the reader recognized the CSSMTP JOB card (for this job).",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119ML_CI_EDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date when the reader recognized the CSSMTP JOB card (for this job), in the form 0cyydddF.",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119ML_CI_USEID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User-defined identification field (taken from common exit parameter area, not from USER=parameter on job statement).",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119ML_CI_EXTWRT",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "External writer name",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119ML_CI_Jes",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "JES subsystem name",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S50_S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119ML_SI",
+          "length": "72",
+          "format": "STRUCTURE",
+          "description": "Spool Identification",
+          "reserved": false
+        },
+        {
+          "offset": 0,
+          "name": "SMF119ML_SI_JMR",
+          "length": "24",
+          "format": "EBCDIC",
+          "description": "Job Management Record. See Standard SMF Record Header in z/OS MVS System Management Facilities (SMF) for detailed information about Job Management Record format.",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S50_S2Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119ML_SI_Job",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Jobname",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119ML_SI_Entry",
+          "length": "4",
+          "format": "Binary",
+          "description": "JES reader entry time - time since midnight, in hundredths of a second, that the reader recognized the JOB card (for this job).",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119ML_SI_EDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "JES reader entry date 0CYYDDDF - date when the reader recognized the JOB card (for this job), in the form 0cyydddF.",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119ML_SI_USEID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User-defined identification field (taken from common exit parameter area, not from USER=parameter on job statement).",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119ML_SI_JobId",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Job Id of selected job",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119ML_SI_SYS",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name of the MVS\u2122 image where the job output was created",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119ML_SI_XEQ",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "NJE node where job executed",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119ML_SI_CRER",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Owning user id of data set",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119ML_SI_TKID",
+          "length": "4",
+          "format": "Binary",
+          "description": "JES task ID",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119ML_SI_Jnum",
+          "length": "4",
+          "format": "Binary",
+          "description": "JES job number in binary",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119ML_SI_Dsky",
+          "length": "4",
+          "format": "Binary",
+          "description": "JES dataset key",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119ML_SI_Dsnm",
+          "length": "4",
+          "format": "Binary",
+          "description": "JES dataset number",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S50_S3Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119ML_MI",
+          "length": "60",
+          "format": "STRUCTURE",
+          "description": "Mail Identification 0 0 SMF119ML_MI_STime 4 Binary Time mail was read from JES - Hundredths of seconds",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119ML_MI_SDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date mail was read from JES - in 0CYYDDDF format",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119ML_MI_ETime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time mail was completed - Hundredths of seconds",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119ML_MI_EDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date mail was completed, in 0CYYDDDF format",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119ML_MI_Dur",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time mail was in progress, in hundredths of seconds",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119ML_MI_ID",
+          "length": "4",
+          "format": "Binary",
+          "description": "Mail message number in spool file",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119ML_MI_Type",
+          "length": "4",
+          "format": "Binary",
+          "description": "Type of mail message - type values: SMFML_MI_TYPE_RegNote = 1 mail message is regular type created by customer SMFML_MI_TYPE_UndelNote = 2 mail message is error note created by customer SMFML_MI_TYPE_Report = 3 mail message is a CSSMTP erro",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119ML_MI_Rsvd1",
+          "length": "4",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119ML_MI_BYCT",
+          "length": "8",
+          "format": "Binary",
+          "description": "Body byte count",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119ML_MI_RLoc",
+          "length": "4",
+          "format": "Binary",
+          "description": "Record location of MAIL command in spool file",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119ML_MI_Rcpts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of total recipients",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119ML_MI_FRcpts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of failed recipients",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119ML_MI_Retry",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of retry attempts",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119ML_MI_Flags1",
+          "length": "1",
+          "format": "binary",
+          "description": "Flags SMF119ML_MI_ESMTP 1... .... EHLO(RFC 2821) command SMF119ML_MI_TLS .1.. .... STARTTLS command SMF119ML_MI_Finis ..1. .... Mail was completed without errors SMF119ML_MI_Error ...1 .... Mail was completed with errors SMF119ML_MI_ERetry ",
+          "reserved": false
+        },
+        {
+          "offset": 57,
+          "name": "SMF119ML_MI_Flags2",
+          "length": "1",
+          "format": "binary",
+          "description": "Flags SMF119ML_MI_From 1... .... Mail contains a From header specified in the spool file SMF119ML_MI_To .1.. .... Mail contains a To header specified in the spool file SMF119ML_MI_Date ..1. .... Mail contains a Date header specified in the ",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119ML_MI_Rsv2x",
+          "length": "1",
+          "format": "binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 59,
+          "name": "SMF119ML_MI_Rsv3x",
+          "length": "1",
+          "format": "binary",
+          "description": "Reserved",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S50_S4Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119ML_MH_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Mail header length",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119ML_MH_Key",
+          "length": "2",
+          "format": "Binary",
+          "description": "Mail header type value",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119ML_MH_Data",
+          "length": "255",
+          "format": "EBCDIC",
+          "description": "Mail header data string",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}

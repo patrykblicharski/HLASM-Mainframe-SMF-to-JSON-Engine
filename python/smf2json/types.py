@@ -32,6 +32,11 @@ TYPE_LENGTHS = {
     "DEC1": 1,
     "DEC2": 2,
     "DEC4": 4,
+    "DEC8": 8,
+    "HEX1": 1,
+    "HEX4": 4,
+    "HEX8": 8,
+    "IP16": 16,
     "DTE": 4,
     "TME": 4,
     "RS_STR": 0,
@@ -105,6 +110,25 @@ def parse_dec(raw: bytes) -> str:
     return str(int.from_bytes(raw, "big", signed=False))
 
 
+def parse_hex(raw: bytes) -> str:
+    return raw.hex().upper() if raw else ""
+
+
+def parse_ip16(raw: bytes) -> str:
+    """16-byte TCP/IP address: IPv4-mapped, IPv4-compatible, or IPv6."""
+    if len(raw) < 16:
+        return ""
+    chunk = raw[:16]
+    if chunk == bytes(16):
+        return ""
+    if chunk[:10] == bytes(10) and chunk[10:12] == b"\xff\xff":
+        return ".".join(str(b) for b in chunk[12:16])
+    if chunk[:12] == bytes(12):
+        return ".".join(str(b) for b in chunk[12:16])
+    hextets = [f"{int.from_bytes(chunk[i : i + 2], 'big'):x}" for i in range(0, 16, 2)]
+    return ":".join(hextets)
+
+
 def field_length(spec: FieldSpec) -> int:
     if spec.length is not None:
         return spec.length
@@ -119,6 +143,10 @@ def convert_value(spec: FieldSpec, raw: bytes) -> str:
         return ebcdic_to_str(raw)
     if ft.startswith("DEC"):
         return parse_dec(raw)
+    if ft.startswith("HEX"):
+        return parse_hex(raw)
+    if ft == "IP16":
+        return parse_ip16(raw)
     if ft in ("DTE", "DATE"):
         return parse_smf_date(raw)
     if ft in ("TME", "TIME"):

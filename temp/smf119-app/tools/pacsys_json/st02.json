@@ -1,0 +1,707 @@
+{
+  "subtype": 2,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word). See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicator Bit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators* 7 System is running in PR/SM mode.*See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 (X'77').",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record. A triplet is a set of three SMF fields (offset/length/number values) that defines a section of the record. The offset is the offset from the RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119IDOff",
+          "length": "4",
+          "format": "binary",
+          "description": "Offset to TCP/IP identification section from RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119IDLen",
+          "length": "2",
+          "format": "binary",
+          "description": "Length of TCP/IP identification section.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119IDNum",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of TCP/IP identification sections.",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to first data section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of first data section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of first data sections",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119S2Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119S2Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119S2Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 2nd data sections",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119S3Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 3rd data section",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119S3Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 3rd data section",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119S3Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 3rd data sections",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119S4Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 4th data section",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119S4Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 4th data section",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119S4Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 4th data sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TI_SYSName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name from SYSNAME in IEASYSxx",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TI_SysplexName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Sysplex name from SYSPLEX in COUPLExx",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TI_Stack",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP stack name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TI_ReleaseID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS Communications Server TCP/IP release identifier",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TI_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP subcomponent (right padded with blanks): FTPC FTP Client FTPS FTP server IP IP layer STACK Entire TCP/IP stack TCP TCP layer TN3270C TN3270 Client TN3270S TN3270 server UDP UDP layer",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TI_ASName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Started task qualifier or address space name of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119TI_UserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User ID of security context under which this SMF record is written",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "_rsv_56",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 58,
+          "name": "SMF119TI_ASID",
+          "length": "2",
+          "format": "Binary",
+          "description": "ASID of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119TI_Reason",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason for writing this SMF record: X'08' Event record X'C0' Interval statistics record, more records follow X'80' Interval statistics record, last record in set X'60' End-of-statistics record, more records follow X'20' End-of-statistics re",
+          "reserved": false
+        },
+        {
+          "offset": 61,
+          "name": "_rsv_61",
+          "length": "3",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TTRName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP socket resource name (Address space name of address space that closed this TCP connection)",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TTConnID",
+          "length": "4",
+          "format": "Binary",
+          "description": "TCP socket resource ID (connection ID)",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119AP_TTTTLSCS",
+          "length": "1",
+          "format": "Binary",
+          "description": "AT-TLS connection status: * x'01': Connection is not secure * x'02': Connection handshake in progress * x'03': Connection is secure",
+          "reserved": false
+        },
+        {
+          "offset": 13,
+          "name": "SMF119AP_TTTTLSPS",
+          "length": "1",
+          "format": "Binary",
+          "description": "AT-TLS Policy Status: * x'00': Policy status is not known * x'01': AT-TLS function off * x'02': No policy defined for connection * x'03': Policy defined for connection; AT-TLS not enabled * x'04': Policy defined for connection; AT-TLS enabl",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119AP_TTTermCode",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason code for connection termination: * x'11': Error occurred during a send using FRCA(AFPA), possibly because the stack is terminating. * x'12': A persistent socket used by FRCA (AFPA) was closed by a FIN. * x'21': The connection was ter",
+          "reserved": false
+        },
+        {
+          "offset": 15,
+          "name": "SMF119AP_TTRsv2",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119AP_TTSubtask",
+          "length": "4",
+          "format": "Binary",
+          "description": "Subtask Name (Address of MVS\u2122 TCB for the task that owns this connection. This is not the subtask value specified on an INITAPI call.)",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119AP_TTSTime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time of connection establishment",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119AP_TTSDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date of connection establishment",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119AP_TTETime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time connection entered TIMEWAIT or LASTACK state.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119AP_TTEDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date connection entered TIMEWAIT or LASTACK state.",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119AP_TTRIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Remote IP address at time of connection close.",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119AP_TTLIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Local IP address at time of connection close.",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119AP_TTRPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote port number at time of connection close.",
+          "reserved": false
+        },
+        {
+          "offset": 70,
+          "name": "SMF119AP_TTLPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local port number at time of connection close.",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119AP_TTInBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound byte count.",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119AP_TTOutBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound byte count.",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119AP_TTSWS",
+          "length": "4",
+          "format": "Binary",
+          "description": "Send window size at time of connection close.",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119AP_TTMSWS",
+          "length": "4",
+          "format": "Binary",
+          "description": "Maximum send window size.",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119AP_TTCWS",
+          "length": "4",
+          "format": "Binary",
+          "description": "Congestion window size at time of connection close.",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119AP_TTSMS",
+          "length": "4",
+          "format": "Binary",
+          "description": "Send segment size at time of connection close.",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119AP_TTRTT",
+          "length": "4",
+          "format": "Binary",
+          "description": "Round trip time in milliseconds at time of connection close.`",
+          "reserved": false
+        },
+        {
+          "offset": 108,
+          "name": "SMF119AP_TTRVA",
+          "length": "4",
+          "format": "Binary",
+          "description": "Round trip time variance estimator at time of connection close, in milliseconds.",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119AP_TTStatus",
+          "length": "1",
+          "format": "Binary",
+          "description": "Socket status: * x'00': Passive Open (this is a server socket) * x'01': Active Open (this is a client socket)",
+          "reserved": false
+        },
+        {
+          "offset": 113,
+          "name": "SMF119AP_TTTOS",
+          "length": "1",
+          "format": "Binary",
+          "description": "Type of Service (ToS) used by this connection.",
+          "reserved": false
+        },
+        {
+          "offset": 114,
+          "name": "SMF119AP_TTXRT",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of times retransmission was required for this connection.",
+          "reserved": false
+        },
+        {
+          "offset": 116,
+          "name": "SMF119AP_TTProf",
+          "length": "32",
+          "format": "EBCDIC",
+          "description": "Service profile name.",
+          "reserved": false
+        },
+        {
+          "offset": 148,
+          "name": "SMF119AP_TTPol",
+          "length": "32",
+          "format": "EBCDIC",
+          "description": "Service Policy name at the time of connection close.",
+          "reserved": false
+        },
+        {
+          "offset": 180,
+          "name": "SMF119AP_TTInSeg",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound segment count.",
+          "reserved": false
+        },
+        {
+          "offset": 188,
+          "name": "SMF119AP_TTOutSeg",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound segment count.",
+          "reserved": false
+        },
+        {
+          "offset": 196,
+          "name": "SMF119AP_TTSSTCK_D",
+          "length": "8",
+          "format": "Binary",
+          "description": "MVS TOD clock value at time of connection establishment.",
+          "reserved": false
+        },
+        {
+          "offset": 196,
+          "name": "SMF119AP_TTSSTCK_T",
+          "length": "8",
+          "format": "Binary",
+          "description": "MVS TOD clock value at time of connection establishment.",
+          "reserved": false
+        },
+        {
+          "offset": 204,
+          "name": "SMF119AP_TTESTCK_D",
+          "length": "8",
+          "format": "Binary",
+          "description": "MVS TOD clock value at time connection entered TIMEWAIT or LASTACK state.",
+          "reserved": false
+        },
+        {
+          "offset": 204,
+          "name": "SMF119AP_TTESTCK_T",
+          "length": "8",
+          "format": "Binary",
+          "description": "MVS TOD clock value at time connection entered TIMEWAIT or LASTACK state.",
+          "reserved": false
+        },
+        {
+          "offset": 212,
+          "name": "SMF119AP_TTDupAcksRcvd",
+          "length": "4",
+          "format": "Binary",
+          "description": "Total Number of DUP ACKs received on the connection.",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S2Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TTTelLUName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "LU name",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TTTelAppl",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Target application name",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119AP_TTTelLogmode",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Logmode name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119AP_TTTelStatus",
+          "length": "4",
+          "format": "Binary",
+          "description": "Status word: * x80000000 Definite response mode * x40000000 The connection is being performance monitored * x00000004 TN3270E mode * x00000002 TN3270 mode * x00000001 Line mode",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119AP_TTTelTermCode",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason code for closing connection. The socket must be accessible to the TN3270 server to record a reason. (for example, SMF119AP_TTTermCode for this record is x'52'.) See the description of EZZ6034I for a list of reason codes and their des",
+          "reserved": false
+        },
+        {
+          "offset": 29,
+          "name": "SMF119AP_TTTelRsv",
+          "length": "3",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S3Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TTTTLSSP",
+          "length": "2",
+          "format": "Binary",
+          "description": "AT-TLS SSL Protocol: * x'0200': SSL Version 2 * x'0300': SSL Version 3 * x'0301': AT-TLS Version 1",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119AP_TTTTLSNC",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "AT-TLS Negotiated Cipher",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119AP_TTTTLSST",
+          "length": "1",
+          "format": "Binary",
+          "description": "AT-TLS Security Type: * x'01': Client * x'02': Server * x'03': Server with client authentication, ClientAuthType = PassThru * x'04': Server with client authentication, ClientAuthType = Full * x'05': Server with client authentication, Client",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119AP_TTTTLSRSV1",
+          "length": "3",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119AP_TTTTLSUID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "AT-TLS Partner UserID",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S4Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119AP_TTAPPLDATA",
+          "length": "40",
+          "format": "EBCDIC",
+          "description": "For z/OS Communications Server applications, see Appendix E. Application data for an explanation of the layout, format, and meaning of",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}

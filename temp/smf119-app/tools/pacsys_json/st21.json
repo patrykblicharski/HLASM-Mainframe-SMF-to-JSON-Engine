@@ -1,0 +1,691 @@
+{
+  "subtype": 21,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word). See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicator Bit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators* 7 System is running in PR/SM mode.*See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 (X'77').",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record. A triplet is a set of three SMF fields (offset/length/number values) that defines a section of the record. The offset is the offset from the RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119IDOff",
+          "length": "4",
+          "format": "binary",
+          "description": "Offset to TCP/IP identification section from RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119IDLen",
+          "length": "2",
+          "format": "binary",
+          "description": "Length of TCP/IP identification section.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119IDNum",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of TCP/IP identification sections.",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to first data section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of first data section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of first data sections",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119S2Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119S2Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119S2Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 2nd data sections",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119S3Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 3rd data section",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119S3Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 3rd data section",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119S3Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 3rd data sections",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119S4Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 4th data section",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119S4Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 4th data section",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119S4Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 4th data sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TI_SYSName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name from SYSNAME in IEASYSxx",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TI_SysplexName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Sysplex name from SYSPLEX in COUPLExx",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TI_Stack",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP stack name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TI_ReleaseID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS Communications Server TCP/IP release identifier",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TI_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP subcomponent (right padded with blanks): FTPC FTP Client FTPS FTP server IP IP layer STACK Entire TCP/IP stack TCP TCP layer TN3270C TN3270 Client TN3270S TN3270 server UDP UDP layer",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TI_ASName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Started task qualifier or address space name of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119TI_UserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User ID of security context under which this SMF record is written",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "_rsv_56",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 58,
+          "name": "SMF119TI_ASID",
+          "length": "2",
+          "format": "Binary",
+          "description": "ASID of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119TI_Reason",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason for writing this SMF record: X'08' Event record X'C0' Interval statistics record, more records follow X'80' Interval statistics record, last record in set X'60' End-of-statistics record, more records follow X'20' End-of-statistics re",
+          "reserved": false
+        },
+        {
+          "offset": 61,
+          "name": "_rsv_61",
+          "length": "3",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TN_NTLU",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Telnet LU name",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TN_NTAppl",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Host application name",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TN_NTLdev",
+          "length": "4",
+          "format": "Binary",
+          "description": "Telnet internal logical device number",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119TN_NTRIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Remote (client) IP address",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119TN_NTLIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Local (Telnet) IP address",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119TN_NTRPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote (client) port number",
+          "reserved": false
+        },
+        {
+          "offset": 54,
+          "name": "SMF119TN_NTLPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local (Telnet) port number",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119TN_NTHostNm",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP Host name",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119TN_NTInByte",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound byte count",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119TN_NTOutByte",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound byte count",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119TN_NTiTime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time of session initiation",
+          "reserved": false
+        },
+        {
+          "offset": 84,
+          "name": "SMF119TN_NTiDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date of session initiation",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119TN_NTtTime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time of session termination",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119TN_NTtDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date of session termination",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119TN_NTDur",
+          "length": "4",
+          "format": "Binary",
+          "description": "Session duration in units of 1/100 seconds",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119TN_NTSType",
+          "length": "1",
+          "format": "Binary",
+          "description": "Telnet session type: 0 UNKNOWN 1 TN3270 2 TN3270E 3 LINEMODE 4 DBCSTRANSFORM 5 BINARY",
+          "reserved": false
+        },
+        {
+          "offset": 101,
+          "name": "SMF119TN_NTLUSel",
+          "length": "1",
+          "format": "Binary",
+          "description": "Telnet LU selection method: 0 LU chosen by server 1 LU requested by client",
+          "reserved": false
+        },
+        {
+          "offset": 102,
+          "name": "SMF119TN_NTSSL",
+          "length": "1",
+          "format": "Binary",
+          "description": "SSL status: 0 No SSL session 1 Server authentication only 2 Server and client authentication (REQUIRED/SSLCERT): * If AT-TLS policy (REQUIRED), then check SAF, and user ID is not required to be returned. * If TN profile control (SSLCERT), t",
+          "reserved": false
+        },
+        {
+          "offset": 103,
+          "name": "_rsv_103",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 104,
+          "name": "SMF119TN_NTCopt",
+          "length": "1",
+          "format": "Binary",
+          "description": "Telnet connection options negotiated for this connection: * 1000 0000 TN3270E * 0100 0000 Terminal type * 0010 0000 End of Record * 0001 0000 Transmit binary * 0000 1000 Echos * 0000 0100 Suppress go ahead * 0000 0010 Timemark * 0000 0001 N",
+          "reserved": false
+        },
+        {
+          "offset": 105,
+          "name": "_rsv_105",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 106,
+          "name": "SMF119TN_NT32opt",
+          "length": "2",
+          "format": "Binary",
+          "description": "TN3270E connection options negotiated for this connection. First Byte: * 1000 0000 Bind image * 0100 0000 SysRequest * 0010 0000 Responses * 0001 0000 SCS control codes * 0000 1000 DCS control codes * 0000 0100 Contention Resolution * 0000 ",
+          "reserved": false
+        },
+        {
+          "offset": 108,
+          "name": "SMF119TN_NTRCode",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Session termination reason code. The values in this field are the same as those displayed in message EZZ6034I as value for the object variable.",
+          "reserved": false
+        },
+        {
+          "offset": 116,
+          "name": "SMF119TN_NTLMode",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "SNA logmode",
+          "reserved": false
+        },
+        {
+          "offset": 124,
+          "name": "SMF119TN_NTDevt",
+          "length": "20",
+          "format": "EBCDIC",
+          "description": "Telnet device type",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S2Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TN_NTHostname",
+          "length": "VARIABLE",
+          "format": "EBCDIC",
+          "description": "Host name associated with this session",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S3Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TN_NTRRts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Sum of round trip times for this session in milliseconds",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119TN_NTRIPRts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Sum of IP portion of round trip times for this session in milliseconds",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TN_NTRCountTrans",
+          "length": "4",
+          "format": "Binary",
+          "description": "Count of transactions used to measure round trip times for this session",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119TN_NTRCountIP",
+          "length": "4",
+          "format": "Binary",
+          "description": "Count of IP transactions used to measure the IP portion of the round trip time",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TN_NTRElapsRndTrpSq",
+          "length": "8",
+          "format": "Binary",
+          "description": "The sum of the square of each round trip time",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TN_NTRElapsIpRtSq",
+          "length": "8",
+          "format": "Binary",
+          "description": "The sum of the square of each IP portion of round trip time",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TN_NTRElapsSnaRtSq",
+          "length": "8",
+          "format": "Binary",
+          "description": "The sum of the square of each SNA portion of round trip time",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TN_NTRGrpIndex",
+          "length": "4",
+          "format": "Binary",
+          "description": "The index into the master MonitorGroup table this connection is using",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119TN_NTRDR",
+          "length": "1",
+          "format": "Binary",
+          "description": "Indicator how IP trip time is measured: '80'x Definite Response used '40'x Timemark used",
+          "reserved": false
+        },
+        {
+          "offset": 45,
+          "name": "_rsv_45",
+          "length": "3",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S4Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TN_NTBucketBndry1",
+          "length": "4",
+          "format": "Binary",
+          "description": "Upper boundary for bucket 1 in milliseconds",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119TN_NTBucketBndry2",
+          "length": "4",
+          "format": "Binary",
+          "description": "Upper boundary for bucket 2 in milliseconds",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TN_NTBucketBndry3",
+          "length": "4",
+          "format": "Binary",
+          "description": "Upper boundary for bucket 3 in milliseconds",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119TN_NTBucketBndry4",
+          "length": "4",
+          "format": "Binary",
+          "description": "Upper boundary for bucket 4 in milliseconds",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TN_NTBucket1Rts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transactions with a round trip time meeting bucket 1 criteria",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119TN_NTBucket2Rts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transactions with a round trip time meeting bucket 2 criteria",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TN_NTBucket3Rts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transactions with round trip time meeting bucket 3 criteria",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119TN_NTBucket4Rts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transactions with a round trip time meeting bucket 4 criteria",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TN_NTBucket5Rts",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of transactions with a round trip time that exceeds bucket 4 time",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}

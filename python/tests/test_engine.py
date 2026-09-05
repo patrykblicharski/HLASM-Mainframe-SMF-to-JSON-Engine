@@ -9,8 +9,8 @@ from pathlib import Path
 
 from smf2json.engine import convert_dump, ordered_columns
 from smf2json.reader import read_dump
-from smf2json.sample_dump import build_smf30, build_smf80
-from smf2json.types import FieldSpec, convert_value, parse_smf_date, parse_smf_time
+from smf2json.sample_dump import build_smf30, build_smf80, build_smf119_st01
+from smf2json.types import FieldSpec, convert_value, parse_ip16, parse_smf_date, parse_smf_time
 
 
 class TypeTests(unittest.TestCase):
@@ -27,6 +27,10 @@ class TypeTests(unittest.TestCase):
         spec = FieldSpec("sid", "SMF30SID", "CHR4", 14)
         raw = "PROD".encode("cp037")
         self.assertEqual(convert_value(spec, raw), "PROD")
+
+    def test_ip16_mapped(self) -> None:
+        raw = bytes(10) + b"\xff\xff" + bytes((10, 1, 2, 3))
+        self.assertEqual(parse_ip16(raw), "10.1.2.3")
 
 
 class DumpTests(unittest.TestCase):
@@ -71,6 +75,28 @@ class DumpTests(unittest.TestCase):
         self.assertIn("PAYROLL", text)
         cols = ordered_columns(rows)
         self.assertIn("job_name", cols)
+
+    def test_convert_type119_st01(self) -> None:
+        path = Path(self.tmp.name) / "smf119.smf"
+        path.write_bytes(build_smf119_st01())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "119")
+        self.assertEqual(row["smf_subtype"], "1")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["tcp_stack"], "TCPIP")
+        self.assertEqual(row["tcp_component"], "TCP")
+        self.assertEqual(row["resource_name"], "FTPTA5")
+        self.assertEqual(row["remote_ip"], "10.1.2.3")
+        self.assertEqual(row["local_ip"], "192.168.1.10")
+        self.assertEqual(row["remote_port"], "443")
+        self.assertEqual(row["local_port"], "21")
+        self.assertEqual(row["record_reason"], "08")
+        self.assertEqual(row["conn_time"], "14:04:06")
+        self.assertEqual(row["conn_date"], "2026-03-25")
+        self.assertEqual(row["subtask_tcb"], "00ABCDEF")
+        self.assertEqual(row["conn_stck"], "00DECAFBAD010203")
 
 
 if __name__ == "__main__":

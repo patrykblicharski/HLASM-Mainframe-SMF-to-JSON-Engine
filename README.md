@@ -26,7 +26,7 @@ The engine is built with a dual-mode execution architecture:
 
 ## Python desktop port
 
-A stdlib-only Python rewrite lives under `python/` — same table-driven maps for types 30/80/89, plus a Tkinter GUI (load dump, processing debug log, table with column descriptions, export JSON/CSV). See [`python/README.md`](python/README.md).
+A stdlib-only Python rewrite lives under `python/` — table-driven maps for types 30/80/89 and 119 subtype 1, plus a Tkinter GUI (tabs per type/subtype, column tooltips, export JSON/CSV). See [`python/README.md`](python/README.md), [`python/AGENTS.md`](python/AGENTS.md), [`python/ROADMAP.md`](python/ROADMAP.md).
 
 ## New: Data-Driven Architecture
 The engine has been refactored to use Master Mapping Tables. This allows developers to choose exactly which fields to export to JSON by simply editing a table, without modifying the core logic.
