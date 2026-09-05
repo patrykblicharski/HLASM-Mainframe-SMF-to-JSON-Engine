@@ -19,6 +19,8 @@ python/
     gui.py             Tkinter: notebook tabs, column picker, tooltips
     column_config.py   Visible columns persisted per type/subtype
     sample_dump.py     Synthetic VB records for 30, 80, 119-1
+    terse.py           AMATERSE/TERSE unpacker (PACK/SPACK); `python -m smf2json.terse`
+  unterse.py           Standalone launcher for terse.py
   tests/               stdlib unittest
   samples/             generated dumps (make-sample)
   ROADMAP.md
@@ -82,6 +84,8 @@ python -m smf2json --make-sample samples/sample.smf
 python -m smf2json samples/sample.smf -o samples/sample.json --debug
 python -m smf2json samples/sample.smf -f csv -o samples/sample.csv
 python -m smf2json --gui samples/sample.smf
+python unterse.py dump.trs
+python -m smf2json.terse dump.trs
 python -m unittest discover -s tests -v
 ```
 

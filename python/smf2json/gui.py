@@ -26,6 +26,7 @@ from .column_config import (
 from .engine import convert_record, field_meta, ordered_columns
 from .progress import CONVERT_BATCH, PROGRESS_EVERY_BYTES, fmt_bytes, format_timing
 from .reader import iter_dump
+from .terse import TerseHeader, default_output_path, decompress_file
 
 # Convert / paint this many rows before yielding back to Tk.
 LOAD_BATCH = CONVERT_BATCH
@@ -342,6 +343,7 @@ class SmfApp(tk.Tk):
         menubar = tk.Menu(self)
         file_m = tk.Menu(menubar, tearoff=0)
         file_m.add_command(label="Open SMF dump…", command=self.open_dump, accelerator="Ctrl+O")
+        file_m.add_command(label="Terse decompress…", command=self.terse_decompress)
         file_m.add_separator()
         file_m.add_command(label="Export JSON…", command=self.export_json, accelerator="Ctrl+J")
         file_m.add_command(label="Export CSV…", command=self.export_csv, accelerator="Ctrl+E")
@@ -463,6 +465,69 @@ class SmfApp(tk.Tk):
         if path:
             self._load_path(Path(path))
 
+    def terse_decompress(self) -> None:
+        if self._busy:
+            return
+        path = filedialog.askopenfilename(
+            parent=self,
+            title="Terse decompress",
+            filetypes=[
+                ("TERSE / AMATERSE", "*.trs *.TRS *.pack *.PACK *.spack *.SPACK"),
+                ("All files", "*.*"),
+            ],
+            initialdir=str(self.dump_path.parent) if self.dump_path else str(Path.cwd()),
+        )
+        if not path:
+            return
+        src = Path(path)
+        dest = default_output_path(src)
+        if dest.exists() and not messagebox.askyesno(
+            "Terse decompress",
+            f"{dest.name} already exists.\nReplace it?",
+            parent=self,
+        ):
+            return
+        self.status_var.set(f"Decompressing {src.name}…")
+        self.log(f"INFO: unterse {src} → {dest}")
+        self._set_busy(True, progress=False)
+
+        def work() -> None:
+            try:
+                header = decompress_file(src, dest)
+                size = dest.stat().st_size
+                self.after(0, lambda: self._terse_done(dest, header, size, None))
+            except Exception as exc:  # noqa: BLE001
+                self.after(0, lambda e=exc: self._terse_done(dest, None, 0, e))
+
+        threading.Thread(target=work, name="smf2json-unterse", daemon=True).start()
+
+    def _terse_done(
+        self,
+        dest: Path,
+        header: Optional[TerseHeader],
+        size: int,
+        error: Optional[BaseException],
+    ) -> None:
+        self._set_busy(False, progress=False)
+        if error is not None:
+            self.log(f"ERROR: unterse failed: {error}")
+            messagebox.showerror("Terse decompress", str(error), parent=self)
+            self.status_var.set("Terse decompress failed")
+            return
+        assert header is not None
+        recfm = "VB" if header.recfm_v else "FB"
+        self.log(
+            f"INFO: wrote {dest} ({size:,} bytes) method={header.method} recfm={recfm}"
+        )
+        self.status_var.set(f"Unpacked {dest.name} ({size:,} bytes)")
+        if messagebox.askyesno(
+            "Terse decompress",
+            f"Wrote {dest.name} ({size:,} bytes, {header.method} {recfm}).\n\n"
+            "Load this file now?",
+            parent=self,
+        ):
+            self._load_path(dest)
+
     def cancel_load(self) -> None:
         if self._busy:
             self._cancel.set()
@@ -472,17 +537,18 @@ class SmfApp(tk.Tk):
         self._cancel.set()
         self.destroy()
 
-    def _set_busy(self, busy: bool) -> None:
+    def _set_busy(self, busy: bool, *, progress: bool = True) -> None:
         self._busy = busy
         state = tk.DISABLED if busy else tk.NORMAL
         for widget in (self._btn_open, self._btn_json, self._btn_csv, self.columns_btn):
             widget.configure(state=state)
         if busy:
-            if not self._btn_cancel.winfo_ismapped():
-                self._btn_cancel.pack(side=tk.LEFT, padx=2, after=self._btn_csv)
-            if not self._load_strip.winfo_ismapped():
-                self._load_strip.pack(side=tk.TOP, fill=tk.X, after=self._desc_bar)
-            self.progress["value"] = 0
+            if progress:
+                if not self._btn_cancel.winfo_ismapped():
+                    self._btn_cancel.pack(side=tk.LEFT, padx=2, after=self._btn_csv)
+                if not self._load_strip.winfo_ismapped():
+                    self._load_strip.pack(side=tk.TOP, fill=tk.X, after=self._desc_bar)
+                self.progress["value"] = 0
             self.config(cursor="watch")
         else:
             self._btn_cancel.pack_forget()
