@@ -224,12 +224,12 @@ P_SRB_BASE DS    A
 BUFFERVB DS    0H
 BUF_RDW  DC    AL2(0)              * Total length (Data + 4)
          DC    AL2(0)              * Always 0
-BUF_DATA DS    CL2048              * JSON data
+BUF_DATA DS    CL8192              * JSON data (MAP30 can be large)
 JSONOUT  DCB   DDNAME=JSONOUT,                                         X
                DSORG=PS,                                               X
                MACRF=PM,                                               X
                RECFM=VB,                                               X
-               LRECL=1024
+               LRECL=8192
 
 * --- MACRO Defintions for Mapping files ----
          MACRO

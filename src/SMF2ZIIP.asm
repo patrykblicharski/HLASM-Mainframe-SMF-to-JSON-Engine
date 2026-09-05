@@ -118,6 +118,8 @@ BTAB     DS    0F                * Branch Table for Data Types
          DC    A(CASE8)          * 8: SMF Date (4-bytes)
          DC    A(CASE9)          * 9: SMF Time (4-bytes)
          DC    A(CASE10)         * 10: Relocate Section String
+         DC    A(CASE11)         * 11: EBCDIC 16-bytes
+         DC    A(CASE12)         * 12: EBCDIC 20-bytes
 
 *--- Conversion Cases Mapping ---*
 CASE0    EQU   *
@@ -177,6 +179,18 @@ CASE9    EQU   *
 * T_RS_STR    EQU   10    RS Variable Length EBCDIC String
 CASE10   EQU   *
          BAL   R14,GET_RS_STR     * Branch to Value Retrieval routine         
+         J     CONTINUE
+
+* T_CHR16  EQU   11     EBCDIC STRING 16 Bytes
+CASE11   EQU   *
+         LHI   R2,16             * SMF field length
+         BAL   R14,GET_CHR       * Branch to Value Retrieval routine
+         J     CONTINUE
+
+* T_CHR20  EQU   12     EBCDIC STRING 20 Bytes
+CASE12   EQU   *
+         LHI   R2,20             * SMF field length
+         BAL   R14,GET_CHR       * Branch to Value Retrieval routine
          J     CONTINUE
 
 CONTINUE EQU   *
