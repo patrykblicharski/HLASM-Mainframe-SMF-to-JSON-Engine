@@ -1,8 +1,12 @@
 *---------------------------------------------------------------------*
 * PROGRAM: SMF2JSON                                                   *
-* PURPOSE: CONVERT SMF RECORDS (TYPE 30, 80) TO JSON FORMAT           *
+* PURPOSE: CONVERT SMF RECORDS (TYPE 30, 80, 89) TO JSON FORMAT       *
 * FEATURES: SUPPORTS STANDARD TCB MODE OR zIIP SRB OFFLOAD            *
+* MAP30  : Full common-section map (header/id/io/cpu/storage/...)     *
+* BUFSIZE: JSONBUFL must hold one expanded type-30 object             *
 *---------------------------------------------------------------------*
+JSONBUFL EQU   8192               * Max JSON object payload (bytes)
+JSONLREC EQU   JSONBUFL+4         * VB LRECL = payload + RDW
 * --- Register definitions ---
 R0       EQU   0
 R1       EQU   1
@@ -147,6 +151,12 @@ STARTOBJ LA    R1,MYPARMS        * Parameter block for SRB/TCB
 
 *--- JSON Record Finalization ---*
          L     R5,P_JSONLEN      * Length returned by SMF2ZIIP
+* --- Guard: expanded MAP30 must fit in BUF_DATA / JSON LRECL ---
+         CFI   R5,JSONBUFL       * Payload longer than buffer?
+         BNH   LEN_OK            * No -> continue
+         WTO   'ERR: JSON OBJECT EXCEEDS BUFFER - RECORD SKIPPED'
+         J     NEXT_SMF          * Skip PUT to avoid abend / truncate
+LEN_OK   EQU   *
          L     R4,P_JSONBUF
          AR    R5,R4             * Point to end of generated JSON
 
@@ -220,16 +230,16 @@ P_STATUS DS    X
 P_SRB_BASE DS    A
 
 
-* --- JSON Output ----
+* --- JSON Output (sized for full MAP30 common-section objects) ----
 BUFFERVB DS    0H
 BUF_RDW  DC    AL2(0)              * Total length (Data + 4)
          DC    AL2(0)              * Always 0
-BUF_DATA DS    CL8192              * JSON data (MAP30 can be large)
+BUF_DATA DS    CL(JSONBUFL)        * JSON payload buffer
 JSONOUT  DCB   DDNAME=JSONOUT,                                         X
                DSORG=PS,                                               X
                MACRF=PM,                                               X
                RECFM=VB,                                               X
-               LRECL=8192
+               LRECL=JSONLREC      * payload + RDW
 
 * --- MACRO Defintions for Mapping files ----
          MACRO
