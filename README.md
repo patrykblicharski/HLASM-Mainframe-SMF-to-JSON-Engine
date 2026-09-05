@@ -24,6 +24,10 @@ The engine is built with a dual-mode execution architecture:
 
 > **Note:** The public version of this repository is configured for TCB mode. The SRB dispatcher and WLM management modules used for performance testing on experimental environments are not included in this public release.
 
+## Python desktop port
+
+A stdlib-only Python rewrite lives under `python/` — same table-driven maps for types 30/80/89, plus a Tkinter GUI (load dump, processing debug log, table with column descriptions, export JSON/CSV). See [`python/README.md`](python/README.md).
+
 ## New: Data-Driven Architecture
 The engine has been refactored to use Master Mapping Tables. This allows developers to choose exactly which fields to export to JSON by simply editing a table, without modifying the core logic.
 
