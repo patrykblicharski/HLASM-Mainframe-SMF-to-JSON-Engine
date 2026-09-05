@@ -92,16 +92,60 @@ def parse_smf_date(raw: bytes) -> str:
         return ""
 
 
+def _hhmmss(total_sec: int) -> str:
+    if total_sec < 0:
+        return ""
+    hh, rem = divmod(total_sec, 3600)
+    mm, ss = divmod(rem, 60)
+    if hh > 47:
+        return ""
+    return f"{hh % 24:02d}:{mm:02d}:{ss:02d}"
+
+
+def _packed_hhmmss(raw: bytes) -> str:
+    """Packed 0HHMMSSf / HHMMSSth → HH:MM:SS."""
+    if len(raw) < 4:
+        return ""
+    hexdigs = raw.hex()
+    if len(hexdigs) < 8:
+        return ""
+    sign = hexdigs[-1]
+    if sign not in "cfCF":
+        return ""
+    digits = hexdigs[:-1]
+    if not digits.isdigit() or len(digits) < 6:
+        return ""
+    body = digits[-6:]
+    try:
+        hh, mm, ss = int(body[0:2]), int(body[2:4]), int(body[4:6])
+    except ValueError:
+        return ""
+    if hh > 23 or mm > 59 or ss > 59:
+        return ""
+    return f"{hh:02d}:{mm:02d}:{ss:02d}"
+
+
 def parse_smf_time(raw: bytes) -> str:
-    """Binary hundredths since midnight → HH:MM:SS."""
+    """SMF TOD: 4-byte binary hundredths since midnight, or packed 0HHMMSSf.
+
+    Whole seconds stay ``HH:MM:SS`` (HLASM GET_TIME). A non-zero hundredths
+    remainder is appended as ``.hh`` so values like x'00000046' are not shown
+    as midnight.
+    """
     if len(raw) < 4:
         return ""
     hundredths = int.from_bytes(raw[:4], "big", signed=False)
-    total_sec = hundredths // 100
-    hh = total_sec // 3600
-    mm = (total_sec % 3600) // 60
-    ss = total_sec % 60
-    return f"{hh:02d}:{mm:02d}:{ss:02d}"
+    if hundredths == 0:
+        return "00:00:00"
+    if hundredths <= 48 * 3600 * 100:
+        total_sec, frac = divmod(hundredths, 100)
+        formatted = _hhmmss(total_sec)
+        if formatted:
+            return f"{formatted}.{frac:02d}" if frac else formatted
+    packed = _packed_hhmmss(raw)
+    if packed:
+        return packed
+    return _hhmmss(hundredths // 100) or ""
 
 
 def parse_dec(raw: bytes) -> str:

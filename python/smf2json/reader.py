@@ -32,6 +32,57 @@ class SmfRecord:
         return None
 
 
+def _looks_packed_date(raw: bytes) -> bool:
+    if len(raw) < 4:
+        return False
+    if raw[3] & 0x0F not in (0x0C, 0x0F):
+        return False
+    try:
+        ddd = int(raw.hex()[4:7], 10)
+    except ValueError:
+        return False
+    return 1 <= ddd <= 366
+
+
+def _is_bdw_at(blob: bytes, pos: int, n: int) -> bool:
+    """True when pos is a block descriptor, not an SMF RDW."""
+    if pos + 18 > n:
+        return False
+    block_ll = int.from_bytes(blob[pos : pos + 2], "big")
+    if blob[pos + 2] != 0 or blob[pos + 3] != 0:
+        return False
+    if block_ll < 8 or pos + block_ll > n:
+        return False
+    inner_ll = int.from_bytes(blob[pos + 4 : pos + 6], "big")
+    if inner_ll < 18 or 4 + inner_ll > block_ll:
+        return False
+    date_at_10 = _looks_packed_date(blob[pos + 10 : pos + 14])
+    date_at_14 = _looks_packed_date(blob[pos + 14 : pos + 18])
+    # Classic SMF: packed date at +10, SID at +14.
+    if date_at_10 and not date_at_14:
+        return False
+    inner_rty = blob[pos + 9]
+    inner_flg = blob[pos + 8]
+    if date_at_14 and inner_rty != 0:
+        if inner_flg & 0x1E == 0x1E or inner_rty in (30, 80, 89, 119):
+            return True
+    return False
+
+
+def normalize_smf_payload(payload: bytes) -> bytes:
+    """Ensure ``data`` starts at SMFxLEN (4-byte RDW) so IBM offsets apply."""
+    if len(payload) < 6:
+        return payload
+    if _looks_packed_date(payload[10:14]) and payload[5] != 0:
+        return payload
+    if len(payload) >= 18 and _looks_packed_date(payload[14:18]) and payload[9] != 0:
+        return payload[4:]
+    if len(payload) >= 14 and payload[1] != 0 and _looks_packed_date(payload[6:10]):
+        total = len(payload) + 4
+        return total.to_bytes(2, "big") + b"\x00\x00" + payload
+    return payload
+
+
 def iter_vb_records(
     blob: bytes,
     *,
@@ -58,10 +109,29 @@ def iter_vb_records(
     pending_rdw_len = 0
 
     while pos + 4 <= n:
+        if _is_bdw_at(blob, pos, n):
+            pos += 4
+            continue
         rdw = blob[pos : pos + 4]
         rec_len = int.from_bytes(rdw[0:2], "big")
         flags = rdw[2]
         if rec_len < 4 or pos + rec_len > n:
+            rest = blob[pos:]
+            if len(rest) >= 14 and rest[1] != 0 and _looks_packed_date(rest[6:10]):
+                payload = normalize_smf_payload(rest)
+                pos = n
+                if progress:
+                    progress(pos, n)
+                if len(payload) > 5 and payload[5] not in skip_types:
+                    rec = SmfRecord(
+                        index=idx,
+                        rdw_length=int.from_bytes(payload[0:2], "big"),
+                        span_flags=0,
+                        data=payload,
+                    )
+                    idx += 1
+                    yield rec
+                break
             if log:
                 log(f"WARN: bad RDW at offset {pos}: len={rec_len} — stopping")
             break
@@ -102,6 +172,7 @@ def iter_vb_records(
                     log(f"DEBUG: spanned segment flags=0x{flags:02X} at idx~{idx}")
                 continue
 
+        payload = normalize_smf_payload(payload)
         if len(payload) <= 5:
             continue
         rty = payload[5]

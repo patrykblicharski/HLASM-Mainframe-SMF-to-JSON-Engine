@@ -18,6 +18,13 @@ class TypeTests(unittest.TestCase):
         raw = ((12 * 3600 + 13 * 60 + 59) * 100).to_bytes(4, "big")
         self.assertEqual(parse_smf_time(raw), "12:13:59")
 
+    def test_time_keeps_hundredths(self) -> None:
+        raw = ((8 * 3600) * 100 + 46).to_bytes(4, "big")
+        self.assertEqual(parse_smf_time(raw), "08:00:00.46")
+
+    def test_time_packed(self) -> None:
+        self.assertEqual(parse_smf_time(bytes.fromhex("0121359f")), "12:13:59")
+
     def test_date(self) -> None:
         # 2026-03-25 → julian day 84 → packed 0c yy ddd F
         raw = bytes.fromhex("0126084f")
@@ -90,6 +97,25 @@ class DumpTests(unittest.TestCase):
         listed = read_dump(str(self.path))
         self.assertEqual(len(streamed), len(listed))
         self.assertEqual(streamed[0].record_type, listed[0].record_type)
+
+    def test_bdw_prefixed_type30_time(self) -> None:
+        rec = build_smf30()
+        block = (len(rec) + 4).to_bytes(2, "big") + b"\x00\x00" + rec
+        path = Path(self.tmp.name) / "bdw.smf"
+        path.write_bytes(block)
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["time"], "12:13:59")
+        self.assertEqual(rows[0]["job_name"], "PAYROLL")
+
+    def test_record_without_rdw_still_decodes_time(self) -> None:
+        rec = build_smf30()[4:]
+        path = Path(self.tmp.name) / "nordw.smf"
+        path.write_bytes(rec)
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["time"], "12:13:59")
+        self.assertEqual(rows[0]["smf_system_id"], "PROD")
 
     def test_convert_path_streams(self) -> None:
         rows = list(convert_path(str(self.path)))

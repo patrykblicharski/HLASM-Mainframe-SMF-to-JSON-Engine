@@ -329,10 +329,10 @@ class SmfApp(tk.Tk):
         self._queue: Optional[SimpleQueue[Tuple[Any, ...]]] = None
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
+        self.status_var = tk.StringVar(value="Ready")
         self._build_menu()
         self._build_toolbar()
         self._build_body()
-        self.status_var = tk.StringVar(value="Ready")
         ttk.Label(self, textvariable=self.status_var, anchor=tk.W, padding=4).pack(
             side=tk.BOTTOM, fill=tk.X
         )
@@ -388,8 +388,14 @@ class SmfApp(tk.Tk):
             self._load_strip, mode="determinate", maximum=PROGRESS_MAX, length=360
         )
         self.progress.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=8)
-        self.pct_var = tk.StringVar(value="0%")
-        ttk.Label(self._load_strip, textvariable=self.pct_var, width=5).pack(side=tk.LEFT)
+        self.progress_status = tk.Label(
+            self.progress,
+            textvariable=self.status_var,
+            bd=0,
+            padx=6,
+            font=("Segoe UI", 8),
+        )
+        self.progress_status.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
         ttk.Label(desc_bar, text="Field:").pack(side=tk.LEFT)
         self.desc_var = tk.StringVar(value="(hover a column header or cell for IBM name and description)")
         ttk.Label(desc_bar, textvariable=self.desc_var, wraplength=1000).pack(
@@ -477,7 +483,6 @@ class SmfApp(tk.Tk):
             if not self._load_strip.winfo_ismapped():
                 self._load_strip.pack(side=tk.TOP, fill=tk.X, after=self._desc_bar)
             self.progress["value"] = 0
-            self.pct_var.set("0%")
             self.config(cursor="watch")
         else:
             self._btn_cancel.pack_forget()
@@ -595,7 +600,6 @@ class SmfApp(tk.Tk):
         else:
             self.progress["value"] = 0
             pct = 0.0
-        self.pct_var.set(f"{pct:.0f}%")
         name = self.dump_path.name if self.dump_path else ""
         self.status_var.set(
             f"Loading {name}  —  {mapped:,} mapped / {seen:,} records  —  "
