@@ -8,7 +8,7 @@ from ..types import FieldSpec
 from .smf30 import FIELDS as SMF30_FIELDS
 from .smf80 import FIELDS as SMF80_FIELDS
 from .smf89 import FIELDS as SMF89_FIELDS
-from .smf119 import FIELDS as SMF119_ST01_FIELDS
+from .smf119 import FIELDS_BY_SUBTYPE as SMF119_FIELDS
 
 MAPS_BY_TYPE = {
     30: SMF30_FIELDS,
@@ -16,9 +16,7 @@ MAPS_BY_TYPE = {
     89: SMF89_FIELDS,
 }
 
-MAPS_BY_SUBTYPE = {
-    (119, 1): SMF119_ST01_FIELDS,
-}
+MAPS_BY_SUBTYPE = {(119, sty): fields for sty, fields in SMF119_FIELDS.items()}
 
 
 def fields_for(record_type: int, subtype: Optional[int] = None) -> Sequence[FieldSpec]:

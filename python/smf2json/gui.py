@@ -646,7 +646,7 @@ class SmfApp(tk.Tk):
             self.status_var.set("Error")
             return
         if not self.panes:
-            self.log("WARN: no mapped records (supported types: 30, 80, 89, 119-1)")
+            self.log("WARN: no mapped records (supported types: 30, 80, 89, 119)")
         dump_s = time.perf_counter() - getattr(self, "_load_t0", time.perf_counter())
         timing = format_timing(records_s, dump_s)
         self.log(f"INFO: timing  {timing}")
@@ -801,7 +801,7 @@ class SmfApp(tk.Tk):
             "About",
             "SMF2JSON Desktop\n\n"
             "Python port of the HLASM table-driven SMF converter.\n"
-            "Supports SMF types 30, 80, 89, 119 subtype 1 from VB/VBS binary dumps.\n"
+            "Supports SMF types 30, 80, 89, and 119 (TCP/IP subtypes) from VB/VBS binary dumps.\n"
             "Records are grouped into tabs by type / subtype.\n"
             f"Column layout is saved to {config_path()}.",
             parent=self,

@@ -156,7 +156,7 @@ def run_cli(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(
         prog="smf2json",
-        description="Convert binary SMF dumps (types 30/80/89/119-1) to JSON or CSV",
+        description="Convert binary SMF dumps (types 30/80/89/119) to JSON or CSV",
     )
     p.add_argument("input", nargs="?", help="SMF dump path (omit to launch GUI)")
     p.add_argument("-o", "--output", help="Output file (json/csv)")
@@ -173,11 +173,25 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
 
     if args.make_sample:
-        from .sample_dump import build_smf30, build_smf80, build_smf119_st01
+        from .sample_dump import (
+            build_smf30,
+            build_smf80,
+            build_smf119_st01,
+            build_smf119_st02,
+            build_smf119_st03,
+            build_smf119_st10,
+        )
 
         path = Path(args.make_sample)
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(build_smf30() + build_smf80() + build_smf119_st01())
+        path.write_bytes(
+            build_smf30()
+            + build_smf80()
+            + build_smf119_st01()
+            + build_smf119_st02()
+            + build_smf119_st03()
+            + build_smf119_st10()
+        )
         print(f"Wrote sample dump {path}")
         return 0
 

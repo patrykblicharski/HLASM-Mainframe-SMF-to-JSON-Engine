@@ -11,21 +11,24 @@ This file is the Python desktop/CLI track only.
 - [x] Column tooltips: header = JSON key, tip = IBM name + description
 - [x] Per-type/subtype column picker persisted in `~/.smf2json/columns.json`
 - [x] Notebook tabs when a dump has several types / subtypes
-- [x] SMF 119 subtype 1 (TCP connection initiation) from PACSYS / IBM layout
-- [x] Synthetic sample dump (30 + 80 + 119-1) and unittest coverage
+- [x] SMF 119 subtypes 1–3, 5–8, 10–12, 20–24, 32–45, 48–52, 70–81 from PACSYS / IBM layouts
+- [x] Synthetic sample dump (30 + 80 + 119-1/2/3/10) and unittest coverage
 
 ## Next maps (desktop value)
 
 Priority is types that show up in IFASMFDP extracts and have a clear PACSYS/IBM table.
 
-- [ ] **119-2** TCP connection termination (bytes in/out, elapsed, term code) — natural pair to 119-1
-- [ ] **119-3** FTP server transfer completion
-- [ ] **119-10 / 119-11** TN3270 session init/term
+- [x] **119-2** TCP connection termination (bytes in/out, elapsed, term code)
+- [x] **119-3 / 119-70** FTP client / server transfer completion
+- [x] **119-10** UDP endpoint close
+- [x] **119-11 / 119-12** zERT connection detail / summary
+- [x] **119-20 / 119-21** TN3270E session init/term
+- [ ] **119-4** TCP/IP profile (NMTP eyecatcher sections)
 - [ ] **14 / 15** dataset activity (non-VSAM)
 - [ ] **42** DFSMS
 - [ ] Packed decimal (`P`) and more HEX/flag decode where IBM tables need it
 
-When adding a 119 subtype: new `FIELDS` list + `MAPS_BY_SUBTYPE[(119, N)]` + sample + test. Do not reuse the 119-1 S1 layout.
+When adding a 119 subtype: extend the temp/smf119-app layout, run `python python/tools/gen_smf119_maps.py`, add a sample + test. Do not reuse another subtype's S1 layout. Subtype 4 (profile) and 94–98 (OpenSSH) stay unmapped.
 
 ## Engine / GUI
 

@@ -34,12 +34,16 @@ TYPE_LENGTHS = {
     "DEC4": 4,
     "DEC8": 8,
     "HEX1": 1,
+    "HEX2": 2,
     "HEX4": 4,
     "HEX8": 8,
+    "IP4": 4,
     "IP16": 16,
+    "IPUN": 16,
     "DTE": 4,
     "TME": 4,
     "RS_STR": 0,
+    "VAR_CHR": 0,
 }
 
 
@@ -158,10 +162,20 @@ def parse_hex(raw: bytes) -> str:
     return raw.hex().upper() if raw else ""
 
 
+def parse_ip4(raw: bytes) -> str:
+    """4-byte IPv4 address."""
+    if len(raw) < 4:
+        return ""
+    chunk = raw[:4]
+    if chunk == bytes(4):
+        return ""
+    return ".".join(str(b) for b in chunk)
+
+
 def parse_ip16(raw: bytes) -> str:
     """16-byte TCP/IP address: IPv4-mapped, IPv4-compatible, or IPv6."""
     if len(raw) < 16:
-        return ""
+        return parse_ip4(raw) if raw else ""
     chunk = raw[:16]
     if chunk == bytes(16):
         return ""
@@ -171,6 +185,20 @@ def parse_ip16(raw: bytes) -> str:
         return ".".join(str(b) for b in chunk[12:16])
     hextets = [f"{int.from_bytes(chunk[i : i + 2], 'big'):x}" for i in range(0, 16, 2)]
     return ":".join(hextets)
+
+
+def parse_ipunion(raw: bytes) -> str:
+    """16-byte IP union: IPv4 in the first 4 bytes, or a 16-byte IPv6/mapped address."""
+    if len(raw) < 4:
+        return ""
+    if len(raw) < 16:
+        return parse_ip4(raw)
+    chunk = raw[:16]
+    if chunk == bytes(16):
+        return ""
+    if chunk[4:] == bytes(12):
+        return parse_ip4(chunk[:4])
+    return parse_ip16(chunk)
 
 
 def field_length(spec: FieldSpec) -> int:
@@ -189,8 +217,14 @@ def convert_value(spec: FieldSpec, raw: bytes) -> str:
         return parse_dec(raw)
     if ft.startswith("HEX"):
         return parse_hex(raw)
+    if ft == "IP4":
+        return parse_ip4(raw)
     if ft == "IP16":
         return parse_ip16(raw)
+    if ft in ("IPUN", "IPUNION"):
+        return parse_ipunion(raw)
+    if ft in ("VAR_CHR", "VARCHR"):
+        return ebcdic_to_str(raw)
     if ft in ("DTE", "DATE"):
         return parse_smf_date(raw)
     if ft in ("TME", "TIME"):

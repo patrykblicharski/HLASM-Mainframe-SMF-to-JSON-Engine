@@ -13,13 +13,15 @@ python/
     __main__.py        CLI / GUI entry (`python -m smf2json`)
     reader.py          RECFM=VB / VBS dump walker (RDW-framed)
     engine.py          FieldSpec → dict rows
-    types.py           FieldSpec + converters (CHR/DEC/HEX/DTE/TME/IP16/RS_STR)
-    maps/              One module per SMF type (or type+subtype)
+    types.py           FieldSpec + converters (CHR/DEC/HEX/DTE/TME/IP16/IPUN/VAR_CHR)
+    maps/              One module per SMF type (or type+subtype); 119 sections in smf119_generated.py
     progress.py        Byte bar + elapsed-time formatting (CLI stderr / GUI status)
     gui.py             Tkinter: notebook tabs, column picker, tooltips
     column_config.py   Visible columns persisted per type/subtype
-    sample_dump.py     Synthetic VB records for 30, 80, 119-1
+    sample_dump.py     Synthetic VB records for 30, 80, 119-1/2/3/10
     terse.py           AMATERSE/TERSE unpacker (PACK/SPACK); `python -m smf2json.terse`
+  tools/
+    gen_smf119_maps.py Regenerate maps/smf119_generated.py from temp/smf119-app layouts
   unterse.py           Standalone launcher for terse.py
   tests/               stdlib unittest
   samples/             generated dumps (make-sample)
@@ -60,8 +62,9 @@ Port of `SMF_FIELD` macros. `FieldSpec`:
 Register in `maps/__init__.py`. Add converters in `types.py` only when the IBM format is new. Add `sample_dump.build_*` + a `tests/test_engine.py` case.
 
 PACSYS HTML tables (e.g. smf119_subtype01) are a valid layout source; keep IBM names exact.
+SMF 119 subtype sections live in `maps/smf119_generated.py` (header + ident in `maps/smf119.py`).
 
-**Mapped today:** 30 (common sections), 80 (RACF header + RS tags 1/17), 89 (header), 119 subtype 1 (TCP connection initiation).
+**Mapped today:** 30 (common sections), 80 (RACF header + RS tags 1/17), 89 (header), 119 subtypes 1–3, 5–8, 10–12, 20–24, 32–45, 48–52, 70–81. Not mapped: 119-4 (NMTP profile), 119-94..98 (OpenSSH, external).
 
 ## GUI conventions
 

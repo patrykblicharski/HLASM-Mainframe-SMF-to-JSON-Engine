@@ -1,11 +1,17 @@
-"""SMF type 119 subtype 1 — TCP connection initiation (PACSYS / IBM IFASMFR)."""
+"""SMF type 119 — TCP/IP (header + ident + per-subtype sections).
+
+Section layouts are generated from PACSYS / IBM IFASMFR tables
+(``python/tools/gen_smf119_maps.py``). Header and stack ident stay
+hand-written so json keys stay stable across subtypes.
+"""
 
 from __future__ import annotations
 
 from ..types import FieldSpec as F
+from .smf119_generated import SECTION_FIELDS, SUBTYPE_TITLES
 
 # Self-defining triplets (absolute offsets from RDW / SMF119LEN)
-IDOFF, S1OFF = 28, 36
+IDOFF = 28
 
 
 def _h(key, ibm, ftype, off, desc):
@@ -16,22 +22,28 @@ def _s(key, ibm, ftype, off, trip, desc):
     return F(key, ibm, ftype, off, trip, description=desc)
 
 
-# Header + TCP/IP ident + subtype-1 connection initiation section.
-# Other 119 subtypes are skipped by the registry (MAPS_BY_SUBTYPE).
-FIELDS = [
-    # Standard SMF header
+HEADER = [
     _h("smf_sys_flag", "SMF119FLG", "DEC1", 4, "System indicator flags"),
     _h("smf_record_type", "SMF119RTY", "DEC1", 5, "Record type (119)"),
     _h("time", "SMF119TME", "TME", 6, "Time record moved to SMF buffer"),
     _h("date", "SMF119DTE", "DTE", 10, "Date record moved to SMF buffer (0cyydddF)"),
     _h("smf_system_id", "SMF119SID", "CHR4", 14, "System identification (SID)"),
     _h("smf_subsystem_id", "SMF119SSI", "CHR4", 18, "Subsystem identification"),
-    _h("smf_subtype", "SMF119STY", "DEC2", 22, "Record subtype (1 = TCP connection initiation)"),
-    # TCP/IP identification section (SMF119IDOff)
+    _h("smf_subtype", "SMF119STY", "DEC2", 22, "Record subtype"),
+]
+
+IDENT = [
     _s("sys_name", "SMF119TI_SYSName", "CHR8", 0, IDOFF, "System name from SYSNAME in IEASYSxx"),
     _s("sysplex_name", "SMF119TI_SysplexName", "CHR8", 8, IDOFF, "Sysplex name from SYSPLEX in COUPLExx"),
     _s("tcp_stack", "SMF119TI_Stack", "CHR8", 16, IDOFF, "TCP/IP stack name"),
-    _s("tcp_release", "SMF119TI_ReleaseID", "CHR8", 24, IDOFF, "z/OS Communications Server TCP/IP release identifier"),
+    _s(
+        "tcp_release",
+        "SMF119TI_ReleaseID",
+        "CHR8",
+        24,
+        IDOFF,
+        "z/OS Communications Server TCP/IP release identifier",
+    ),
     _s(
         "tcp_component",
         "SMF119TI_Comp",
@@ -44,22 +56,23 @@ FIELDS = [
     _s("user_id", "SMF119TI_UserID", "CHR8", 48, IDOFF, "User ID of the security context writing this record"),
     _s("asid", "SMF119TI_ASID", "DEC2", 58, IDOFF, "ASID of the address space that writes this record"),
     _s("record_reason", "SMF119TI_Reason", "HEX1", 60, IDOFF, "Reason for writing this record (08 = event)"),
-    # Subtype 1 — TCP connection initiation (SMF119S1Off)
-    _s(
-        "resource_name",
-        "SMF119AP_TIRName",
-        "CHR8",
-        0,
-        S1OFF,
-        "TCP socket resource name (address space that established the connection)",
-    ),
-    _s("connection_id", "SMF119AP_TIConnID", "DEC4", 8, S1OFF, "TCP socket resource ID (connection ID)"),
-    _s("subtask_tcb", "SMF119AP_TISubTask", "HEX4", 16, S1OFF, "TCB address of the task that owns this connection"),
-    _s("remote_ip", "SMF119AP_TIRIP", "IP16", 20, S1OFF, "Remote IP address at connection open"),
-    _s("local_ip", "SMF119AP_TILIP", "IP16", 36, S1OFF, "Local IP address at connection open"),
-    _s("remote_port", "SMF119AP_TIRPort", "DEC2", 52, S1OFF, "Remote port number at connection open"),
-    _s("local_port", "SMF119AP_TILPort", "DEC2", 54, S1OFF, "Local port number at connection open"),
-    _s("conn_time", "SMF119AP_TITime", "TME", 56, S1OFF, "Time of day of connection establishment"),
-    _s("conn_date", "SMF119AP_TIDate", "DTE", 60, S1OFF, "Date of connection establishment"),
-    _s("conn_stck", "SMF119AP_TISTCK", "HEX8", 64, S1OFF, "STCK of connection establishment"),
+]
+
+COMMON = HEADER + IDENT
+
+FIELDS_BY_SUBTYPE: dict[int, list[F]] = {
+    sty: COMMON + list(sections) for sty, sections in SECTION_FIELDS.items()
+}
+
+# Back-compat: subtype 1 is the original map.
+FIELDS = FIELDS_BY_SUBTYPE[1]
+
+__all__ = [
+    "COMMON",
+    "FIELDS",
+    "FIELDS_BY_SUBTYPE",
+    "HEADER",
+    "IDENT",
+    "SECTION_FIELDS",
+    "SUBTYPE_TITLES",
 ]

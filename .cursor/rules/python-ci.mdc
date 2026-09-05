@@ -19,7 +19,7 @@ python -m smf2json --make-sample samples/sample.smf
 python -m smf2json samples/sample.smf -o samples/sample.json
 ```
 
-Expect three mapped records (30, 80, 119-1). Exit 2 = no mapped records (broken map/registry).
+Expect mapped records for types 30, 80, and 119 subtypes 1/2/3/10. Exit 2 = no mapped records (broken map/registry).
 
 ## What CI should run (if/when a workflow is added)
 

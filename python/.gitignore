@@ -2,3 +2,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+# unpacked TERSE dumps (keep *.TRS fixtures)
+samples/**/*.smf
+samples/**/*.raw.dump
+samples/**/_probe.py

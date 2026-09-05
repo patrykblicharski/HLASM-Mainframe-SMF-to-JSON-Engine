@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence
 
 from .maps import MAPS_BY_SUBTYPE, MAPS_BY_TYPE, fields_for
 from .reader import ProgressFn, SmfRecord, iter_dump
-from .types import FieldSpec, convert_value, field_length
+from .types import FieldSpec, convert_value, ebcdic_to_str, field_length
 
 
 LogFn = Callable[[str], None]
@@ -18,6 +18,18 @@ def _u16(data: bytes, off: int) -> int:
 
 def _u32(data: bytes, off: int) -> int:
     return int.from_bytes(data[off : off + 4], "big")
+
+
+def read_triplet(data: bytes, trip: int) -> Optional[tuple[int, int, int]]:
+    """Return (section_offset, section_length, section_number) or None if absent."""
+    if trip + 8 > len(data):
+        return None
+    section_off = _u32(data, trip)
+    if section_off == 0:
+        return None
+    section_len = _u16(data, trip + 4)
+    section_num = _u16(data, trip + 6)
+    return section_off, section_len, section_num
 
 
 def resolve_address(data: bytes, spec: FieldSpec, log: Optional[LogFn] = None) -> Optional[int]:
@@ -67,6 +79,31 @@ def extract_rs_string(data: bytes, control_offset: int, tag: int, log: Optional[
     return ""
 
 
+def _extract_var_chr(data: bytes, spec: FieldSpec, log: Optional[LogFn] = None) -> str:
+    """EBCDIC string whose length is the triplet section length minus the field offset."""
+    if spec.triplet_offset is None:
+        return ""
+    trip = read_triplet(data, spec.triplet_offset)
+    if trip is None:
+        if log:
+            log(f"DEBUG: {spec.json_key}: VAR_CHR triplet absent")
+        return ""
+    section_off, section_len, _num = trip
+    addr = section_off + spec.offset
+    nbytes = section_len - spec.offset
+    if nbytes <= 0 or addr < 0 or addr + nbytes > len(data):
+        if log:
+            log(
+                f"DEBUG: {spec.json_key}: VAR_CHR addr={addr} len={nbytes} "
+                f"OOB (rec={len(data)} seclen={section_len})"
+            )
+        return ""
+    val = ebcdic_to_str(data[addr : addr + nbytes])
+    if log:
+        log(f"DEBUG: {spec.json_key} ({spec.ibm_name}) type=VAR_CHR @{addr:#x}/{nbytes} → {val!r}")
+    return val
+
+
 def convert_record(rec: SmfRecord, log: Optional[LogFn] = None) -> Optional[Dict[str, Any]]:
     rty = rec.record_type
     sty = rec.subtype
@@ -88,6 +125,10 @@ def convert_record(rec: SmfRecord, log: Optional[LogFn] = None) -> Optional[Dict
         try:
             if spec.ftype == "RS_STR":
                 out[spec.json_key] = extract_rs_string(data, spec.offset, spec.tag or 0, log)
+                continue
+
+            if spec.ftype.upper() in ("VAR_CHR", "VARCHR"):
+                out[spec.json_key] = _extract_var_chr(data, spec, log)
                 continue
 
             addr = resolve_address(data, spec, log)

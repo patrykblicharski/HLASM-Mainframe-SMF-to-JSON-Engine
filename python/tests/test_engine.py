@@ -8,9 +8,18 @@ import unittest
 from pathlib import Path
 
 from smf2json.engine import convert_dump, convert_path, ordered_columns
+from smf2json.maps import MAPS_BY_SUBTYPE, fields_for
 from smf2json.reader import iter_dump, read_dump
-from smf2json.sample_dump import build_smf30, build_smf80, build_smf119_st01
-from smf2json.types import FieldSpec, convert_value, parse_ip16, parse_smf_date, parse_smf_time
+from smf2json.sample_dump import (
+    build_smf30,
+    build_smf80,
+    build_smf119_st01,
+    build_smf119_st02,
+    build_smf119_st03,
+    build_smf119_st10,
+    build_smf119_st32,
+)
+from smf2json.types import FieldSpec, convert_value, parse_ip16, parse_ip4, parse_ipunion, parse_smf_date, parse_smf_time
 
 
 class TypeTests(unittest.TestCase):
@@ -38,6 +47,14 @@ class TypeTests(unittest.TestCase):
     def test_ip16_mapped(self) -> None:
         raw = bytes(10) + b"\xff\xff" + bytes((10, 1, 2, 3))
         self.assertEqual(parse_ip16(raw), "10.1.2.3")
+
+    def test_ip4(self) -> None:
+        self.assertEqual(parse_ip4(bytes((10, 20, 30, 40))), "10.20.30.40")
+        self.assertEqual(parse_ip4(bytes(4)), "")
+
+    def test_ipunion_v4_in_prefix(self) -> None:
+        raw = bytes((10, 20, 30, 40)) + bytes(12)
+        self.assertEqual(parse_ipunion(raw), "10.20.30.40")
 
 
 class DumpTests(unittest.TestCase):
@@ -153,6 +170,77 @@ class DumpTests(unittest.TestCase):
         self.assertEqual(row["conn_date"], "2026-03-25")
         self.assertEqual(row["subtask_tcb"], "00ABCDEF")
         self.assertEqual(row["conn_stck"], "00DECAFBAD010203")
+
+    def test_convert_type119_st02(self) -> None:
+        path = Path(self.tmp.name) / "smf119-2.smf"
+        path.write_bytes(build_smf119_st02())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_subtype"], "2")
+        self.assertEqual(row["resource_name"], "FTPTA5")
+        self.assertEqual(row["remote_ip"], "10.1.2.3")
+        self.assertEqual(row["local_ip"], "192.168.1.10")
+        self.assertEqual(row["remote_port"], "443")
+        self.assertEqual(row["local_port"], "21")
+        self.assertEqual(row["in_bytes"], "4096")
+        self.assertEqual(row["out_bytes"], "2048")
+        self.assertEqual(row["term_code"], "21")
+        self.assertEqual(row["conn_end_time"], "14:05:01")
+        self.assertEqual(row["socket_status"], "01")
+
+    def test_convert_type119_st03_var_chr(self) -> None:
+        path = Path(self.tmp.name) / "smf119-3.smf"
+        path.write_bytes(build_smf119_st03())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_subtype"], "3")
+        self.assertEqual(row["ftp_cmd"], "RETR")
+        self.assertEqual(row["remote_user"], "FTPUSER")
+        self.assertEqual(row["local_user"], "IBMUSER")
+        self.assertEqual(row["bytes_transferred"], "8192")
+        self.assertEqual(row["file_name"], "USER.FTP.DATA")
+
+    def test_convert_type119_st10(self) -> None:
+        path = Path(self.tmp.name) / "smf119-10.smf"
+        path.write_bytes(build_smf119_st10())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_subtype"], "10")
+        self.assertEqual(row["resource_name"], "UDPSRV")
+        self.assertEqual(row["remote_ip"], "10.9.8.7")
+        self.assertEqual(row["local_port"], "5353")
+        self.assertEqual(row["in_bytes"], "100")
+        self.assertEqual(row["out_bytes"], "200")
+
+    def test_convert_type119_st32_ipunion(self) -> None:
+        path = Path(self.tmp.name) / "smf119-32.smf"
+        path.write_bytes(build_smf119_st32())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_subtype"], "32")
+        self.assertEqual(row["sc_addr"], "10.20.30.40")
+
+    def test_smf119_unmapped_subtype_skipped(self) -> None:
+        rec = bytearray(build_smf119_st01())
+        rec[22:24] = (4).to_bytes(2, "big")
+        path = Path(self.tmp.name) / "smf119-4.smf"
+        path.write_bytes(bytes(rec))
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(rows, [])
+
+    def test_smf119_subtype_registry(self) -> None:
+        self.assertTrue(fields_for(119, 1))
+        self.assertTrue(fields_for(119, 2))
+        self.assertTrue(fields_for(119, 70))
+        self.assertEqual(fields_for(119, 4), ())
+        self.assertEqual(fields_for(119, 94), ())
+        mapped = {sty for rty, sty in MAPS_BY_SUBTYPE if rty == 119}
+        self.assertGreaterEqual(len(mapped), 46)
+        self.assertNotIn(4, mapped)
 
 
 if __name__ == "__main__":
