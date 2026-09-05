@@ -7,8 +7,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from smf2json.engine import convert_dump, ordered_columns
-from smf2json.reader import read_dump
+from smf2json.engine import convert_dump, convert_path, ordered_columns
+from smf2json.reader import iter_dump, read_dump
 from smf2json.sample_dump import build_smf30, build_smf80, build_smf119_st01
 from smf2json.types import FieldSpec, convert_value, parse_ip16, parse_smf_date, parse_smf_time
 
@@ -75,6 +75,36 @@ class DumpTests(unittest.TestCase):
         self.assertIn("PAYROLL", text)
         cols = ordered_columns(rows)
         self.assertIn("job_name", cols)
+
+    def test_iter_progress_reaches_eof(self) -> None:
+        ticks: list[tuple[int, int]] = []
+        recs = list(iter_dump(str(self.path), progress=lambda pos, n: ticks.append((pos, n))))
+        self.assertEqual(len(recs), 2)
+        self.assertTrue(ticks)
+        self.assertEqual(ticks[0][0], 0)
+        self.assertEqual(ticks[-1][0], ticks[-1][1])
+        self.assertEqual(ticks[-1][1], self.path.stat().st_size)
+
+    def test_iter_dump_matches_read_dump(self) -> None:
+        streamed = list(iter_dump(str(self.path)))
+        listed = read_dump(str(self.path))
+        self.assertEqual(len(streamed), len(listed))
+        self.assertEqual(streamed[0].record_type, listed[0].record_type)
+
+    def test_convert_path_streams(self) -> None:
+        rows = list(convert_path(str(self.path)))
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0]["smf_record_type"], "30")
+        self.assertEqual(rows[1]["smf_record_type"], "80")
+
+    def test_convert_path_many_records(self) -> None:
+        path = Path(self.tmp.name) / "many.smf"
+        path.write_bytes(build_smf30() * 300)
+        count = 0
+        for row in convert_path(str(path)):
+            count += 1
+            self.assertEqual(row["smf_record_type"], "30")
+        self.assertEqual(count, 300)
 
     def test_convert_type119_st01(self) -> None:
         path = Path(self.tmp.name) / "smf119.smf"

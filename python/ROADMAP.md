@@ -29,6 +29,7 @@ When adding a 119 subtype: new `FIELDS` list + `MAPS_BY_SUBTYPE[(119, N)]` + sam
 
 ## Engine / GUI
 
+- [x] GUI stays responsive on large dumps (background convert, batched tree insert)
 - [ ] Filter / search in the current tab
 - [ ] Sort by clicking a column heading
 - [ ] Export JSON of the current tab (today JSON is the whole dump)

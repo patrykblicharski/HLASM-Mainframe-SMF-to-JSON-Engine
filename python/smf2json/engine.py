@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence
 
 from .maps import MAPS_BY_SUBTYPE, MAPS_BY_TYPE, fields_for
-from .reader import SmfRecord
+from .reader import SmfRecord, iter_dump
 from .types import FieldSpec, convert_value, field_length
 
 
@@ -20,22 +20,24 @@ def _u32(data: bytes, off: int) -> int:
     return int.from_bytes(data[off : off + 4], "big")
 
 
-def resolve_address(data: bytes, spec: FieldSpec, log: LogFn) -> Optional[int]:
+def resolve_address(data: bytes, spec: FieldSpec, log: Optional[LogFn] = None) -> Optional[int]:
     if spec.triplet_offset is None:
         return spec.offset
 
     trip = spec.triplet_offset
     if trip + 4 > len(data):
-        log(f"DEBUG: {spec.json_key}: triplet @{trip} past EOF")
+        if log:
+            log(f"DEBUG: {spec.json_key}: triplet @{trip} past EOF")
         return None
     section_off = _u32(data, trip)
     if section_off == 0:
-        log(f"DEBUG: {spec.json_key}: section triplet @{trip:#x} = 0 (absent)")
+        if log:
+            log(f"DEBUG: {spec.json_key}: section triplet @{trip:#x} = 0 (absent)")
         return None
     return section_off + spec.offset
 
 
-def extract_rs_string(data: bytes, control_offset: int, tag: int, log: LogFn) -> str:
+def extract_rs_string(data: bytes, control_offset: int, tag: int, log: Optional[LogFn] = None) -> str:
     if control_offset + 4 > len(data):
         return ""
     rel = _u16(data, control_offset)
@@ -57,25 +59,28 @@ def extract_rs_string(data: bytes, control_offset: int, tag: int, log: LogFn) ->
             from .types import ebcdic_to_str
 
             val = ebcdic_to_str(payload)
-            log(f"DEBUG: RS tag={tag} hit len={dln} value={val!r}")
+            if log:
+                log(f"DEBUG: RS tag={tag} hit len={dln} value={val!r}")
             return val
-    log(f"DEBUG: RS tag={tag} not found (cnt={cnt})")
+    if log:
+        log(f"DEBUG: RS tag={tag} not found (cnt={cnt})")
     return ""
 
 
 def convert_record(rec: SmfRecord, log: Optional[LogFn] = None) -> Optional[Dict[str, Any]]:
-    log = log or (lambda _m: None)
     rty = rec.record_type
     sty = rec.subtype
     fields: Sequence[FieldSpec] = fields_for(rty, sty)
     if not fields:
-        log(f"DEBUG: record[{rec.index}] type={rty} subtype={sty} — no map, skipped")
+        if log:
+            log(f"DEBUG: record[{rec.index}] type={rty} subtype={sty} — no map, skipped")
         return None
 
-    log(
-        f"INFO: converting record[{rec.index}] type={rty} subtype={sty} "
-        f"with {len(fields)} field specs"
-    )
+    if log:
+        log(
+            f"INFO: converting record[{rec.index}] type={rty} subtype={sty} "
+            f"with {len(fields)} field specs"
+        )
     out: Dict[str, Any] = {}
     data = rec.data
 
@@ -91,18 +96,21 @@ def convert_record(rec: SmfRecord, log: Optional[LogFn] = None) -> Optional[Dict
                 continue
             ln = field_length(spec)
             if addr < 0 or addr + ln > len(data):
-                log(f"DEBUG: {spec.json_key}: addr={addr} len={ln} OOB (rec={len(data)})")
+                if log:
+                    log(f"DEBUG: {spec.json_key}: addr={addr} len={ln} OOB (rec={len(data)})")
                 out[spec.json_key] = ""
                 continue
             raw = data[addr : addr + ln]
             val = convert_value(spec, raw)
             out[spec.json_key] = val
-            log(
-                f"DEBUG: {spec.json_key} ({spec.ibm_name}) "
-                f"type={spec.ftype} @{addr:#x}/{ln} → {val!r}"
-            )
+            if log:
+                log(
+                    f"DEBUG: {spec.json_key} ({spec.ibm_name}) "
+                    f"type={spec.ftype} @{addr:#x}/{ln} → {val!r}"
+                )
         except Exception as exc:  # noqa: BLE001
-            log(f"ERROR: {spec.json_key}: {exc}")
+            if log:
+                log(f"ERROR: {spec.json_key}: {exc}")
             out[spec.json_key] = ""
     return out
 
@@ -116,6 +124,14 @@ def convert_dump(records: List[SmfRecord], log: Optional[LogFn] = None) -> List[
     if log:
         log(f"INFO: converted {len(rows)} records")
     return rows
+
+
+def convert_path(path: str, log: Optional[LogFn] = None) -> Iterator[Dict[str, Any]]:
+    """Yield mapped rows one at a time so callers can batch without holding every SMF record."""
+    for rec in iter_dump(path, log=log):
+        obj = convert_record(rec, log=log)
+        if obj is not None:
+            yield obj
 
 
 def field_meta() -> Dict[str, Dict[str, Any]]:

@@ -27,7 +27,7 @@ No pip packages. Python 3.10+ (`from __future__ import annotations` is used thro
 
 ## Data flow
 
-1. `reader.read_dump(path)` → `list[SmfRecord]`. Each `data` **includes the 4-byte RDW** so IBM offsets (from SMFxLEN) apply as-is.
+1. `reader.iter_dump(path)` / `read_dump(path)` → records. Each `data` **includes the 4-byte RDW** so IBM offsets (from SMFxLEN) apply as-is. The GUI uses `iter_dump` so it never builds a full `list[SmfRecord]`.
 2. `engine.convert_record` looks up `maps.fields_for(type, subtype)`.
    - `MAPS_BY_TYPE[rty]` — types without distinct subtype layouts (30, 80, 89).
    - `MAPS_BY_SUBTYPE[(rty, sty)]` — types whose sections differ by subtype (119).
@@ -65,6 +65,7 @@ PACSYS HTML tables (e.g. smf119_subtype01) are a valid layout source; keep IBM n
 - Column **header** = `json_key`. **Tooltip / Field bar** = IBM name + description.
 - **Columns…** appears after a dump is loaded. Checkboxes show source key, friendly label, IBM name. Saved to `~/.smf2json/columns.json` under `"30"` or `"119-1"`.
 - Header width = `TkHeadingFont.measure(title) + 28`.
+- Load runs on a worker thread in batches of 250; the table fills incrementally. A determinate **progress bar** tracks file bytes (percent + MB). Debug pane gets progress / errors, not per-field DEBUG (that is CLI `--debug`). **Cancel load** keeps rows already shown.
 
 ## Commands
 
