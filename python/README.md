@@ -56,6 +56,7 @@ Copy the file in binary mode. Text / hex listings / SYSOUT will not parse.
 | 61 / 65 / 66 | — | ICF DEFINE / DELETE / ALTER |
 | 80 | — | RACF z/OS 3.1 fixed + relocate tags 1/2/3/4/8/9/13/15/16/17/20 (`MAPS_BY_TYPE`; bytes 22–23 = `SMF80USR`) |
 | 89 | — | Header subset |
+| 92 | 1, 2, 4–7, 10–17 | OMVS / zFS file system activity (`MAPS_BY_SUBTYPE`; zFS 50–57 not mapped) |
 | 119 | 1–4, 5–8, 10–12, 20–24, 32–45, 48–52, 70–81 | TCP/IP (connections, FTP, profile/NMTP partial, TN3270, DVIPA, CSSMTP, IPSec, …) |
 
 Unmapped 119 subtypes: **94–98** (OpenSSH). Subtype **4** is mapped **partially** (common + stack cfg NMTP sections). Other types are skipped until a map is added.

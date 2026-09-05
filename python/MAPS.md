@@ -24,6 +24,20 @@ Inventory of record types and subtypes currently registered in `smf2json/maps`.
 | **66** | — | ICF ALTER activity |
 | **80** | — | RACF processing (z/OS 3.1 fixed + relocate; no SMFxSTY — discriminate by `SMF80EVT`) |
 | **89** | — | Usage data (header subset) |
+| **92** | **1** | File system activity — mount |
+| **92** | **2** | File system activity — quiesce (suspend) |
+| **92** | **4** | File system activity — unquiesce (resume) |
+| **92** | **5** | File system activity — unmount |
+| **92** | **6** | File system activity — remount |
+| **92** | **7** | File system activity — move |
+| **92** | **10** | File system activity — file open |
+| **92** | **11** | File system activity — file close |
+| **92** | **12** | File system activity — MMAP |
+| **92** | **13** | File system activity — MUNMAP |
+| **92** | **14** | File system activity — delete / rename |
+| **92** | **15** | File system activity — security attribute change |
+| **92** | **16** | File system activity — socket / special / pipe close |
+| **92** | **17** | File system activity — file access count (interval) |
 | **119** | **1** | TCP/IP — TCP connection initiation |
 | **119** | **2** | TCP/IP — TCP connection termination |
 | **119** | **3** | TCP/IP — FTP client transfer completion |
@@ -72,4 +86,4 @@ Inventory of record types and subtypes currently registered in `smf2json/maps`.
 | **119** | **80** | TCP/IP — Manual tunnel deactivation |
 | **119** | **81** | TCP/IP — VTAM 3270 IDS |
 
-**Not mapped (known gaps):** SMF 119 subtypes **94–98** (OpenSSH, no layouts); 119-4 NMTP sections beyond the partial set (PORT/INTF/route/IPSec/…).
+**Not mapped (known gaps):** SMF 119 subtypes **94–98** (OpenSSH, no layouts); 119-4 NMTP sections beyond the partial set (PORT/INTF/route/IPSec/…); SMF **92** zFS performance subtypes **50–57**.

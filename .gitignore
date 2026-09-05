@@ -1,0 +1,15 @@
+# OS / IDE
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/
+
+# Scratch dumps (never commit)
+*.bin
+IZYP.*
+
+# Python runtime junk at repo root (package uses python/.gitignore too)
+__pycache__/
+*.py[cod]
+.venv/
+venv/

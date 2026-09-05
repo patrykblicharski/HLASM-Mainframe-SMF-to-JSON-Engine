@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from smf2json.engine import convert_dump, convert_path, ordered_columns
+from smf2json.engine import convert_dump, convert_path, ordered_columns, read_triplet
 from smf2json.maps import MAPS_BY_SUBTYPE, fields_for
 from smf2json.reader import iter_dump, read_dump
 from smf2json.sample_dump import (
@@ -24,6 +24,10 @@ from smf2json.sample_dump import (
     build_smf65,
     build_smf66,
     build_smf80,
+    build_smf92_st01,
+    build_smf92_st10,
+    build_smf92_st11,
+    build_smf92_st17,
     build_smf119_st01,
     build_smf119_st02,
     build_smf119_st03,
@@ -497,6 +501,77 @@ class DumpTests(unittest.TestCase):
         row = rows[0]
         self.assertEqual(row["smf_subtype"], "32")
         self.assertEqual(row["sc_addr"], "10.20.30.40")
+
+    def test_convert_type92_st01(self) -> None:
+        path = Path(self.tmp.name) / "smf92-1.smf"
+        path.write_bytes(build_smf92_st01())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "92")
+        self.assertEqual(row["smf_subtype"], "1")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["smf_subsystem_id"], "OMVS")
+        self.assertEqual(row["product_name"], "OpenMVS")
+        self.assertEqual(row["job_name"], "MOUNTJB1")
+        self.assertEqual(row["omvs_uid"], "1001")
+        self.assertEqual(row["fs_type_name"], "ZFS")
+        self.assertEqual(row["fs_name"], "OMVS.ROOT.ZFS")
+        self.assertEqual(row["fs_blocksize"], "4096")
+        self.assertEqual(row["fs_space_total"], "10000")
+        self.assertEqual(row["mount_flags"], "80")
+
+    def test_convert_type92_st10(self) -> None:
+        path = Path(self.tmp.name) / "smf92-10.smf"
+        path.write_bytes(build_smf92_st10())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_subtype"], "10")
+        self.assertEqual(row["job_name"], "OPENJOB1")
+        self.assertEqual(row["file_token"], "2882400001")
+        self.assertEqual(row["file_inode"], "777")
+        self.assertEqual(row["fs_device"], "4660")
+
+    def test_convert_type92_st11(self) -> None:
+        path = Path(self.tmp.name) / "smf92-11.smf"
+        path.write_bytes(build_smf92_st11())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_subtype"], "11")
+        self.assertEqual(row["job_name"], "CLOSEJB1")
+        self.assertEqual(row["bytes_read"], "4096")
+        self.assertEqual(row["bytes_written"], "512")
+        self.assertEqual(row["pathname"], "/u/ibmuser/app/config.ini")
+        self.assertEqual(row["read_calls"], "10")
+        self.assertEqual(row["write_calls"], "3")
+
+    def test_convert_type92_st17_absent_identification(self) -> None:
+        path = Path(self.tmp.name) / "smf92-17.smf"
+        path.write_bytes(build_smf92_st17())
+        raw = path.read_bytes()
+        # IOF points at DOF but number/length are 0 — must not be treated as present.
+        self.assertIsNone(read_triplet(raw, 36))
+        self.assertEqual(read_triplet(raw, 44), (72, 88, 1))
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_subtype"], "17")
+        self.assertEqual(row["job_name"], "")
+        self.assertEqual(row["omvs_uid"], "")
+        self.assertEqual(row["file_inode"], "4067")
+        self.assertEqual(row["fs_device"], "84")
+        self.assertEqual(row["access_count"], "12")
+        self.assertEqual(row["pathname"], "/u/app/logs/access.cnt")
+        self.assertEqual(row["access_flags"], "80")
+
+    def test_smf92_subtype_registry(self) -> None:
+        for sty in (1, 2, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 17):
+            self.assertTrue(fields_for(92, sty), f"missing map for 92-{sty}")
+        self.assertEqual(fields_for(92, 50), ())
+        mapped = {sty for rty, sty in MAPS_BY_SUBTYPE if rty == 92}
+        self.assertEqual(mapped, {1, 2, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 16, 17})
 
     def test_smf119_unmapped_subtype_skipped(self) -> None:
         rec = bytearray(build_smf119_st01())

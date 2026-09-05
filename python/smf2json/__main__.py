@@ -188,6 +188,10 @@ def main(argv: list[str] | None = None) -> int:
             build_smf66,
             build_smf80,
             build_smf80_jobinit,
+            build_smf92_st01,
+            build_smf92_st10,
+            build_smf92_st11,
+            build_smf92_st17,
             build_smf119_st01,
             build_smf119_st02,
             build_smf119_st03,
@@ -212,6 +216,10 @@ def main(argv: list[str] | None = None) -> int:
             + build_smf66()
             + build_smf80()
             + build_smf80_jobinit()
+            + build_smf92_st01()
+            + build_smf92_st10()
+            + build_smf92_st11()
+            + build_smf92_st17()
             + build_smf119_st01()
             + build_smf119_st02()
             + build_smf119_st03()

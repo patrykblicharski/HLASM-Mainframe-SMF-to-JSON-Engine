@@ -4,30 +4,13 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
-*.egg
-
-# IDE / tools
-.claude/
-.playwright-mcp/
-
-# NiceGUI runtime storage (session state, not source)
-.nicegui/
-
-# Scratch/dump artifacts from local scripts
-smf-explorer-app/scripts/fields_dump.json
-smf-explorer-app/scripts/fields_dump.err
 
 # OS
 Thumbs.db
 .DS_Store
 
-# Logs
-*.log
-
-# Large local SMF dumps (keep out of git)
+# Large local SMF dumps
 *.bin
 IZYP.*
-
-# Portable Python runtime for start.bat (duze binaria — buduj lokalnie)
-smf-explorer-app/runtime/python-*/
-smf-explorer-app/runtime/*.zip
+*.zip
+api-doc.json

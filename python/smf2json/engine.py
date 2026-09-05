@@ -21,14 +21,19 @@ def _u32(data: bytes, off: int) -> int:
 
 
 def read_triplet(data: bytes, trip: int) -> Optional[tuple[int, int, int]]:
-    """Return (section_offset, section_length, section_number) or None if absent."""
+    """Return (section_offset, section_length, section_number) or None if absent.
+
+    IBM self-defining triplets mark a section absent with number=0 (and often
+    length=0). The offset may still point at the next section — do not treat a
+    non-zero offset alone as presence.
+    """
     if trip + 8 > len(data):
         return None
     section_off = _u32(data, trip)
-    if section_off == 0:
-        return None
     section_len = _u16(data, trip + 4)
     section_num = _u16(data, trip + 6)
+    if section_off == 0 or section_num == 0:
+        return None
     return section_off, section_len, section_num
 
 
@@ -37,14 +42,18 @@ def resolve_address(data: bytes, spec: FieldSpec, log: Optional[LogFn] = None) -
         return spec.offset
 
     trip = spec.triplet_offset
-    if trip + 4 > len(data):
+    if trip + 8 > len(data):
         if log:
             log(f"DEBUG: {spec.json_key}: triplet @{trip} past EOF")
         return None
     section_off = _u32(data, trip)
-    if section_off == 0:
+    section_num = _u16(data, trip + 6)
+    if section_off == 0 or section_num == 0:
         if log:
-            log(f"DEBUG: {spec.json_key}: section triplet @{trip:#x} = 0 (absent)")
+            log(
+                f"DEBUG: {spec.json_key}: section triplet @{trip:#x} absent "
+                f"(off={section_off} num={section_num})"
+            )
         return None
     return section_off + spec.offset
 

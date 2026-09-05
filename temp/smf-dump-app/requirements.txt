@@ -1,1 +1,0 @@
-# Stdlib only (tkinter). OpenAPI JSON is read from ../smf-mock/mock_server/openapi_spec.json

@@ -15,6 +15,7 @@ from .smf65 import FIELDS as SMF65_FIELDS
 from .smf66 import FIELDS as SMF66_FIELDS
 from .smf80 import FIELDS as SMF80_FIELDS
 from .smf89 import FIELDS as SMF89_FIELDS
+from .smf92 import FIELDS_BY_SUBTYPE as SMF92_FIELDS
 from .smf119 import FIELDS_BY_SUBTYPE as SMF119_FIELDS
 
 MAPS_BY_TYPE = {
@@ -31,6 +32,7 @@ MAPS_BY_TYPE = {
 MAPS_BY_SUBTYPE = {
     **{(30, sty): fields for sty, fields in SMF30_FIELDS.items()},
     **{(42, sty): fields for sty, fields in SMF42_FIELDS.items()},
+    **{(92, sty): fields for sty, fields in SMF92_FIELDS.items()},
     **{(119, sty): fields for sty, fields in SMF119_FIELDS.items()},
 }
 

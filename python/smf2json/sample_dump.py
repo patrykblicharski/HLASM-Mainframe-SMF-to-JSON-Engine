@@ -830,6 +830,159 @@ def build_smf66() -> bytes:
     )
 
 
+def _smf92_header(buf: bytearray, subtype: int) -> None:
+    buf[4] = 0x5E  # subsystem id follows + subtypes used
+    buf[5] = 92
+    buf[6:10] = _smf_time(16, 20, 0)
+    buf[10:14] = _smf_date(2026, 3, 25)
+    buf[14:18] = _ebcdic("PROD", 4)
+    buf[18:22] = _ebcdic("OMVS", 4)
+    buf[22:24] = _u16(subtype)
+    buf[24:26] = b"\x00\x00"
+    buf[26:28] = _u16(24)  # SMF92SDL — three triplets
+
+
+def _smf92_triplet(buf: bytearray, trip: int, offs: int, length: int, number: int = 1) -> None:
+    buf[trip : trip + 4] = _u32(offs)
+    buf[trip + 4 : trip + 6] = _u16(length)
+    buf[trip + 6 : trip + 8] = _u16(number)
+
+
+def _smf92_subsystem(buf: bytearray, sof: int, subtype: int) -> None:
+    buf[sof : sof + 2] = _u16(subtype)
+    buf[sof + 2 : sof + 4] = _ebcdic("02", 2)
+    buf[sof + 4 : sof + 12] = _ebcdic("OpenMVS", 8)
+    buf[sof + 12 : sof + 20] = _ebcdic("Z/OS310", 8)
+
+
+def _smf92_identification(buf: bytearray, iof: int, *, job: str = "OMVSJOB1") -> None:
+    buf[iof : iof + 8] = _ebcdic(job, 8)
+    buf[iof + 8 : iof + 12] = _smf_time(8, 0, 0)
+    buf[iof + 12 : iof + 16] = _smf_date(2026, 3, 25)
+    buf[iof + 16 : iof + 24] = _ebcdic("STEP1", 8)
+    buf[iof + 24 : iof + 32] = _ebcdic("SYS1", 8)
+    buf[iof + 32 : iof + 40] = _ebcdic("IBMUSER", 8)
+    buf[iof + 40 : iof + 44] = _u32(1001)  # UID
+    buf[iof + 44 : iof + 48] = _u32(100)  # GID
+    buf[iof + 48 : iof + 52] = _u32(4242)  # PID
+    buf[iof + 52 : iof + 56] = _u32(4240)  # PGID
+    buf[iof + 56 : iof + 60] = _u32(1)  # SID
+    buf[iof + 60 : iof + 64] = _u32(4242)
+    buf[iof + 64 : iof + 68] = _u32(4240)
+    buf[iof + 68 : iof + 72] = _u32(1)
+
+
+def build_smf92_st01() -> bytes:
+    """Type-92 subtype 1 — file system mount."""
+    sof_len, iof_len, dof_len = 20, 72, 106
+    sof, iof, dof = 52, 72, 144
+    total = dof + dof_len
+    buf = bytearray(total)
+    _smf92_header(buf, 1)
+    _smf92_triplet(buf, 28, sof, sof_len)
+    _smf92_triplet(buf, 36, iof, iof_len)
+    _smf92_triplet(buf, 44, dof, dof_len)
+    _smf92_subsystem(buf, sof, 1)
+    _smf92_identification(buf, iof, job="MOUNTJB1")
+    buf[dof : dof + 8] = bytes.fromhex("00DECAFBAD010203")
+    buf[dof + 8 : dof + 12] = _u32(0)  # path offset unused in sample
+    buf[dof + 12 : dof + 16] = _u32(1)  # FS type
+    buf[dof + 16 : dof + 20] = _u32(0)  # mode
+    buf[dof + 20 : dof + 24] = _u32(0x1234)
+    buf[dof + 24 : dof + 32] = _ebcdic("OMVSZFS ", 8)
+    buf[dof + 32 : dof + 40] = _ebcdic("ZFS     ", 8)
+    buf[dof + 40 : dof + 84] = _ebcdic("OMVS.ROOT.ZFS", 44)
+    buf[dof + 84 : dof + 88] = _u32(4096)
+    buf[dof + 88 : dof + 96] = (10000).to_bytes(8, "big")
+    buf[dof + 96 : dof + 104] = (2500).to_bytes(8, "big")
+    buf[dof + 104] = 0x80  # automount
+    buf[dof + 105] = 0x80  # local
+    buf[0:2] = _u16(total)
+    buf[2:4] = b"\x00\x00"
+    return bytes(buf)
+
+
+def build_smf92_st10() -> bytes:
+    """Type-92 subtype 10 — file open."""
+    sof_len, iof_len, dof_len = 20, 72, 24
+    sof, iof, dof = 52, 72, 144
+    total = dof + dof_len
+    buf = bytearray(total)
+    _smf92_header(buf, 10)
+    _smf92_triplet(buf, 28, sof, sof_len)
+    _smf92_triplet(buf, 36, iof, iof_len)
+    _smf92_triplet(buf, 44, dof, dof_len)
+    _smf92_subsystem(buf, sof, 10)
+    _smf92_identification(buf, iof, job="OPENJOB1")
+    buf[dof : dof + 8] = bytes.fromhex("00AABBCCDDEEFF01")
+    buf[dof + 8] = 0x01  # regular file
+    buf[dof + 9] = 0x00
+    buf[dof + 12 : dof + 16] = _u32(0xABCDEF01)
+    buf[dof + 16 : dof + 20] = _u32(777)
+    buf[dof + 20 : dof + 24] = _u32(0x1234)
+    buf[0:2] = _u16(total)
+    buf[2:4] = b"\x00\x00"
+    return bytes(buf)
+
+
+def build_smf92_st11() -> bytes:
+    """Type-92 subtype 11 — file close."""
+    sof_len, iof_len, dof_len = 20, 72, 132
+    sof, iof, dof = 52, 72, 144
+    total = dof + dof_len
+    buf = bytearray(total)
+    _smf92_header(buf, 11)
+    _smf92_triplet(buf, 28, sof, sof_len)
+    _smf92_triplet(buf, 36, iof, iof_len)
+    _smf92_triplet(buf, 44, dof, dof_len)
+    _smf92_subsystem(buf, sof, 11)
+    _smf92_identification(buf, iof, job="CLOSEJB1")
+    buf[dof : dof + 8] = bytes.fromhex("00AABBCCDDEEFF01")
+    buf[dof + 8 : dof + 16] = bytes.fromhex("00AABBCCDDEEFF99")
+    buf[dof + 16] = 0x01
+    buf[dof + 17] = 0x00
+    buf[dof + 20 : dof + 24] = _u32(0xABCDEF01)
+    buf[dof + 24 : dof + 28] = _u32(777)
+    buf[dof + 28 : dof + 32] = _u32(0x1234)
+    buf[dof + 32 : dof + 36] = _u32(10)
+    buf[dof + 36 : dof + 40] = _u32(3)
+    buf[dof + 40 : dof + 44] = _u32(1)
+    buf[dof + 44 : dof + 48] = _u32(5)
+    buf[dof + 48 : dof + 52] = _u32(2)
+    buf[dof + 52 : dof + 60] = (4096).to_bytes(8, "big")
+    buf[dof + 60 : dof + 68] = (512).to_bytes(8, "big")
+    buf[dof + 68 : dof + 132] = _ebcdic("/u/ibmuser/app/config.ini", 64)
+    buf[0:2] = _u16(total)
+    buf[2:4] = b"\x00\x00"
+    return bytes(buf)
+
+
+def build_smf92_st17() -> bytes:
+    """Type-92 subtype 17 — file access interval (identification section absent).
+
+    Real dumps set SMF92IOF to the data-section offset with ILN=ION=0.
+    """
+    sof_len, dof_len = 20, 88
+    sof, dof = 52, 72
+    total = dof + dof_len
+    buf = bytearray(total)
+    _smf92_header(buf, 17)
+    _smf92_triplet(buf, 28, sof, sof_len)
+    # Absent identification: offset may still equal DOF; number/length are 0.
+    _smf92_triplet(buf, 36, dof, 0, number=0)
+    _smf92_triplet(buf, 44, dof, dof_len)
+    _smf92_subsystem(buf, sof, 17)
+    buf[dof : dof + 8] = bytes.fromhex("00DEADBEEFCAFE01")
+    buf[dof + 8] = 0x80  # interval-time flag
+    buf[dof + 12 : dof + 16] = _u32(4067)
+    buf[dof + 16 : dof + 20] = _u32(84)
+    buf[dof + 20 : dof + 24] = _u32(12)
+    buf[dof + 24 : dof + 88] = _ebcdic("/u/app/logs/access.cnt", 64)
+    buf[0:2] = _u16(total)
+    buf[2:4] = b"\x00\x00"
+    return bytes(buf)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="Generate sample SMF VB dump")
     ap.add_argument("-o", "--output", default="python/samples/sample.smf")
@@ -851,6 +1004,10 @@ def main() -> None:
         + build_smf66()
         + build_smf80()
         + build_smf80_jobinit()
+        + build_smf92_st01()
+        + build_smf92_st10()
+        + build_smf92_st11()
+        + build_smf92_st17()
         + build_smf119_st01()
         + build_smf119_st02()
         + build_smf119_st03()

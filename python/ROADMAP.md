@@ -12,7 +12,7 @@ This file is the Python desktop/CLI track only.
 - [x] Per-type/subtype column picker persisted in `~/.smf2json/columns.json`
 - [x] Notebook tabs when a dump has several types / subtypes
 - [x] SMF 119 subtypes 1–4, 5–8, 10–12, 20–24, 32–45, 48–52, 70–81 from PACSYS / IBM layouts (119-4 NMTP partial)
-- [x] Synthetic sample dump (14 + 15 + 17 + 30-1/4/5 + 42-20/21/24 + 61 + 65 + 66 + 80 + 119-1/2/3/4/10) and unittest coverage
+- [x] Synthetic sample dump (14 + 15 + 17 + 30-1/4/5 + 42-20/21/24 + 61 + 65 + 66 + 80 + 92-1/10/11/17 + 119-1/2/3/4/10) and unittest coverage
 
 ## Next maps (desktop value)
 
@@ -47,6 +47,19 @@ Priority is types that show up in IFASMFDP extracts and have a clear PACSYS/IBM 
 - [x] **65** ICF DELETE ACTIVITY
 - [x] **66** ICF ALTER ACTIVITY
 - [x] **42** DFSMS — subtypes **20, 21, 22, 23, 24, 25** (STOW init / member delete / DFSMSrmm audit+security / member add-replace / rename via `MAPS_BY_SUBTYPE`)
+- [x] **92** File system activity (OMVS/zFS) — PACSYS [smf92.htm](https://www.pacsys.com/smf/smf92.htm) via `MAPS_BY_SUBTYPE`:
+  - [x] **92-1** Mount
+  - [x] **92-2** Quiesce (suspend)
+  - [x] **92-4** Unquiesce (resume)
+  - [x] **92-5 / 92-6** Unmount / remount
+  - [x] **92-7** Move
+  - [x] **92-10 / 92-11** File open / close
+  - [x] **92-12 / 92-13** MMAP / MUNMAP
+  - [x] **92-14** Delete / rename
+  - [x] **92-15** Security attribute change
+  - [x] **92-16** Socket / special / pipe / FIFO close (minimal)
+  - [x] **92-17** File access count (interval)
+  - [ ] zFS performance subtypes **50–57** (not on PACSYS USS table — future)
 - [ ] Packed decimal (`P`) and more HEX/flag decode where IBM tables need it
 
 When adding a 119 subtype: extend the temp/smf119-app layout, run `python python/tools/gen_smf119_maps.py`, add a sample + test. Do not reuse another subtype's S1 layout. Subtype 4 NMTP coverage is partial (see checkbox note). OpenSSH 94–98 stay unmapped.
