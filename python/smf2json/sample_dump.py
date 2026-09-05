@@ -128,13 +128,63 @@ def build_smf80() -> bytes:
     return bytes(body)
 
 
+def _ip4_mapped(a: int, b: int, c: int, d: int) -> bytes:
+    return bytes(10) + b"\xff\xff" + bytes((a, b, c, d))
+
+
+def build_smf119_st01() -> bytes:
+    """Type 119 subtype 1 — TCP connection initiation (ident + S1)."""
+    ident, s1 = 88, 152
+    total = s1 + 72
+    buf = bytearray(total)
+    buf[4] = 0x1E  # new format + subtypes
+    buf[5] = 119
+    buf[6:10] = _smf_time(14, 4, 6)
+    buf[10:14] = _smf_date(2026, 3, 25)
+    buf[14:18] = _ebcdic("PROD", 4)
+    buf[18:22] = _ebcdic("TCP", 4)
+    buf[22:24] = _u16(1)
+    buf[24:26] = _u16(2)  # two triplets: ident + S1
+    buf[28:32] = _u32(ident)
+    buf[32:34] = _u16(64)
+    buf[34:36] = _u16(1)
+    buf[36:40] = _u32(s1)
+    buf[40:42] = _u16(72)
+    buf[42:44] = _u16(1)
+
+    buf[ident + 0 : ident + 8] = _ebcdic("SYS1", 8)
+    buf[ident + 8 : ident + 16] = _ebcdic("PLEX1", 8)
+    buf[ident + 16 : ident + 24] = _ebcdic("TCPIP", 8)
+    buf[ident + 24 : ident + 32] = _ebcdic("CS&TM", 8)
+    buf[ident + 32 : ident + 40] = _ebcdic("TCP", 8)
+    buf[ident + 40 : ident + 48] = _ebcdic("FTPTA5", 8)
+    buf[ident + 48 : ident + 56] = _ebcdic("IBMUSER", 8)
+    buf[ident + 58 : ident + 60] = _u16(0x001A)
+    buf[ident + 60] = 0x08
+
+    buf[s1 + 0 : s1 + 8] = _ebcdic("FTPTA5", 8)
+    buf[s1 + 8 : s1 + 12] = _u32(0x0000A1B2)
+    buf[s1 + 16 : s1 + 20] = bytes.fromhex("00ABCDEF")
+    buf[s1 + 20 : s1 + 36] = _ip4_mapped(10, 1, 2, 3)
+    buf[s1 + 36 : s1 + 52] = _ip4_mapped(192, 168, 1, 10)
+    buf[s1 + 52 : s1 + 54] = _u16(443)
+    buf[s1 + 54 : s1 + 56] = _u16(21)
+    buf[s1 + 56 : s1 + 60] = _smf_time(14, 4, 6)
+    buf[s1 + 60 : s1 + 64] = _smf_date(2026, 3, 25)
+    buf[s1 + 64 : s1 + 72] = bytes.fromhex("00DECAFBAD010203")
+
+    buf[0:2] = _u16(total)
+    buf[2:4] = b"\x00\x00"
+    return bytes(buf)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="Generate sample SMF VB dump")
     ap.add_argument("-o", "--output", default="python/samples/sample.smf")
     args = ap.parse_args()
     path = Path(args.output)
     path.parent.mkdir(parents=True, exist_ok=True)
-    blob = build_smf30() + build_smf80()
+    blob = build_smf30() + build_smf80() + build_smf119_st01()
     path.write_bytes(blob)
     print(f"Wrote {path} ({len(blob)} bytes)")
 

@@ -23,6 +23,13 @@ class SmfRecord:
             return self.data[5]
         return -1
 
+    @property
+    def subtype(self) -> Optional[int]:
+        # SMFxSTY at offset 22 when the header uses subtypes
+        if len(self.data) >= 24:
+            return int.from_bytes(self.data[22:24], "big")
+        return None
+
 
 def iter_vb_records(
     blob: bytes,

@@ -1,0 +1,86 @@
+# SMF2JSON Python — agent notes
+
+Stdlib-only desktop/CLI port of the HLASM table-driven SMF converter.
+**Read this file instead of re-walking the package** unless you are changing the named module.
+
+Language: English in code, comments, docs. Chat with the owner may be Polish.
+
+## Layout
+
+```
+python/
+  smf2json/
+    __main__.py        CLI / GUI entry (`python -m smf2json`)
+    reader.py          RECFM=VB / VBS dump walker (RDW-framed)
+    engine.py          FieldSpec → dict rows
+    types.py           FieldSpec + converters (CHR/DEC/HEX/DTE/TME/IP16/RS_STR)
+    maps/              One module per SMF type (or type+subtype)
+    gui.py             Tkinter: notebook tabs, column picker, tooltips
+    column_config.py   Visible columns persisted per type/subtype
+    sample_dump.py     Synthetic VB records for 30, 80, 119-1
+  tests/               stdlib unittest
+  samples/             generated dumps (make-sample)
+  ROADMAP.md
+```
+
+No pip packages. Python 3.10+ (`from __future__ import annotations` is used throughout).
+
+## Data flow
+
+1. `reader.read_dump(path)` → `list[SmfRecord]`. Each `data` **includes the 4-byte RDW** so IBM offsets (from SMFxLEN) apply as-is.
+2. `engine.convert_record` looks up `maps.fields_for(type, subtype)`.
+   - `MAPS_BY_TYPE[rty]` — types without distinct subtype layouts (30, 80, 89).
+   - `MAPS_BY_SUBTYPE[(rty, sty)]` — types whose sections differ by subtype (119).
+   - If a type has **any** subtype map, unmapped subtypes are **skipped**.
+3. `gui` groups converted rows by `(smf_record_type, smf_subtype|None)` into notebook tabs. Subtype is taken only from the mapped `smf_subtype` field (do not invent it from raw bytes 22–23 on types 30/80).
+4. Export: JSON = all rows; CSV = **current tab** (visible columns).
+
+## Input dump format
+
+Binary IFASMFDP / IFASMFDL dump: **RECFM=VB or VBS**, big-endian RDW (`LL` + flags).
+Not text, not hex listings, not SYSOUT. Types 2 and 3 (dump control) are skipped.
+
+## Maps (how to add one)
+
+Port of `SMF_FIELD` macros. `FieldSpec`:
+
+| attr | meaning |
+|---|---|
+| `json_key` | Table header / JSON key (`time`, `remote_ip`) |
+| `ibm_name` | Tooltip first line (`SMF119AP_TIRIP`) |
+| `description` | Tooltip second line |
+| `offset` | Relative to section base (absolute if `triplet_offset` is None) |
+| `triplet_offset` | Absolute offset of the section triplet (offset/length/number) in the header |
+| `ftype` | See `types.TYPE_LENGTHS` + `convert_value` |
+| `tag` | Relocate-section tag (`RS_STR` only) |
+
+Register in `maps/__init__.py`. Add converters in `types.py` only when the IBM format is new. Add `sample_dump.build_*` + a `tests/test_engine.py` case.
+
+PACSYS HTML tables (e.g. smf119_subtype01) are a valid layout source; keep IBM names exact.
+
+**Mapped today:** 30 (common sections), 80 (RACF header + RS tags 1/17), 89 (header), 119 subtype 1 (TCP connection initiation).
+
+## GUI conventions
+
+- Column **header** = `json_key`. **Tooltip / Field bar** = IBM name + description.
+- **Columns…** appears after a dump is loaded. Checkboxes show source key, friendly label, IBM name. Saved to `~/.smf2json/columns.json` under `"30"` or `"119-1"`.
+- Header width = `TkHeadingFont.measure(title) + 28`.
+
+## Commands
+
+```text
+cd python
+python -m smf2json --make-sample samples/sample.smf
+python -m smf2json samples/sample.smf -o samples/sample.json --debug
+python -m smf2json samples/sample.smf -f csv -o samples/sample.csv
+python -m smf2json --gui samples/sample.smf
+python -m unittest discover -s tests -v
+```
+
+## Do not
+
+- Add pip dependencies without an explicit ask.
+- Parse dumps as text / assume little-endian integers.
+- Apply a 119-1 section map to other 119 subtypes.
+- Treat type-30/80 bytes 22–23 as `SMFxSTY`.
+- Re-read the whole package for column/tooltip/tab behavior — it is all in `gui.py` + `column_config.py`.

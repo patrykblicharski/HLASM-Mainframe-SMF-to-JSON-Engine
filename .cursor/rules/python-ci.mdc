@@ -1,0 +1,43 @@
+---
+description: Useful CI and how to verify the Python smf2json port
+globs: python/**/*,.github/workflows/**
+alwaysApply: false
+---
+
+# Python CI (`python/`)
+
+Before claiming a Python change is done, run from `python/`:
+
+```text
+python -m unittest discover -s tests -v
+```
+
+If you touched maps, reader, engine, or sample_dump, also smoke the sample:
+
+```text
+python -m smf2json --make-sample samples/sample.smf
+python -m smf2json samples/sample.smf -o samples/sample.json
+```
+
+Expect three mapped records (30, 80, 119-1). Exit 2 = no mapped records (broken map/registry).
+
+## What CI should run (if/when a workflow is added)
+
+Useful — keep it this small:
+
+1. Matrix: **Python 3.10, 3.11, 3.12** × **ubuntu-latest** and **windows-latest**
+2. Working directory: `python/`
+3. **No `pip install`.** The package is stdlib-only (tkinter is unused in tests)
+4. `python -m unittest discover -s tests -v`
+5. Optional smoke job: `--make-sample` + convert, then assert `"smf_record_type": "119"` in JSON
+
+Not useful yet: coverage gates, mypy, ruff-as-required, GUI screenshot tests, publishing wheels.
+
+## Do not
+
+- Add dependencies to “make CI nicer”
+- Skip tests with `--no-verify` or by deleting cases that failed
+- Run unittest from the repo root (imports break; `cd python` first)
+- Treat `temp/` explorer/mock apps as this package’s CI
+
+Architecture and map rules: `python/AGENTS.md`. Plan: `python/ROADMAP.md`.

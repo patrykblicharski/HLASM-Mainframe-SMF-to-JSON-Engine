@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
-from .maps import MAPS_BY_TYPE
+from .maps import MAPS_BY_SUBTYPE, MAPS_BY_TYPE, fields_for
 from .reader import SmfRecord
 from .types import FieldSpec, convert_value, field_length
 
@@ -66,12 +66,16 @@ def extract_rs_string(data: bytes, control_offset: int, tag: int, log: LogFn) ->
 def convert_record(rec: SmfRecord, log: Optional[LogFn] = None) -> Optional[Dict[str, Any]]:
     log = log or (lambda _m: None)
     rty = rec.record_type
-    fields: Sequence[FieldSpec] = MAPS_BY_TYPE.get(rty, ())
+    sty = rec.subtype
+    fields: Sequence[FieldSpec] = fields_for(rty, sty)
     if not fields:
-        log(f"DEBUG: record[{rec.index}] type={rty} — no map, skipped")
+        log(f"DEBUG: record[{rec.index}] type={rty} subtype={sty} — no map, skipped")
         return None
 
-    log(f"INFO: converting record[{rec.index}] type={rty} with {len(fields)} field specs")
+    log(
+        f"INFO: converting record[{rec.index}] type={rty} subtype={sty} "
+        f"with {len(fields)} field specs"
+    )
     out: Dict[str, Any] = {}
     data = rec.data
 
@@ -114,12 +118,35 @@ def convert_dump(records: List[SmfRecord], log: Optional[LogFn] = None) -> List[
     return rows
 
 
+def field_meta() -> Dict[str, Dict[str, Any]]:
+    """json_key → label / description / IBM name / SMF types that define it."""
+    meta: Dict[str, Dict[str, Any]] = {}
+    catalogs: List[tuple[int, Sequence[FieldSpec]]] = [
+        (rty, specs) for rty, specs in MAPS_BY_TYPE.items()
+    ]
+    catalogs.extend((rty, specs) for (rty, _sty), specs in MAPS_BY_SUBTYPE.items())
+    for rty, specs in catalogs:
+        for spec in specs:
+            rec = meta.get(spec.json_key)
+            if rec is None:
+                meta[spec.json_key] = {
+                    "key": spec.json_key,
+                    "label": spec.description or spec.ibm_name or spec.json_key,
+                    "description": spec.description,
+                    "ibm_name": spec.ibm_name,
+                    "ibm_by_type": {rty: spec.ibm_name},
+                    "desc_by_type": {rty: spec.description},
+                    "types": [rty],
+                }
+            elif rty not in rec["types"]:
+                rec["types"].append(rty)
+                rec["ibm_by_type"][rty] = spec.ibm_name
+                rec["desc_by_type"][rty] = spec.description
+    return meta
+
+
 def field_descriptions_for_rows(rows: List[Dict[str, Any]]) -> Dict[str, str]:
-    desc: Dict[str, str] = {}
-    for specs in MAPS_BY_TYPE.values():
-        for s in specs:
-            desc[s.json_key] = s.description or s.ibm_name
-    return desc
+    return {key: info["label"] for key, info in field_meta().items()}
 
 
 def ordered_columns(rows: List[Dict[str, Any]]) -> List[str]:
