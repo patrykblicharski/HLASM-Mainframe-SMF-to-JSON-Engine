@@ -5,6 +5,7 @@ from __future__ import annotations
 import csv
 import json
 import threading
+import time
 import tkinter as tk
 from pathlib import Path
 from queue import Empty, SimpleQueue
@@ -23,15 +24,15 @@ from .column_config import (
     visible_for_group,
 )
 from .engine import convert_record, field_meta, ordered_columns
+from .progress import CONVERT_BATCH, PROGRESS_EVERY_BYTES, fmt_bytes, format_timing
 from .reader import iter_dump
 
 # Convert / paint this many rows before yielding back to Tk.
-LOAD_BATCH = 250
+LOAD_BATCH = CONVERT_BATCH
 UI_BATCHES_PER_TICK = 2
 TREE_PAINT_BATCH = 250
 TREE_CLEAR_BATCH = 400
 PROGRESS_MAX = 1000
-PROGRESS_EVERY_BYTES = 256 * 1024
 
 
 class ToolTip:
@@ -501,6 +502,7 @@ class SmfApp(tk.Tk):
         self.rows = []
         self._clear_tabs()
         self.status_var.set("Reading file…")
+        self._load_t0 = time.perf_counter()
         self._cancel = threading.Event()
         self._load_token += 1
         token = self._load_token
@@ -523,6 +525,7 @@ class SmfApp(tk.Tk):
         finished = False
         error: Optional[str] = None
         cancelled = False
+        records_s = 0.0
         batches = 0
         while True:
             try:
@@ -547,6 +550,7 @@ class SmfApp(tk.Tk):
                 seen = int(msg[1])
                 mapped = int(msg[2])
                 total = int(msg[3])
+                records_s = float(msg[4])
                 finished = True
                 self._apply_progress(total, total, seen, mapped)
                 self.log(f"INFO: converted {mapped:,} mapped records from {seen:,} SMF records")
@@ -554,6 +558,8 @@ class SmfApp(tk.Tk):
             elif kind == "cancelled":
                 cancelled = True
                 finished = True
+                if len(msg) > 1:
+                    records_s = float(msg[1])
                 break
             elif kind == "error":
                 error = str(msg[1])
@@ -570,12 +576,16 @@ class SmfApp(tk.Tk):
             return
         if not self.panes:
             self.log("WARN: no mapped records (supported types: 30, 80, 89, 119-1)")
+        dump_s = time.perf_counter() - getattr(self, "_load_t0", time.perf_counter())
+        timing = format_timing(records_s, dump_s)
+        self.log(f"INFO: timing  {timing}")
         labels = ", ".join(pane.label for pane in self.panes)
         prefix = "Cancelled — kept" if cancelled else "Loaded"
         self.status_var.set(
             f"{prefix} {len(self.rows):,} mapped records in {len(self.panes)} tab(s) "
             f"({labels or 'none'})"
             + (f" from {self.dump_path.name}" if self.dump_path else "")
+            + f"  —  {timing}"
         )
 
     def _apply_progress(self, pos: int, total: int, seen: int, mapped: int) -> None:
@@ -589,7 +599,7 @@ class SmfApp(tk.Tk):
         name = self.dump_path.name if self.dump_path else ""
         self.status_var.set(
             f"Loading {name}  —  {mapped:,} mapped / {seen:,} records  —  "
-            f"{_fmt_bytes(pos)} / {_fmt_bytes(total)}  ({pct:.0f}%)"
+            f"{fmt_bytes(pos)} / {fmt_bytes(total)}  ({pct:.0f}%)"
         )
 
     def _ingest_batch(self, rows: List[Dict[str, Any]]) -> None:
@@ -728,14 +738,6 @@ class SmfApp(tk.Tk):
         )
 
 
-def _fmt_bytes(n: int) -> str:
-    if n >= 1024 * 1024:
-        return f"{n / (1024 * 1024):.1f} MB"
-    if n >= 1024:
-        return f"{n / 1024:.0f} KB"
-    return f"{n} B"
-
-
 def _load_worker(path: str, queue: SimpleQueue, cancel: threading.Event) -> None:
     """Read and convert off the Tk thread; push mapped rows in LOAD_BATCH chunks."""
 
@@ -750,6 +752,8 @@ def _load_worker(path: str, queue: SimpleQueue, cancel: threading.Event) -> None
         last_pos = 0
         total = 0
         last_sent = 0
+        t_start = time.perf_counter()
+        t_records_start: Optional[float] = None
 
         def on_progress(pos: int, n: int) -> None:
             nonlocal last_pos, total, last_sent
@@ -759,11 +763,19 @@ def _load_worker(path: str, queue: SimpleQueue, cancel: threading.Event) -> None
                 last_sent = pos
                 queue.put(("progress", pos, n, seen, mapped))
 
+        def _times() -> tuple[float, float]:
+            now = time.perf_counter()
+            records_s = (now - t_records_start) if t_records_start is not None else 0.0
+            return records_s, now - t_start
+
         for rec in iter_dump(path, log=reader_log, progress=on_progress):
+            if t_records_start is None:
+                t_records_start = time.perf_counter()
             if cancel.is_set():
                 if batch:
                     queue.put(("batch", batch, seen, mapped, last_pos, total))
-                queue.put(("cancelled",))
+                rec_s, dump_s = _times()
+                queue.put(("cancelled", rec_s, dump_s))
                 return
             seen += 1
             obj = convert_record(rec)
@@ -776,7 +788,8 @@ def _load_worker(path: str, queue: SimpleQueue, cancel: threading.Event) -> None
                 batch = []
         if batch:
             queue.put(("batch", batch, seen, mapped, last_pos, total))
-        queue.put(("done", seen, mapped, total))
+        rec_s, dump_s = _times()
+        queue.put(("done", seen, mapped, total, rec_s, dump_s))
     except Exception as exc:  # noqa: BLE001
         queue.put(("error", str(exc)))
 

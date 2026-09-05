@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence
 
 from .maps import MAPS_BY_SUBTYPE, MAPS_BY_TYPE, fields_for
-from .reader import SmfRecord, iter_dump
+from .reader import ProgressFn, SmfRecord, iter_dump
 from .types import FieldSpec, convert_value, field_length
 
 
@@ -126,9 +126,13 @@ def convert_dump(records: List[SmfRecord], log: Optional[LogFn] = None) -> List[
     return rows
 
 
-def convert_path(path: str, log: Optional[LogFn] = None) -> Iterator[Dict[str, Any]]:
+def convert_path(
+    path: str,
+    log: Optional[LogFn] = None,
+    progress: Optional[ProgressFn] = None,
+) -> Iterator[Dict[str, Any]]:
     """Yield mapped rows one at a time so callers can batch without holding every SMF record."""
-    for rec in iter_dump(path, log=log):
+    for rec in iter_dump(path, log=log, progress=progress):
         obj = convert_record(rec, log=log)
         if obj is not None:
             yield obj

@@ -15,6 +15,7 @@ python/
     engine.py          FieldSpec → dict rows
     types.py           FieldSpec + converters (CHR/DEC/HEX/DTE/TME/IP16/RS_STR)
     maps/              One module per SMF type (or type+subtype)
+    progress.py        Byte bar + elapsed-time formatting (CLI stderr / GUI status)
     gui.py             Tkinter: notebook tabs, column picker, tooltips
     column_config.py   Visible columns persisted per type/subtype
     sample_dump.py     Synthetic VB records for 30, 80, 119-1
@@ -65,7 +66,13 @@ PACSYS HTML tables (e.g. smf119_subtype01) are a valid layout source; keep IBM n
 - Column **header** = `json_key`. **Tooltip / Field bar** = IBM name + description.
 - **Columns…** appears after a dump is loaded. Checkboxes show source key, friendly label, IBM name. Saved to `~/.smf2json/columns.json` under `"30"` or `"119-1"`.
 - Header width = `TkHeadingFont.measure(title) + 28`.
-- Load runs on a worker thread in batches of 250; the table fills incrementally. A determinate **progress bar** tracks file bytes (percent + MB). Debug pane gets progress / errors, not per-field DEBUG (that is CLI `--debug`). **Cancel load** keeps rows already shown.
+- Load runs on a worker thread in batches of 250; the table fills incrementally. A determinate **progress bar** tracks file bytes (percent + MB). When finished, log/status show **records** time (convert loop) and **dump** time (whole load including read + UI). Debug pane gets progress / errors, not per-field DEBUG (that is CLI `--debug`). **Cancel load** keeps rows already shown.
+
+## CLI conventions
+
+- Streams convert in batches of 250 with the same byte progress bar on stderr (`--no-progress` to hide; off with `--debug`).
+- End of run always prints `INFO: timing  records … — dump …` (records = parse/convert/write loop; dump = file read + that loop).
+- JSON is written as a streaming array. CSV header is taken from the first 250 mapped rows.
 
 ## Commands
 

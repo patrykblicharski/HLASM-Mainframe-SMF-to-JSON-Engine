@@ -23,8 +23,8 @@ cd python
 # Synthetic VB dump (types 30 + 80 + 119-1)
 python -m smf2json --make-sample samples/sample.smf
 
-# CLI
-python -m smf2json samples/sample.smf -o samples/sample.json --debug
+# CLI (stderr progress bar + records/dump timing; --no-progress to hide the bar)
+python -m smf2json samples/sample.smf -o samples/sample.json
 python -m smf2json samples/sample.smf -f csv -o samples/sample.csv
 
 # GUI (tabs per type/subtype, column tooltips, Columns… picker)
@@ -56,5 +56,5 @@ Other 119 subtypes are skipped until a map is added.
 - One **tab** per SMF type (and subtype when the map has `smf_subtype`).
 - Column header = JSON key (`time`). Hover tip = IBM name + description (`SMF80TME`).
 - **Columns…** (after load) saves the visible set per type/subtype to `~/.smf2json/columns.json`.
-- Large dumps load on a background thread in batches; a progress bar shows percent of the file. **Cancel load** keeps rows already shown.
+- Large dumps load on a background thread in batches; a progress bar shows percent of the file. When done, status shows **records** vs **dump** elapsed time. **Cancel load** keeps rows already shown.
 - CSV export is the current tab; JSON export is the whole dump.
