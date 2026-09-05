@@ -1,0 +1,521 @@
+{
+  "subtype": 6,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word). See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicator Bit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators* 7 System is running in PR/SM mode.*See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 (X'77').",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record. A triplet is a set of three SMF fields (offset/length/number values) that defines a section of the record. The offset is the offset from the RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119IDOff",
+          "length": "4",
+          "format": "binary",
+          "description": "Offset to TCP/IP identification section from RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119IDLen",
+          "length": "2",
+          "format": "binary",
+          "description": "Length of TCP/IP identification section.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119IDNum",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of TCP/IP identification sections.",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to first data section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of first data section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of first data sections",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119S2Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119S2Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119S2Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 2nd data sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TI_SYSName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name from SYSNAME in IEASYSxx",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TI_SysplexName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Sysplex name from SYSPLEX in COUPLExx",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TI_Stack",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP stack name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TI_ReleaseID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS Communications Server TCP/IP release identifier",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TI_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP subcomponent (right padded with blanks): FTPC FTP Client FTPS FTP server IP IP layer STACK Entire TCP/IP stack TCP TCP layer TN3270C TN3270 Client TN3270S TN3270 server UDP UDP layer",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TI_ASName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Started task qualifier or address space name of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119TI_UserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User ID of security context under which this SMF record is written",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "_rsv_56",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 58,
+          "name": "SMF119TI_ASID",
+          "length": "2",
+          "format": "Binary",
+          "description": "ASID of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119TI_Reason",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason for writing this SMF record: X'08' Event record X'C0' Interval statistics record, more records follow X'80' Interval statistics record, last record in set X'60' End-of-statistics record, more records follow X'20' End-of-statistics re",
+          "reserved": false
+        },
+        {
+          "offset": 61,
+          "name": "_rsv_61",
+          "length": "3",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SP_IFDuration",
+          "length": "8",
+          "format": "Binary",
+          "description": "Duration of recording interval in microseconds, where bit 51 is equivalent to one microsecond",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119IS_IFLnkHome",
+          "length": "16",
+          "format": "Binary",
+          "description": "Interface HOME address. For IPv6 interfaces, additional addresses might be specified in subsequent HOME IP address sections.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119IS_IFName",
+          "length": "16",
+          "format": "EBCDIC",
+          "description": "Link or interface name",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119IS_IFDevName",
+          "length": "16",
+          "format": "EBCDIC",
+          "description": "Device name",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119IS_IFDesc",
+          "length": "18",
+          "format": "EBCDIC",
+          "description": "Interface Description (TCPIP PROFILE keyword for LINK or INTERFACE type.) Possible values include: ATM, CDLC, CTC, ETHERnet, ETHEROR802.3, FDDI, HCH, IBMTR, IP, IPAQENET, IPAQIDIO, IPAQTR, MPCPTP, OSAENET, OSAFDDI, SAMEHOST, Unknown, 802.3,",
+          "reserved": false
+        },
+        {
+          "offset": 74,
+          "name": "_rsv_74",
+          "length": "2",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 76,
+          "name": "SMF119IS_IFActualMtu",
+          "length": "4",
+          "format": "Binary",
+          "description": "MTU size",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119IS_IFSPeed",
+          "length": "4",
+          "format": "Binary",
+          "description": "Speed Guideline: If the interface speed exceeds x'FFFFFFFF', then this field contains x'FFFFFFFF'. If this field contains x'FFFFFFFF', then use the SMF119IS_IFHSpeed field to determine the interface speed.",
+          "reserved": false
+        },
+        {
+          "offset": 84,
+          "name": "SMF119IS_IFHSpeed",
+          "length": "4",
+          "format": "Binary",
+          "description": "HSpeed",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119IS_IFInBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of inbound bytes",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119IS_IFInUniC",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of inbound Unicast packets",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119IS_IFInBroadC",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of inbound broadcast packets",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119IS_IFInMultiC",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of inbound multicast packets",
+          "reserved": false
+        },
+        {
+          "offset": 120,
+          "name": "SMF119IS_IFInDisc",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound discarded packets",
+          "reserved": false
+        },
+        {
+          "offset": 124,
+          "name": "SMF119IS_IFInError",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound packets in error",
+          "reserved": false
+        },
+        {
+          "offset": 128,
+          "name": "SMF119IS_IFInUProt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of inbound packets with unknown protocol.",
+          "reserved": false
+        },
+        {
+          "offset": 132,
+          "name": "SMF119IS_IFOutBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of outbound bytes",
+          "reserved": false
+        },
+        {
+          "offset": 140,
+          "name": "SMF119IS_IFOutUniC",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of outbound Unicast packets",
+          "reserved": false
+        },
+        {
+          "offset": 148,
+          "name": "SMF119IS_IFOutBroadC",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of outbound broadcast packets",
+          "reserved": false
+        },
+        {
+          "offset": 156,
+          "name": "SMF119IS_IFOutMultiC",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of outbound multicast packets",
+          "reserved": false
+        },
+        {
+          "offset": 164,
+          "name": "SMF119IS_IFOutDisc",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound discarded packets",
+          "reserved": false
+        },
+        {
+          "offset": 168,
+          "name": "SMF119IS_IFOutError",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of outbound packets in error",
+          "reserved": false
+        },
+        {
+          "offset": 172,
+          "name": "SMF119IS_IFOQL",
+          "length": "4",
+          "format": "Binary",
+          "description": "Current output queue length",
+          "reserved": false
+        },
+        {
+          "offset": 176,
+          "name": "SMF119IS_IFIQDXName",
+          "length": "16",
+          "format": "EBCDIC",
+          "description": "For IPAQENET and IPAQENET6 interfaces that are defined with CHPIDTYPE OSX and with an associated IQDX interface, this field is the associated IQDX interface name. Otherwise, this field is blank and the following four counters are not valid.",
+          "reserved": false
+        },
+        {
+          "offset": 192,
+          "name": "SMF119IS_IFInIQDXBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of inbound bytes that were received over the associated IQDX interface. This field is valid only if the SMF119IS_IFIQDXName field is not blank.",
+          "reserved": false
+        },
+        {
+          "offset": 200,
+          "name": "SMF119IS_IFInIQDXUniC",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of inbound unicast packets that were received over the associated IQDX interface. This field is valid only if the SMF119IS_IFIQDXName field is not blank.",
+          "reserved": false
+        },
+        {
+          "offset": 208,
+          "name": "SMF119IS_IFOutIQDXBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of outbound bytes that were sent over the associated IQDX interface. This field is valid only if the SMF119IS_IFIQDXName field is not blank.",
+          "reserved": false
+        },
+        {
+          "offset": 216,
+          "name": "SMF119IS_IFOutIQDXUniC",
+          "length": "8",
+          "format": "Binary",
+          "description": "Number of outbound unicast packets that were sent over the associated IQDX interface. This field is valid only if the SMF119IS_IFIQDXName field is not blank.",
+          "reserved": false
+        },
+        {
+          "offset": 224,
+          "name": "SMF119IS_IFPNetID",
+          "length": "16",
+          "format": "EBCDIC",
+          "description": "Physical network ID. This field is valid for only IPAQENET and IPAQENET6 interfaces that are active for Shared Memory Communications over RDMA (SMC-R).",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S2Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119IS_IFAddIntfName",
+          "length": "16",
+          "format": "EBCDIC",
+          "description": "Interface name, used to correlate this additional address to the interface statistics record in Table 169",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119IS_IFAddIntfHome",
+          "length": "16",
+          "format": "Binary",
+          "description": "Additional interface HOME address",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}

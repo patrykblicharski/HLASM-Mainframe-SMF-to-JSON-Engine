@@ -1,0 +1,292 @@
+{
+  "subtype": 22,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word). See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicator Bit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators* 7 System is running in PR/SM mode.*See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 (X'77').",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record. A triplet is a set of three SMF fields (offset/length/number values) that defines a section of the record. The offset is the offset from the RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119IDOff",
+          "length": "4",
+          "format": "binary",
+          "description": "Offset to TCP/IP identification section from RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119IDLen",
+          "length": "2",
+          "format": "binary",
+          "description": "Length of TCP/IP identification section.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119IDNum",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of TCP/IP identification sections.",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to first data section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of first data section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of first data sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TI_SYSName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name from SYSNAME in IEASYSxx",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TI_SysplexName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Sysplex name from SYSPLEX in COUPLExx",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TI_Stack",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP stack name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TI_ReleaseID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS Communications Server TCP/IP release identifier",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TI_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP subcomponent (right padded with blanks): FTPC FTP Client FTPS FTP server IP IP layer STACK Entire TCP/IP stack TCP TCP layer TN3270C TN3270 Client TN3270S TN3270 server UDP UDP layer",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TI_ASName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Started task qualifier or address space name of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119TI_UserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User ID of security context under which this SMF record is written",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "_rsv_56",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 58,
+          "name": "SMF119TI_ASID",
+          "length": "2",
+          "format": "Binary",
+          "description": "ASID of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119TI_Reason",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason for writing this SMF record: X'08' Event record X'C0' Interval statistics record, more records follow X'80' Interval statistics record, last record in set X'60' End-of-statistics record, more records follow X'20' End-of-statistics re",
+          "reserved": false
+        },
+        {
+          "offset": 61,
+          "name": "_rsv_61",
+          "length": "3",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TN_CIRIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Remote (server) IP address",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TN_CILIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Local IP address",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TN_CIRPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote (server) port number",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119TN_CILPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local port number",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119TN_CITime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time of day of session initiation",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TN_CIDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date of session initiation",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}

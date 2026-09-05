@@ -1,0 +1,1144 @@
+{
+  "subtype": 12,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word).",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicator Bit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators 7 System is running in PR/SM mode.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 77.",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record (7)",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119IDOff",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to TCP/IP identification section",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119IDLen",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of TCP/IP identification section",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119IDNum",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of TCP/IP identification sections",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to zERT connection detail common section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of zERT connection detail common section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of zERT connection detail common section",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119S2Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to TLS protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119S2Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of TLS protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119S2Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of TLS protocol attributes sections",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119S3Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to SSH protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119S3Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of SSH protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119S3Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of SSH protocol attributes sections",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119S4Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to IPSec protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119S4Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of IPSec protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119S4Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of IPSec protocol attributes sections",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119S5Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to certificate DNs section",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119S5Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of certificate DNs section",
+          "reserved": false
+        },
+        {
+          "offset": 74,
+          "name": "SMF119S5Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of certificate DNs sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TI_SYSName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name from SYSNAME in IEASYSxx",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TI_SysplexName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Sysplex name from SYSPLEX in COUPLExx",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TI_Stack",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP stack name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TI_ReleaseID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS Communications Server TCP/IP release identifier",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TI_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP subcomponent (right padded with blanks): FTPC FTP Client FTPS FTP server IP IP layer STACK Entire TCP/IP stack TCP TCP layer TN3270C TN3270 Client TN3270S TN3270 server UDP UDP layer",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TI_ASName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Started task qualifier or address space name of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119TI_UserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User ID of security context under which this SMF record is written",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "_rsv_56",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 58,
+          "name": "SMF119TI_ASID",
+          "length": "2",
+          "format": "Binary",
+          "description": "ASID of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119TI_Reason",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason for writing this SMF record: X'08' Event record X'C0' Interval statistics record, more records follow X'80' Interval statistics record, last record in set X'60' End-of-statistics record, more records follow X'20' End-of-statistics re",
+          "reserved": false
+        },
+        {
+          "offset": 61,
+          "name": "_rsv_61",
+          "length": "3",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SS_SAIntervalDuration",
+          "length": "8",
+          "format": "Binary",
+          "description": "Duration of recording interval in microseconds, where bit 51 is equivalent to 1 microsecond.",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119SS_SAEvent_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Event type: 1. Summary interval record 2. zERT aggregation function enabled event record 3. zERT aggregation function disabled event record",
+          "reserved": false
+        },
+        {
+          "offset": 9,
+          "name": "SMF119SS_SAFlags",
+          "length": "1",
+          "format": "Binary",
+          "description": "Flags: X'80': The session uses IPv6 addresses X\u201940\u2019: The local socket of this session is acting as the server (only meaningful when SMF119SS_SAIPProto indicates TCP) X\u201920\u2019: The local socket of this session is acting as the client (only mean",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119SS_SASecProtos",
+          "length": "1",
+          "format": "Binary",
+          "description": "Cryptographic security protocol. Only one value is set. Possible values are: X'00': No recognized cryptographic protection X'80': TLS/SSL X'40': SSH X'20': IPSec",
+          "reserved": false
+        },
+        {
+          "offset": 11,
+          "name": "SMF119SS_SAJobname",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Jobname that is associated with the socket.",
+          "reserved": false
+        },
+        {
+          "offset": 19,
+          "name": "SMF119SS_SAUserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS\u00ae user ID associated with the socket Note The value *FTPUSR* is specified when this security session represents an aggregation of FTP data connections and we are reporting at the FTP server (SMF119SS_SAFlags = x\u201940.",
+          "reserved": false
+        },
+        {
+          "offset": 27,
+          "name": "SMF119SS_SAIPProto",
+          "length": "1",
+          "format": "Binary",
+          "description": "IP Protocol value. Possible values are: 6: TCP 17: UDP",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119SS_SASrvIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Server IP address. If SMF119SS_Flags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field.",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119SS_SACltIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Client IP address. If SMF119SS_Flags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field.",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119SS_SASrvPortStart",
+          "length": "2",
+          "format": "Binary",
+          "description": "Starting value for server port range. For information on this field, see How does zERT aggregation determine the server port? in z/OS Communications Server: IP Configuration Guide.",
+          "reserved": false
+        },
+        {
+          "offset": 62,
+          "name": "SMF119SS_SASrvPortEnd",
+          "length": "2",
+          "format": "Binary",
+          "description": "Ending value for server port range. If this security session represents a single-server port, then the ending value equals the starting value for the port range.",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119SS_SASessionID",
+          "length": "42",
+          "format": "EBCDIC",
+          "description": "Session identifier that uniquely identifies a security session based on the server and client endpoints plus the significant security attributes for the session. The session identifier is in the form p-value, where p represents the cryptogr",
+          "reserved": false
+        },
+        {
+          "offset": 106,
+          "name": "_rsv_106",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved (alignment)",
+          "reserved": true
+        },
+        {
+          "offset": 108,
+          "name": "SMF119SS_SAInitLifeConnCnt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Count of connections for the life of this security session at the beginning of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119SS_SAInitLifePartialConnCnt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Count of the partial connections for the life of this security session at the beginning of the summary interval. This is a subset of the connections reported in SMF119SS_SAInitLifeConnCnt. A connection is considered to be a \u201cpartial connect",
+          "reserved": false
+        },
+        {
+          "offset": 116,
+          "name": "SMF119SS_SAInitLifeShortConnCnt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Count of short connections for the life of this security session at the beginning of the summary interval. Short connections are connections that last less than 10 seconds. This value is only meaningful when SMF119SS_SAIPProto indicates TCP",
+          "reserved": false
+        },
+        {
+          "offset": 120,
+          "name": "SMF119SS_SAInitActiveConnCnt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of active connections that are associated with this security session at the beginning of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 124,
+          "name": "SMF119SS_SAInitLifeInBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound byte count for the life of this security session at the beginning of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 132,
+          "name": "SMF119SS_SAInitLifeOutBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound byte count for the life of this security session at the beginning of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 140,
+          "name": "SMF119SS_SAInitLifeInSegDG",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound TCP segment or UDP datagram count for the life of this security session at the beginning of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 148,
+          "name": "SMF119SS_SAInitLifeOutSegDG",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound TCP segment or UDP datagram count for the life of this security session at the beginning of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 156,
+          "name": "SMF119SS_SAEndLifeConnCnt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Count of connections for the life of this security session at the end of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 160,
+          "name": "SMF119SS_SAEndLifePartialConnCnt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Count of partial connections for the life of this security session at the end of the summary interval. This is a subset of the connections reported in SMF119SS_SAEndLifeConnCnt that were associated with the security session for only part of",
+          "reserved": false
+        },
+        {
+          "offset": 164,
+          "name": "SMF119SS_SAEndLifeShortConnCnt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Count of short connections for the life of this security session at the end of the summary interval. Short connections are ones that last less than 10 seconds. This value is only meaningful when SMF119SS_SAIPProto indicates TCP.",
+          "reserved": false
+        },
+        {
+          "offset": 168,
+          "name": "SMF119SS_SAEndActiveConnCnt",
+          "length": "4",
+          "format": "Binary",
+          "description": "Number of active connections that are associated with this security session at the end of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 172,
+          "name": "SMF119SS_SAEndLifeInBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound byte count for the life of this security session at the end of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 180,
+          "name": "SMF119SS_SAEndLifeOutBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound byte count for the life of this security session at the end of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 188,
+          "name": "SMF119SS_SAEndLifeInSegDG",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound TCP segment or UDP datagram count for the life of this security session at the end of the summary interval.",
+          "reserved": false
+        },
+        {
+          "offset": 196,
+          "name": "SMF119SS_SAEndLifeOutSegDG",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound TCP segment or UDP datagram count for the life of this security session at the end of the summary interval.",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S2Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SS_TLS_Source",
+          "length": "1",
+          "format": "Binary",
+          "description": "Source of the information in this record. Can be one of the following values: X'01': Stream observation X'02': Cryptographic protocol provider",
+          "reserved": false
+        },
+        {
+          "offset": 1,
+          "name": "SMF119SS_TLS_CryptoFlags",
+          "length": "1",
+          "format": "BINARY",
+          "description": "Cryptographic operations flags: X'80': Encrypt-then-MAC processing is used",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SS_TLS_Prot_Ver",
+          "length": "2",
+          "format": "Binary",
+          "description": "Protocol version: X'0000': Unknown version X'0200': SSLv2 X'0300': SSLv3 X'0301': TLSv1.0 X'0302': TLSv1.1 X'0303': TLSv1.2",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SS_TLS_Neg_Cipher",
+          "length": "6",
+          "format": "EBCDIC",
+          "description": "Negotiated cipher suite identifier. If the TLS version is SSLv3 or higher, this is a four character value in the first 4 bytes of this field, padded with trailing blanks. Refer to the TLS Cipher Suite registry for a complete list of the 4-h",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119SS_TLS_CS_Enc_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "The symmetric encryption algorithm used by the cipher suite: X'0000': Unknown X'0001': None X'0002': DES X'0003': DES 40 X'0004': 3DES X'0005': RC2 40 X'0006': RC2 128 X'0007': RC2 X'0008': RC4 40 X'0009': RC4 128 X'000A': RC4 256 X'000B': ",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119SS_TLS_CS_Msg_Auth",
+          "length": "2",
+          "format": "Binary",
+          "description": "The message authentication algorithm used by the cipher suite: X'0000': Unknown X'0001': No message authentication, or uses authenticated encryption algorithm like AES-GCM X'0002': MD2 X'0003': HMAC-MD5 X'0004': HMAC-SHA1 X'0005': HMAC-SHA2",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SS_TLS_CS_Kex_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "The key exchange algorithm used by the cipher suite: X'0000': Unknown X'0001': None X'0002': RSA X'0003': RSA_EXPORT X'0004': RSA_PSK X'0005': DH_RSA X'0006': DH_RSA_EXPORT X'0007': DH_DSS X'0008': DH_ANON X'0009': DH_ANON_EXPORT X'000A': D",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119SS_TLS_SCert_Signature_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate signature method: X'0000': Unknown X'0001': None X'0002': RSA with MD2 X'0003': RSA with MD5 X'0004': RSA with SHA1 X'0005': DSA with SHA1 X'0006': RSA with SHA-224 X'0007': RSA with SHA-256 X'0008': RSA with SHA-384 X'00",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SS_TLS_SCert_Enc_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate encryption method: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': ECDSA",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119SS_TLS_SCert_Digest_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate digest algorithm: X'0000': Unknown X'0001': None X'0002': MD2 X'0003': MD5 X'0004': SHA1 X'0005': SHA-224 X'0006': SHA-256 X'0007': SHA-384 X'0008': SHA-512",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119SS_TLS_SCert_Key_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate key type: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': Diffie-Hellman (DH) X'0005': Elliptic Curve Cryptography (ECC)",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119SS_TLS_SCert_Key_Len",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Server certificate key length",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "SMF119SS_TLS_CCert_Signature_Method",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119SS_TLS_CCert_Enc_Method",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 30,
+          "name": "SMF119SS_TLS_CCert_Digest_Alg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119SS_TLS_CCert_Key_Type",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119SS_TLS_CCert_Key_Len",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate key length",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S3Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SS_SSH_Source",
+          "length": "1",
+          "format": "BINARY",
+          "description": "Source of the information in this record. Can be one of the following values: X'01': Stream observation X'02': Cryptographic protocol provider 1 1 1 Unused",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SS_SSH_Prot_Ver",
+          "length": "1",
+          "format": "BINARY",
+          "description": "Protocol version : 1 Protocol version 1 2 Protocol version 2",
+          "reserved": false
+        },
+        {
+          "offset": 3,
+          "name": "SMF119SS_SSH_CryptoFlags",
+          "length": "1",
+          "format": "BINARY",
+          "description": "Cryptographic operations flags: X'80': Encrypt-then-MAC processing is used for inbound traffic X'40': Encrypt-then-MAC processing is used for outbound traffic",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SS_SSH_Auth_Method",
+          "length": "2",
+          "format": "BINARY",
+          "description": "First or only peer authentication method that is used for this security session: X'0000': Unknown X'0001': None X'0002': Password X'0003': Public key X'0004': Host-based X'0005': Rhosts X'0006': RhostsRSA X'0007': RSA X'0008': Keyboard-inte",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119SS_SSH_Auth_Method2",
+          "length": "2",
+          "format": "BINARY",
+          "description": "If not 0, the last of multiple authentication methods used for this connection. Values are the same as those for SMF119SS_SSH_Auth_Method",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119SS_SSH_In_Enc_Alg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Encryption algorithm for inbound traffic. Same values as SMF119SS_TLS_CS_Enc_Alg.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119SS_SSH_In_Msg_Auth",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Message authentication algorithm for inbound traffic. Same values as SMF119SS_TLS_CS_Msg_Auth.",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119SS_SSH_Kex_Method",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Key exchange method. X'0000' Unknown X'0001' None X'0002' Diffie-Hellman-group-exchangeSHA256 X'0003' Diffie-Hellman-group-exchangeSHA1 X'0004' Diffie-Hellman-group14-SHA1 X'0005' Diffie-Hellman-group1-SHA1 X'0006' ECDH-SHA2-NISTP256 X'0007",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SS_SSH_Out_Enc_Alg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Encryption algorithm for outbound traffic. Same values as SMF119SS_TLS_CS_Enc_Alg.",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119SS_SSH_Out_Msg_Auth",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Message authentication algorithm for outbound traffic. Same values as SMF119SS_TLS_CS_Msg_Auth.",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SS_SSH_SKey_Type",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Type of raw server key: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': Diffie-Hellman (DH) X'0005': Elliptic Curve Cryptography (ECC) X'0006': RSA1 (SSHV1 only) X'0007': RSA_CERT (from OpenSSH certificate) X'0008': DSA_CE",
+          "reserved": false
+        },
+        {
+          "offset": 20,
+          "name": "SMF119SS_SSH_SKey_Len",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Length of raw server key in bits.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119SS_SSH_CKey_Type",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Type of raw client key. Same values as SMF119SS_SSH_Server_Key_Type.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119SS_SSH_CKey_Len",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Length of raw client key in bits.",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "SMF119SS_SSH_SCert_Signature_Method",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Server certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119SS_SSH_SCert_Enc_Method",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Server certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 30,
+          "name": "SMF119SS_SSH_SCert_Digest_Alg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Server certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119SS_SSH_SCert_Key_Type",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Server certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119SS_SSH_SCert_Key_Len",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Server certificate key length",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119SS_SSH_CCert_Signature_Method",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 38,
+          "name": "SMF119SS_SSH_CCert_Enc_Method",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119SS_SSH_CCert_Digest_Alg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg.",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119SS_SSH_CCert_Key_Type",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type.",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119SS_SSH_CCert_Key_Len",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Client certificate key length",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S4Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SS_IPSec_IKEMajVer",
+          "length": "1",
+          "format": "BINARY",
+          "description": "Major version of the IKE protocol in use. Only the low-order 4 bits are used.",
+          "reserved": false
+        },
+        {
+          "offset": 1,
+          "name": "SMF119SS_IPSec_IKEMinVer",
+          "length": "1",
+          "format": "BINARY",
+          "description": "Minor version of the IKE protocol in use. Only the low-order 4 bits are used.",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SS_IPSec_IKETunLclEndpt",
+          "length": "16",
+          "format": "BINARY",
+          "description": "Local IP address of tunnel endpoint. If SMF119SS_SAFlags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field.",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SS_IPSec_IKETunRmtEndpt",
+          "length": "16",
+          "format": "BINARY",
+          "description": "Remote IP address of tunnel endpoint. If SMF119SS_SAFlags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119SS_IPSec_IKETunLclAuthMeth",
+          "length": "2",
+          "format": "BINARY",
+          "description": "The authentication method for the local endpoint. One of the following values: X'00': Unknown or manual tunnel X'01': None X'02': RSA signature X'03': Preshared key X'04': ECDSA-256 signature X'05': ECDSA-384 signature X'06': ECDSA-521 sign",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119SS_IPSec_IKETunRmtAuthMeth",
+          "length": "2",
+          "format": "BINARY",
+          "description": "The authentication method for the remote endpoint. Same values as SMF119SS_IPSec_IKETunLclAuthMeth.",
+          "reserved": false
+        },
+        {
+          "offset": 38,
+          "name": "SMF119SS_IPSec_IKETunAuthAlg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Tunnel authentication algorithm. Same values as SMF119SS_TLS_CS_Msg_Auth.",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119SS_IPSec_IKETunEncAlg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Tunnel encryption algorithm. Same values as SMF119SS_TLS_CS_Enc_Alg.",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119SS_IPSec_IKETunDHGroup",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Diffie-Hellman group that is used to generate the keying material for this IKE tunnel. One of the following values: X'00': Unknown or manual tunnel X'01': Group1 X'02': Group 2 X'05': Group 5 X'0E': Group 14 X'13': Group 19 X'14': Group 20 ",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119SS_IPSec_IKETunPseudoRandFunc",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Pseudo-random function that is used for seeding keying material. One of the following values: X'00': Unknown or manual tunnel X'01': None X'02': HMAC-SHA2-256 X'03': HMAC-SHA2-384 X'04': HMAC-SHA2-512 X'05': AES-128-XCBC X'06': HMAC-MD5 X'0",
+          "reserved": false
+        },
+        {
+          "offset": 46,
+          "name": "SMF119SS_IPSec_LclCert_Sign_Meth",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Local IKE certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119SS_IPSec_LclCert_Enc_Meth",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Local IKE certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119SS_IPSec_LclCert_Digest_Alg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Local IKE certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg.",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119SS_IPSec_LclCert_Key_Type",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Local IKE certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type.",
+          "reserved": false
+        },
+        {
+          "offset": 54,
+          "name": "SMF119SS_IPSec_LclCert_Key_Len",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Local IKE certificate key length in bits",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119SS_IPSec_RmtCert_Sign_Meth",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Remote IKE certificate signature method. Same values as SMF119SS_TLS_SCert_Signature_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119SS_IPSec_RmtCert_Enc_Meth",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Remote IKE certificate encryption method. Same values as SMF119SS_TLS_SCert_Enc_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119SS_IPSec_RmtCert_Digest_Alg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Remote IKE certificate digest algorithm. Same values as SMF119SS_TLS_SCert_Digest_Alg.",
+          "reserved": false
+        },
+        {
+          "offset": 62,
+          "name": "SMF119SS_IPSec_RmtCert_Key_Type",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Remote IKE certificate key type. Same values as SMF119SS_TLS_SCert_Key_Type.",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119SS_IPSec_RmtCert_Key_Len",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Remote IKE certificate key length in bits",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119SS_IPSec_PFSGroup",
+          "length": "2",
+          "format": "BINARY",
+          "description": "Diffie-Hellman group that is used for perfect forward secrecy. Same values as SMF119SS_IPSec_IKETunDHGroup.",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119SS_IPSec_EncapMode",
+          "length": "1",
+          "format": "BINARY",
+          "description": "Tunnel encapsulation mode. One of the following values: X'01': Tunnel Mode X'02': Transport Mode",
+          "reserved": false
+        },
+        {
+          "offset": 69,
+          "name": "SMF119SS_IPSec_AuthProto",
+          "length": "1",
+          "format": "BINARY",
+          "description": "The protocol that is used for message authentication. One of the following values: 50 Encapsulating Security Payload (ESP) 51: Authentication Header (AH)",
+          "reserved": false
+        },
+        {
+          "offset": 70,
+          "name": "SMF119SS_IPSec_AuthAlg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "The tunnel authentication algorithms. Same values as SMF119SS_TLS_CS_Msg_Auth.",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119SS_IPSec_EncAlg",
+          "length": "2",
+          "format": "BINARY",
+          "description": "The tunnel encryption algorithms. Same values as !!119SS_TLS_CS_Enc_Alg.",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S5Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SS_DN_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of the DN structure (includes the length of SMF119SS_DN_Len, SMF119SS_DN_Type, and SMF119SS_DN)",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SS_DN_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Type of Distinguished Name: X'0001': IPSec Local Certificate Subject DN X'0002': IPSec Local Certificate Issuer DN X'0003': IPSec Remote Certificate Subject DN X'0004': IPSec Remote Certificate Issuer DN X'0005': TLS Server Certificate Subj",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SS_DN",
+          "length": "1024",
+          "format": "EBCDIC",
+          "description": "The variable length DN value (up to 1024)",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,704 @@
+{
+  "subtype": 70,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word). See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicator Bit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators* 7 System is running in PR/SM mode.*See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 (X'77').",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record. A triplet is a set of three SMF fields (offset/length/number values) that defines a section of the record. The offset is the offset from the RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119IDOff",
+          "length": "4",
+          "format": "binary",
+          "description": "Offset to TCP/IP identification section from RDW.",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119IDLen",
+          "length": "2",
+          "format": "binary",
+          "description": "Length of TCP/IP identification section.",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119IDNum",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of TCP/IP identification sections.",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to first data section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of first data section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of first data sections",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119S2Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119S2Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 2nd data section",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119S2Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 2nd data sections",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119S3Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 3rd data section",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119S3Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 3rd data section",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119S3Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 3rd data sections",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119S4Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 4th data section",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119S4Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 4th data section",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119S4Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 4th data sections",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119S5Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to 5th data section",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119S5Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of 5th data section",
+          "reserved": false
+        },
+        {
+          "offset": 74,
+          "name": "SMF119S5Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of 5th data sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TI_SYSName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name from SYSNAME in IEASYSxx",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TI_SysplexName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Sysplex name from SYSPLEX in COUPLExx",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TI_Stack",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP stack name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TI_ReleaseID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS Communications Server TCP/IP release identifier",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TI_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP subcomponent (right padded with blanks): FTPC FTP Client FTPS FTP server IP IP layer STACK Entire TCP/IP stack TCP TCP layer TN3270C TN3270 Client TN3270S TN3270 server UDP UDP layer",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TI_ASName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Started task qualifier or address space name of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119TI_UserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User ID of security context under which this SMF record is written",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "_rsv_56",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 58,
+          "name": "SMF119TI_ASID",
+          "length": "2",
+          "format": "Binary",
+          "description": "ASID of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119TI_Reason",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason for writing this SMF record: X'08' Event record X'C0' Interval statistics record, more records follow X'80' Interval statistics record, last record in set X'60' End-of-statistics record, more records follow X'20' End-of-statistics re",
+          "reserved": false
+        },
+        {
+          "offset": 61,
+          "name": "_rsv_61",
+          "length": "3",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119FT_FSOper",
+          "length": "1",
+          "format": "Binary",
+          "description": "FTP Operation according to SMF77 subtype classification: x'01': Append x'02': Delete x'03': Rename x'04': Retrieve x'05': Store x'06': Store Unique",
+          "reserved": false
+        },
+        {
+          "offset": 1,
+          "name": "_rsv_1",
+          "length": "3",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FT_FSCmd",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "FTP command (according to RFC 959+)",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119FT_FSFType",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "File type (SEQ, JES, or SQL)",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119FT_FSDRIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Remote IP address (data connection)",
+          "reserved": false
+        },
+        {
+          "offset": 28,
+          "name": "SMF119FT_FSDLIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Local IP address (data connection)",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119FT_FSDRPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote port number (data connection - client)",
+          "reserved": false
+        },
+        {
+          "offset": 46,
+          "name": "SMF119FT_FSDLPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local port number (data connection - server)",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119FT_FSCRIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Remote IP address (control connection)",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119FT_FSCLIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Local IP address (control connection)",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119FT_FSCRPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote port number (control connection - client)",
+          "reserved": false
+        },
+        {
+          "offset": 82,
+          "name": "SMF119FT_FSCLPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local port number (control connection - server)",
+          "reserved": false
+        },
+        {
+          "offset": 84,
+          "name": "SMF119FT_FSSUser",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Client User ID on server",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119FT_FSType",
+          "length": "1",
+          "format": "EBCDIC",
+          "description": "Data type: A: ASCII E: EBCDIC I: Image B: Double-byte U: UCS-2",
+          "reserved": false
+        },
+        {
+          "offset": 93,
+          "name": "SMF119FT_FSMode",
+          "length": "1",
+          "format": "EBCDIC",
+          "description": "Transmission mode B: Block C: Compressed S: Stream",
+          "reserved": false
+        },
+        {
+          "offset": 94,
+          "name": "SMF119FT_FSStruct",
+          "length": "1",
+          "format": "EBCDIC",
+          "description": "Data structure F: File R: Record",
+          "reserved": false
+        },
+        {
+          "offset": 95,
+          "name": "SMF119FT_FSDsType",
+          "length": "1",
+          "format": "EBCDIC",
+          "description": "Data set type S: SEQ P: PDS H: HFS",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119FT_FSSTime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Transmission start time of day",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119FT_FSSDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Transmission start date",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119FT_FSETime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Transmission end time of day",
+          "reserved": false
+        },
+        {
+          "offset": 108,
+          "name": "SMF119FT_FSEDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Transmission end date",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119FT_FSDur",
+          "length": "4",
+          "format": "Binary",
+          "description": "File transmission duration in units of 1/100 seconds",
+          "reserved": false
+        },
+        {
+          "offset": 116,
+          "name": "SMF119FT_FSBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Transmission byte count; 64-bit integer",
+          "reserved": false
+        },
+        {
+          "offset": 124,
+          "name": "SMF119FT_FSLReply",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Last reply to client (3-digit RFC 959 code, right justified)",
+          "reserved": false
+        },
+        {
+          "offset": 128,
+          "name": "SMF119FT_FSM1",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "PDS Member name",
+          "reserved": false
+        },
+        {
+          "offset": 136,
+          "name": "SMF119FT_FSRS",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Reserved for abnormal end information",
+          "reserved": false
+        },
+        {
+          "offset": 144,
+          "name": "SMF119FT_FSM2",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Second PDS member name (if rename operation)",
+          "reserved": false
+        },
+        {
+          "offset": 152,
+          "name": "SMF119FT_FSBytesFloat",
+          "length": "8",
+          "format": "Floating",
+          "description": "point hex z/OS floating point format for transmission byte count",
+          "reserved": false
+        },
+        {
+          "offset": 160,
+          "name": "SMF119FT_FSCConnID",
+          "length": "4",
+          "format": "Binary",
+          "description": "TCP connection ID of FTP control connection",
+          "reserved": false
+        },
+        {
+          "offset": 164,
+          "name": "SMF119FT_FSDConnID",
+          "length": "4",
+          "format": "Binary",
+          "description": "TCP connection ID of FTP data connection, or 0",
+          "reserved": false
+        },
+        {
+          "offset": 168,
+          "name": "SMF119FT_FSSessionID",
+          "length": "15",
+          "format": "EBCDIC",
+          "description": "FTP activity logging session ID. The activity logging session ID uniquely identifies the FTP session between a client and a server. The identifier is created by combining the job name of the FTP daemon with a 5-digit number in the range 000",
+          "reserved": false
+        },
+        {
+          "offset": 183,
+          "name": "_rsv_183",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S2Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119FT_FSHostname",
+          "length": "VARIABLE",
+          "format": "EBCDIC",
+          "description": "Host Name",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S3Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119FT_FSFileName1",
+          "length": "VARIABLE",
+          "format": "EBCDIC",
+          "description": "Server MVS or z/OS UNIX file name associated with the file transfer or rename operation. When the operation is a rename, this is the file or data set original name.",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S4Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119FT_FSFileName2",
+          "length": "VARIABLE",
+          "format": "EBCDIC",
+          "description": "Second MVS or z/OS UNIX file name associated with a rename. This is the new file or data set name.",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S5Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119FT_FSMechanism",
+          "length": "1",
+          "format": "EBCDIC",
+          "description": "Protection Mechanism N None T TLS G GSSAPI A AT-TLS",
+          "reserved": false
+        },
+        {
+          "offset": 1,
+          "name": "SMF119FT_FSCProtect",
+          "length": "1",
+          "format": "EBCDIC",
+          "description": "Control connection protection level N None C Clear S Safe P Private",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119FT_FSDProtect",
+          "length": "1",
+          "format": "EBCDIC",
+          "description": "Data connection Protection Level N None C Clear S Safe P Private",
+          "reserved": false
+        },
+        {
+          "offset": 3,
+          "name": "SMF119FT_FSLoginMech",
+          "length": "1",
+          "format": "EBCDIC",
+          "description": "Login Method P Password C Certificate T Kerberos ticket",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FT_FSProtoLevel",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Protocol level (only present if Protocol Mechanism is TLS or AT-TLS) Possible values are: * SSLV2 * SSLV3 * TLSV1",
+          "reserved": false
+        },
+        {
+          "offset": 12,
+          "name": "SMF119FT_FSCipherSpec",
+          "length": "20",
+          "format": "EBCDIC",
+          "description": "Cipher Specification (only present if Protocol Mechanism is TLS or AT-TLS). Possible values when Protocol Level is SSLV2: * RC4 US * RC4 Export * RC2 US * RC2 Export * DES 56-Bit * Triple DES US Possible values when Protocol Level is SSLV3 ",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119FT_FSProtoBufSize",
+          "length": "4",
+          "format": "Binary",
+          "description": "Negotiated protection buffer size",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119FT_FSCipher",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Hexadecimal value of cipher specification (present only when Protocol Mechanism is TLS or AT-TLS).",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}

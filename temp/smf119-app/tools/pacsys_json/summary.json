@@ -1,0 +1,172 @@
+{
+  "1": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off"
+    ],
+    "fields": 55
+  },
+  "2": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off",
+      "SMF119S3Off",
+      "SMF119S4Off"
+    ],
+    "fields": 84
+  },
+  "3": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off",
+      "SMF119S3Off",
+      "SMF119S4Off",
+      "SMF119S5Off"
+    ],
+    "fields": 82
+  },
+  "5": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off",
+      "SMF119S3Off",
+      "SMF119S4Off",
+      "SMF119S5Off",
+      "SMF119S6Off"
+    ],
+    "fields": 193
+  },
+  "6": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off"
+    ],
+    "fields": 62
+  },
+  "7": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off"
+    ],
+    "fields": 51
+  },
+  "8": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off"
+    ],
+    "fields": 33
+  },
+  "10": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off"
+    ],
+    "fields": 46
+  },
+  "11": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off",
+      "SMF119S3Off",
+      "SMF119S4Off",
+      "SMF119S5Off",
+      "SMF119S6Off"
+    ],
+    "fields": 203
+  },
+  "12": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off",
+      "SMF119S3Off",
+      "SMF119S4Off",
+      "SMF119S5Off"
+    ],
+    "fields": 138
+  },
+  "20": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off"
+    ],
+    "fields": 37
+  },
+  "21": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off",
+      "SMF119S3Off",
+      "SMF119S4Off"
+    ],
+    "fields": 82
+  },
+  "22": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off"
+    ],
+    "fields": 34
+  },
+  "23": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off"
+    ],
+    "fields": 43
+  },
+  "50": {
+    "sections": [
+      "HEADER",
+      "SMF119S50_IDOff",
+      "SMF119S50_S1Off",
+      "SMF119S50_S2Off",
+      "SMF119S50_S3Off",
+      "SMF119S50_S4Off"
+    ],
+    "fields": 68
+  },
+  "70": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off",
+      "SMF119S3Off",
+      "SMF119S4Off",
+      "SMF119S5Off"
+    ],
+    "fields": 83
+  },
+  "72": {
+    "sections": [
+      "HEADER",
+      "SMF119IDOff",
+      "SMF119S1Off",
+      "SMF119S2Off"
+    ],
+    "fields": 48
+  }
+}

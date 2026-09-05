@@ -1,0 +1,1669 @@
+{
+  "subtype": 11,
+  "sections": [
+    {
+      "triplet": "HEADER",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119LEN",
+          "length": "2",
+          "format": "binary",
+          "description": "Record length. This field and the next field (total of four bytes) form the RDW (record descriptor word).",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SEG",
+          "length": "2",
+          "format": "binary",
+          "description": "Segment descriptor (see record length field).",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119FLG",
+          "length": "1",
+          "format": "binary",
+          "description": "System indicatorBit Meaning When Set 0 New record format 1 Subtypes used 2 Reserved. 3-6 Version indicators 7 System is running in PR/SM mode.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119RTY",
+          "length": "1",
+          "format": "binary",
+          "description": "Record type 119 77').",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119TME",
+          "length": "4",
+          "format": "binary",
+          "description": "Time since midnight, in hundredths of a second, that the record was moved into the SMF buffer.",
+          "reserved": false
+        },
+        {
+          "offset": 10,
+          "name": "SMF119DTE",
+          "length": "4",
+          "format": "packed",
+          "description": "Date when the record was moved into the SMF buffer, in the form 0cyydddF. See \u201cStandard SMF Record Header\u201d on page 13-1 for a detailed description.",
+          "reserved": false
+        },
+        {
+          "offset": 14,
+          "name": "SMF119SID",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "System identification (from the SMFPRMxx SID parameter).",
+          "reserved": false
+        },
+        {
+          "offset": 18,
+          "name": "SMF119SSI",
+          "length": "4",
+          "format": "EBCDIC",
+          "description": "Subsystem identification.",
+          "reserved": false
+        },
+        {
+          "offset": 22,
+          "name": "SMF119STY",
+          "length": "2",
+          "format": "binary",
+          "description": "Record subtype.",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TRN",
+          "length": "2",
+          "format": "binary",
+          "description": "Number of triplets in this record (7)",
+          "reserved": false
+        },
+        {
+          "offset": 26,
+          "name": "_rsv_26",
+          "length": "2",
+          "format": "binary",
+          "description": "Reserved.",
+          "reserved": true
+        },
+        {
+          "offset": 28,
+          "name": "SMF119IDOff",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to TCP/IP identification section",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119IDLen",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of TCP/IP identification section",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119IDNum",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of TCP/IP identification sections",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119S1Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to zERT connection detail common section",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119S1Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of zERT connection detail common section",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119S1Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of zERT connection detail common section",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119S2Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to IP filter-specific section",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119S2Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of IP filter-specific section",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119S2Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of IP filter-specific sections",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119S3Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to TLS protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119S3Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of TLS protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119S3Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of TLS protocol attributes sections",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119S4Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to SSH protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119S4Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of SSH protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119S4Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of SSH protocol attributes sections",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119S5Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to IPSec protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119S5Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of IPSec protocol attributes section",
+          "reserved": false
+        },
+        {
+          "offset": 74,
+          "name": "SMF119S5Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of IPSec protocol attributes sections",
+          "reserved": false
+        },
+        {
+          "offset": 76,
+          "name": "SMF119S6Off",
+          "length": "4",
+          "format": "Binary",
+          "description": "Offset to certificate DNs section",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119S6Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of certificate DNs section",
+          "reserved": false
+        },
+        {
+          "offset": 82,
+          "name": "SMF119S6Num",
+          "length": "2",
+          "format": "Binary",
+          "description": "Number of certificate DNs sections",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119IDOff",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119TI_SYSName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "System name from SYSNAME in IEASYSxx",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119TI_SysplexName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Sysplex name from SYSPLEX in COUPLExx",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119TI_Stack",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP stack name",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119TI_ReleaseID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS Communications Server TCP/IP release identifier",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119TI_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "TCP/IP subcomponent (right padded with blanks): FTPC FTP Client FTPS FTP server IP IP layer STACK Entire TCP/IP stack TCP TCP layer TN3270C TN3270 Client TN3270S TN3270 server UDP UDP layer",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119TI_ASName",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Started task qualifier or address space name of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119TI_UserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "User ID of security context under which this SMF record is written",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "_rsv_56",
+          "length": "2",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        },
+        {
+          "offset": 58,
+          "name": "SMF119TI_ASID",
+          "length": "2",
+          "format": "Binary",
+          "description": "ASID of address space that writes this SMF record",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119TI_Reason",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reason for writing this SMF record: X'08' Event record X'C0' Interval statistics record, more records follow X'80' Interval statistics record, last record in set X'60' End-of-statistics record, more records follow X'20' End-of-statistics re",
+          "reserved": false
+        },
+        {
+          "offset": 61,
+          "name": "_rsv_61",
+          "length": "3",
+          "format": "EBCDIC",
+          "description": "Reserved",
+          "reserved": true
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S1Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SC_SAEvent_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Event type: X'01': Connection initiation X'02': Change in cryptographic attributes X'03': Connection termination X'04': Short connection termination (Connection terminates within 10 seconds of being established. No associated Connection ini",
+          "reserved": false
+        },
+        {
+          "offset": 1,
+          "name": "SMF119SC_SASecProtos",
+          "length": "1",
+          "format": "Binary",
+          "description": "Cryptographic security protocols for the connection. Zero or more of these flags may be specified: X'00': No recognized cryptographic protection X'80': TLS/SSL X'40': SSH X'20': IPSec",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SC_SAFlags",
+          "length": "1",
+          "format": "Binary",
+          "description": "Flags: X'80': IPv6 connection X'40': AT-TLS cryptographic data protection operations are bypassed for this connection as part of a stack optimization for intra-host connections. Only AT-TLS peer authentication operations are executed in thi",
+          "reserved": false
+        },
+        {
+          "offset": 3,
+          "name": "SMF119SC_SASecFlags",
+          "length": "1",
+          "format": "Binary",
+          "description": "IP security Flags: x'80': IP security is enabled x'40': IPv6 security is enabled x'20': IP filtering done for connection",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SC_SAIPProto",
+          "length": "1",
+          "format": "Binary",
+          "description": "IP Protocol value: X'06': TCP X'11': UDP",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119SC_SA_Rsvd1",
+          "length": "3",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119SC_SAJobname",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Jobname associated with the socket",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119SC_SAJobID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Job ID associated with the socket",
+          "reserved": false
+        },
+        {
+          "offset": 24,
+          "name": "SMF119SC_SAUserID",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "z/OS\u00ae user ID associated with the socket",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119SC_SASTime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time of day of connection establishment in 1/100 seconds since midnight (using Coordinated Universal Time (UTC))",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119SC_SASDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date of connection establishment (UTC)",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119SC_SAETime",
+          "length": "4",
+          "format": "Binary",
+          "description": "Time connection ended in 1/100 seconds since midnight (using Coordinated Universal Time (UTC))",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119SC_SAEDate",
+          "length": "4",
+          "format": "Packed",
+          "description": "Date connection end, set when event type (SMF119SC_SAEvent_Type) is connection termination or short connection termination otherwise, 0",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119SC_SARIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Remote connection endpoint IP address. If SMF119SC_SAFlags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field.",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119SC_SALIP",
+          "length": "16",
+          "format": "Binary",
+          "description": "Local connection endpoint IP address. If SMF119SC_SAFlags indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field.",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119SC_SARPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote port",
+          "reserved": false
+        },
+        {
+          "offset": 82,
+          "name": "SMF119SC_SALPort",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local port",
+          "reserved": false
+        },
+        {
+          "offset": 84,
+          "name": "SMF119SC_SAConnID",
+          "length": "4",
+          "format": "Binary",
+          "description": "Transport layer connection ID",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119SC_SAInBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound byte count since connection started",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119SC_SAOutBytes",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound byte count since connection started",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119SC_SAInSegDG",
+          "length": "8",
+          "format": "Binary",
+          "description": "Inbound TCP segment or UDP datagram count since connection started",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119SC_SAOutSegDG",
+          "length": "8",
+          "format": "Binary",
+          "description": "Outbound TCP segment or UDP datagram count since connection started",
+          "reserved": false
+        },
+        {
+          "offset": 120,
+          "name": "SMF119SC_SA_Rsvd2",
+          "length": "8",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S2Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SC_IPFlt_OutAct",
+          "length": "1",
+          "format": "Binary",
+          "description": "Outbound IP filtering behavior: X'01': Outbound traffic permitted in the clear X'02': Outbound traffic permitted with IPSec protection X'03': Outbound traffic denied X'00' if no associated outbound filter rule). A change in this attribute c",
+          "reserved": false
+        },
+        {
+          "offset": 1,
+          "name": "SMF119SC_IPFlt_InbAct",
+          "length": "1",
+          "format": "Binary",
+          "description": "Inbound IP filtering behavior: X'01': Inbound traffic permitted in the clear X'02': Inbound traffic permitted with IPSec protection X'03': Inbound traffic denied X'00' if no associated inbound filter rule). A change in this attribute causes",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SC_IPFlt_Rsvd1",
+          "length": "2",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SC_IPFlt_OutRuleName",
+          "length": "40",
+          "format": "EBCDIC",
+          "description": "Outbound traffic IP filter rule name (blank if no associated outbound filter rule)",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119SC_IPFlt_OutRuleExt",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Outbound traffic IP filter rule name extension (blank if no associated outbound filter rule or the filter rule has no rule name extension value)",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119SC_IPFlt_InRuleName",
+          "length": "40",
+          "format": "EBCDIC",
+          "description": "Inbound traffic IP filter rule name (blank if no associated inbound filter rule)",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119SC_IPFlt_InRuleExt",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "Inbound traffic IP filter rule name extension (blank if no associated inbound filter rule or the filter rule has no rule name extension value)",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S3Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SC_TLS_Prot_Ver",
+          "length": "2",
+          "format": "Binary",
+          "description": "Protocol version: X'0000': Unknown version X'0200': SSLv2 X'0300': SSLv3 X'0301': TLSv1.0 X'0302': TLSv1.1 X'0303': TLSv1.2",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SC_TLS_Source",
+          "length": "1",
+          "format": "Binary",
+          "description": "Source of the TLS/SSL information in this record: X'01': Stream observation X'02': Cryptographic protocol provider Information only",
+          "reserved": false
+        },
+        {
+          "offset": 3,
+          "name": "SMF119SC_TLS_Handshake_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Handshake type: X'01': Full handshake X'02': Abbreviated handshake Information only",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SC_TLS_Handshake_Role",
+          "length": "1",
+          "format": "Binary",
+          "description": "Local handshake role: X'00': Unknown X'01': Client X'02': Server X'03': Server with client authentication Information only",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119SC_TLS_Rsvd1",
+          "length": "2",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 7,
+          "name": "SMF119SC_TLS_Session_ID_Len",
+          "length": "1",
+          "format": "Binary",
+          "description": "Length of TLS session ID value in bytes. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119SC_TLS_Session_ID",
+          "length": "32",
+          "format": "Binary",
+          "description": "TLS session ID (left justified). Information only",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119SC_TLS_Protocol_Provider",
+          "length": "16",
+          "format": "EBCDIC",
+          "description": "Source of the information in this record (padded with trailing blanks): \"Observation\": Information was observed by the TCP/IP stack, not supplied by a CPP. This value is used when SMF119SC_TLS_Source is set to 1. \"IBM System SSL\" : System S",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119SC_TLS_Neg_Cipher",
+          "length": "6",
+          "format": "EBCDIC",
+          "description": "Negotiated cipher suite identifier. If the TLS version is SSLv3 or higher, this is a four character value in the first 4 bytes of this field, padded with trailing blanks. Refer to the TLS Cipher Suite registry for a complete list of the 4-h",
+          "reserved": false
+        },
+        {
+          "offset": 62,
+          "name": "SMF119SC_TLS_CS_Enc_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "The symmetric encryption algorithm used by the cipher suite: X'0000': Unknown X'0001': None X'0002': DES X'0003': DES 40 X'0004': 3DES X'0005': RC2 40 X'0006': RC2 128 X'0007': RC2 X'0008': RC4 40 X'0009': RC4 128 X'000A': RC4 256 X'000B': ",
+          "reserved": false
+        },
+        {
+          "offset": 64,
+          "name": "SMF119SC_TLS_CS_Msg_Auth",
+          "length": "2",
+          "format": "Binary",
+          "description": "The message authentication algorithm used by the cipher suite: X'0000': Unknown X'0001': No message authentication, or uses authenticated encryption algorithm like AES-GCM X'0002': MD2 X'0003': HMAC-MD5 X'0004': HMAC-SHA1 X'0005': HMAC-SHA2",
+          "reserved": false
+        },
+        {
+          "offset": 66,
+          "name": "SMF119SC_TLS_CS_Kex_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "The key exchange algorithm used by the cipher suite: X'0000': Unknown X'0001': None X'0002': RSA X'0003': RSA_EXPORT X'0004': RSA_PSK X'0005': DH_RSA X'0006': DH_RSA_EXPORT X'0007': DH_DSS X'0008': DH_ANON X'0009': DH_ANON_EXPORT X'000A': D",
+          "reserved": false
+        },
+        {
+          "offset": 68,
+          "name": "SMF119SC_TLS_FIPS_Mode",
+          "length": "1",
+          "format": "Binary",
+          "description": "FIPS 140 mode of the TLS/SSL provider: X'00': Not in FIPS 140 mode X'01': FIPS 140 mode is enabled (80-bit strength enforced) X'02': FIPS 140 mode is enabled at level 1 (synonymous with X'01') X'03': FIPS 140 mode is enabled at level 2 (112",
+          "reserved": false
+        },
+        {
+          "offset": 69,
+          "name": "SMF119SC_TLS_CryptoFlags",
+          "length": "1",
+          "format": "Binary",
+          "description": "Cryptographic operations flags: X'80': Encrypt-then-MAC processing is used All other flags reserved",
+          "reserved": false
+        },
+        {
+          "offset": 70,
+          "name": "SMF119SC_TLS_Rsvd2",
+          "length": "2",
+          "format": "Binary",
+          "description": "Reserved Server certificate information",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119SC_TLS_SCert_Signature_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate signature method: X'0000': Unknown X'0001': None X'0002': RSA with MD2 X'0003': RSA with MD5 X'0004': RSA with SHA1 X'0005': DSA with SHA1 X'0006': RSA with SHA-224 X'0007': RSA with SHA-256 X'0008': RSA with SHA-384 X'00",
+          "reserved": false
+        },
+        {
+          "offset": 74,
+          "name": "SMF119SC_TLS_SCert_Enc_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate encryption method: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': ECDSA",
+          "reserved": false
+        },
+        {
+          "offset": 76,
+          "name": "SMF119SC_TLS_SCert_Digest_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate digest algorithm: X'0000': Unknown X'0001': None X'0002': MD2 X'0003': MD5 X'0004': SHA1 X'0005': SHA-224 X'0006': SHA-256 X'0007': SHA-384 X'0008': SHA-512",
+          "reserved": false
+        },
+        {
+          "offset": 78,
+          "name": "SMF119SC_TLS_Rsvd3",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 79,
+          "name": "SMF119SC_TLS_SCert_Serial_Len",
+          "length": "1",
+          "format": "Binary",
+          "description": "Server certificate serial number length in bytes. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 80,
+          "name": "SMF119SC_TLS_SCert_Serial",
+          "length": "20",
+          "format": "Binary",
+          "description": "Server certificate serial number, left justified. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119SC_TLS_SCert_Time_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Format of server certificate \"not after\" time: X'01': Coordinated Universal Time (UTC) X'02': Generalized Time (GT) Information only",
+          "reserved": false
+        },
+        {
+          "offset": 101,
+          "name": "SMF119SC_TLS_SCert_Time",
+          "length": "15",
+          "format": "Binary",
+          "description": "Server certificate \"not after\" time: If the time type is UTC (SMF119SC_TLS_SCert_Time_Type = X'01'), the first 13 bytes of this field contain the time in UTC format (YYMMDDhhmmssZ). If the time type is GT (SMF119SC_TLS_SCert_Time_Type = X'0",
+          "reserved": false
+        },
+        {
+          "offset": 116,
+          "name": "SMF119SC_TLS_SCert_Key_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate key type: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': Diffie-Hellman (DH) X'0005': Elliptic Curve Cryptography (ECC)",
+          "reserved": false
+        },
+        {
+          "offset": 118,
+          "name": "SMF119SC_TLS_SCert_Key_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate key length in bits Client certificate information",
+          "reserved": false
+        },
+        {
+          "offset": 120,
+          "name": "SMF119SC_TLS_CCert_Signature_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate signature method. Same values as SMF119SC_TLS_SCert_Signature_Method.",
+          "reserved": false
+        },
+        {
+          "offset": 122,
+          "name": "SMF119SC_TLS_CCert_Enc_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate encryption method. Same values as SMF119SC_TLS_SCert_Enc_Method",
+          "reserved": false
+        },
+        {
+          "offset": 124,
+          "name": "SMF119SC_TLS_CCert_Digest_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate digest algorithm. Same values as SMF119SC_TLS_SCert_Digest_Alg",
+          "reserved": false
+        },
+        {
+          "offset": 126,
+          "name": "SMF119SC_TLS_Rsvd4",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 127,
+          "name": "SMF119SC_TLS_CCert_Serial_Len",
+          "length": "1",
+          "format": "Binary",
+          "description": "Client certificate serial number length in bytes. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 128,
+          "name": "SMF119SC_TLS_CCert_Serial",
+          "length": "20",
+          "format": "Binary",
+          "description": "Client certificate serial number, left justified. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 148,
+          "name": "SMF119SC_TLS_CCert_Time_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Format of client certificate \"not after\" time: X'01': Coordinated Universal Time (UTC) X'02': Generalized Time (GT) Information only",
+          "reserved": false
+        },
+        {
+          "offset": 149,
+          "name": "SMF119SC_TLS_CCert_Time",
+          "length": "15",
+          "format": "Binary",
+          "description": "Client certificate \"not after\" time: If the time type is UTC (SMF119SC_TLS_CCert_Time_Type = X'01'), the first 13 bytes of this field contain the time in UTC format (YYMMDDhhmmssZ). If the time type is GMT (SMF119SC_TLS_CCert_Time_Type = X'",
+          "reserved": false
+        },
+        {
+          "offset": 164,
+          "name": "SMF119SC_TLS_CCert_Key_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate key type. Same values as SMF119SC_TLS_SCert_Key_Type.",
+          "reserved": false
+        },
+        {
+          "offset": 166,
+          "name": "SMF119SC_TLS_CCert_Key_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate key length in bits",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S4Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SC_SSH_Prot_Ver",
+          "length": "1",
+          "format": "Binary",
+          "description": "Protocol version: X'01': Protocol version 1 X'02': Protocol version 2",
+          "reserved": false
+        },
+        {
+          "offset": 1,
+          "name": "SMF119SC_SSH_Source",
+          "length": "1",
+          "format": "Binary",
+          "description": "Source of the SSH information in this record: X'01': Stream observation X'02': Cryptographic protocol provider Information only",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SC_SSH_FIPS_Mode",
+          "length": "1",
+          "format": "Binary",
+          "description": "FIPS 140 mode of the SSH provider. Same values as SMF119SC_TLS_FIPS_Mode . Information only",
+          "reserved": false
+        },
+        {
+          "offset": 3,
+          "name": "SMF119SC_SSH_CryptoFlags",
+          "length": "1",
+          "format": "Binary",
+          "description": "Cryptographic operations flags: X'80': Encrypt-then-MAC processing is used for inbound traffic X'40' Encrypt-then-MAC processing is used for outbound traffic All other flags reserved",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SC_SSH_Rsvd1",
+          "length": "4",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119SC_SSH_Comp",
+          "length": "8",
+          "format": "EBCDIC",
+          "description": "SSH subcomponent (-padded with trailing blanks): 'SFTPS': sftp server 'SFTPC': sftp client 'SCPS ' : scp server 'SCPC' : scp client 'SSH' : ssh client 'SSHD' : sshd daemon Information only",
+          "reserved": false
+        },
+        {
+          "offset": 16,
+          "name": "SMF119SC_SSH_Protocol_Provider",
+          "length": "16",
+          "format": "EBCDIC",
+          "description": "Protocol provider (padded with trailing blanks): \"Observation\": Information was observed by the TCP/IP stack, not supplied by a CPP. This value is used when SMF119SC_SSH_Source is set to 1. \"IBM OpenSSH\": z/OS-provided OpenSSH Other values ",
+          "reserved": false
+        },
+        {
+          "offset": 32,
+          "name": "SMF119SC_SSH_Auth_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "First or only peer authentication method used for this connection: X'0000': Unknown X'0001': None X'0002': Password X'0003': Public key X'0004': Host-based X'0005': Rhosts X'0006': RhostsRSA X'0007': RSA X'0008': Keyboard-interactive X'0009",
+          "reserved": false
+        },
+        {
+          "offset": 34,
+          "name": "SMF119SC_SSH_Auth_Method2",
+          "length": "2",
+          "format": "Binary",
+          "description": "If not 0, the last of multiple authentication methods used for this connection. Values are the same as those for SMF119SC_SSH_Auth_Method",
+          "reserved": false
+        },
+        {
+          "offset": 36,
+          "name": "SMF119SC_SSH_In_Enc_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Encryption algorithm for inbound traffic. Same values as SMF119SC_TLS_CS_Enc_Alg .",
+          "reserved": false
+        },
+        {
+          "offset": 38,
+          "name": "SMF119SC_SSH_In_Msg_Auth",
+          "length": "2",
+          "format": "Binary",
+          "description": "Message authentication algorithm for inbound traffic. Same values as SMF119SC_TLS_CS_Msg_Auth .",
+          "reserved": false
+        },
+        {
+          "offset": 40,
+          "name": "SMF119SC_SSH_Kex_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Key exchange method. X'0000' Unknown X'0001' None X'0002' Diffie-Hellman-group-exchangeSHA256 X'0003' Diffie-Hellman-group-exchangeSHA1 X'0004' Diffie-Hellman-group14-SHA1 X'0005' Diffie-Hellman-group1-SHA1 X'0006' ECDH-SHA2-NISTP256 X'0007",
+          "reserved": false
+        },
+        {
+          "offset": 42,
+          "name": "SMF119SC_SSH_Out_Enc_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Encryption algorithm for outbound traffic. . Same values as SMF119SC_TLS_CS_Enc_Alg .",
+          "reserved": false
+        },
+        {
+          "offset": 44,
+          "name": "SMF119SC_SSH_Out_Msg_Auth",
+          "length": "2",
+          "format": "Binary",
+          "description": "Message authentication algorithm for outbound traffic. Same values as SMF119SC_TLS_CS_Msg_Auth .",
+          "reserved": false
+        },
+        {
+          "offset": 46,
+          "name": "SMF119SC_SSH_Rsvd2",
+          "length": "2",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 48,
+          "name": "SMF119SC_SSH_SKey_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Type of raw server key: X'0000': Unknown X'0001': None X'0002': RSA X'0003': DSA X'0004': Diffie-Hellman (DH) X'0005': Elliptic Curve Cryptography (ECC) X'0006': RSA1 (SSHV1 only) X'0007': RSA_CERT (from OpenSSH certificate) X'0008': DSA_CE",
+          "reserved": false
+        },
+        {
+          "offset": 50,
+          "name": "SMF119SC_SSH_SKey_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of raw server key in bits.",
+          "reserved": false
+        },
+        {
+          "offset": 52,
+          "name": "SMF119SC_SSH_CKey_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Type of raw client key. Same values as SMF119SC_SSH_SKey_Type.",
+          "reserved": false
+        },
+        {
+          "offset": 54,
+          "name": "SMF119SC_SSH_CKey_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of raw client key in bits.",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119SC_SSH_SKey_FPLen",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length (in bytes) of the server public key fingerprint. If no server public key is used, then this length is set to zero. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 58,
+          "name": "SMF119SC_SSH_CKey_FPLen",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length (in bytes) of the client public key fingerprint. If no client public key is used, then this length is set to zero. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 60,
+          "name": "SMF119SC_SSH_SKey_FP",
+          "length": "64",
+          "format": "Binary",
+          "description": "The server public key fingerprint (a hash of the public key used to identify that key), left justified and padded on the right with X\u201900\u2019. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 124,
+          "name": "SMF119SC_SSH_CKey_FP",
+          "length": "64",
+          "format": "Binary",
+          "description": "The client public key fingerprint (a hash of the public key used to identify that key), left justified and padded on the right with X\u201900\u2019. Information only Server X.509 certificate information",
+          "reserved": false
+        },
+        {
+          "offset": 188,
+          "name": "SMF119SC_SSH_SCert_Signature_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate signature method. Same values as SMF119SC_TLS_SCert_Signature_Method .",
+          "reserved": false
+        },
+        {
+          "offset": 190,
+          "name": "SMF119SC_SSH_SCert_Enc_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate encryption method. Same values as SMF119SC_TLS_SCert_Enc_Method .",
+          "reserved": false
+        },
+        {
+          "offset": 192,
+          "name": "SMF119SC_SSH_SCert_Digest_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate digest algorithm. Same values as SMF119SC_TLS_SCert_Digest_Alg .",
+          "reserved": false
+        },
+        {
+          "offset": 194,
+          "name": "SMF119SC_SSH_Rsvd3",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 195,
+          "name": "SMF119SC_SSH_SCert_Serial_Len",
+          "length": "1",
+          "format": "Binary",
+          "description": "Server certificate serial number length in bytes. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 196,
+          "name": "SMF119SC_SSH_SCert_Serial",
+          "length": "20",
+          "format": "Binary",
+          "description": "Server certificate serial number, left justified. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 216,
+          "name": "SMF119SC_SSH_SCert_Time_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Format of server certificate \"not after\" time: X'01': Coordinated Universal Time (UTC) X'02': Generalized Time (GT) Information only",
+          "reserved": false
+        },
+        {
+          "offset": 217,
+          "name": "SMF119SC_SSH_SCert_Time",
+          "length": "15",
+          "format": "Binary",
+          "description": "Server certificate \"not after\" time: If the time type is UTC (SMF119SC_SSH_SCert_Time_Type = X'01'), the first 13 bytes of this field contain the time in UTC format (YYMMDDhhmmssZ). If the time type is GT (SMF119SC_SSH_SCert_Time_Type = X'0",
+          "reserved": false
+        },
+        {
+          "offset": 232,
+          "name": "SMF119SC_SSH_SCert_Key_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate key type. Same values as SMF119SC_TLS_SCert_Key_Type .",
+          "reserved": false
+        },
+        {
+          "offset": 234,
+          "name": "SMF119SC_SSH_SCert_Key_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Server certificate key length in bits Client X.509 certificate information",
+          "reserved": false
+        },
+        {
+          "offset": 236,
+          "name": "SMF119SC_SSH_CCert_Signature_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate signature method. Same values as SMF119SC_TLS_SCert_Signature_Method .",
+          "reserved": false
+        },
+        {
+          "offset": 238,
+          "name": "SMF119SC_SSH_CCert_Enc_Method",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate encryption method. Same values as SMF119SC_TLS_SCert_Enc_Method .",
+          "reserved": false
+        },
+        {
+          "offset": 240,
+          "name": "SMF119SC_SSH_CCert_Digest_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate digest algorithm. Same values as SMF119SC_TLS_SCert_Digest_Alg .",
+          "reserved": false
+        },
+        {
+          "offset": 242,
+          "name": "SMF119SC_SSH_Rsvd4",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 243,
+          "name": "SMF119SC_SSH_CCert_Serial_Len",
+          "length": "1",
+          "format": "Binary",
+          "description": "Client certificate serial number length in bytes. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 244,
+          "name": "SMF119SC_SSH_CCert_Serial",
+          "length": "20",
+          "format": "Binary",
+          "description": "Client certificate serial number, left justified. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 264,
+          "name": "SMF119SC_SSH_CCert_Time_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Format of client certificate \"not after\" time: X'01': Coordinated Universal Time (UTC) X'02': Generalized Time (GT) Information only",
+          "reserved": false
+        },
+        {
+          "offset": 265,
+          "name": "SMF119SC_SSH_CCert_Time",
+          "length": "15",
+          "format": "Binary",
+          "description": "Client certificate \"not after\" time: If the time type is UTC (SMF119SC_SSH_CCert_Time_Type = X'01'), the first 13 bytes of this field contain the time in UTC format (YYMMDDhhmmssZ). If the time type is GT (SMF119SC_SSH_CCert_Time_Type = X'0",
+          "reserved": false
+        },
+        {
+          "offset": 280,
+          "name": "SMF119SC_SSH_CCert_Key_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate key type. Same values as SMF119SC_TLS_SCert_Key_Type .",
+          "reserved": false
+        },
+        {
+          "offset": 282,
+          "name": "SMF119SC_SSH_CCert_Key_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Client certificate key length in bits",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S5Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SC_IPSec_IKETunID",
+          "length": "4",
+          "format": "Binary",
+          "description": "IKE tunnel identifier. This value is displayed as Ktunid in ipsec command displays. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SC_IPSec_IKEMajVer",
+          "length": "1",
+          "format": "Binary",
+          "description": "Major version of the IKE protocol in use. Only the low-order 4 bits are used.",
+          "reserved": false
+        },
+        {
+          "offset": 5,
+          "name": "SMF119SC_IPSec_IKEMinVer",
+          "length": "1",
+          "format": "Binary",
+          "description": "Minor version of the IKE protocol in use. Only the low-order 4 bits are used.",
+          "reserved": false
+        },
+        {
+          "offset": 6,
+          "name": "SMF119SC_IPsec_Rsvd1",
+          "length": "2",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 8,
+          "name": "SMF119SC_IPSec_IKETunKeyExchRule",
+          "length": "48",
+          "format": "EBCDIC",
+          "description": "Key exchange rule for this IKE tunnel (padded with trailing blanks). Information only",
+          "reserved": false
+        },
+        {
+          "offset": 56,
+          "name": "SMF119SC_IPSec_IKETunLclEndpt",
+          "length": "16",
+          "format": "Binary",
+          "description": "Local IP address of tunnel endpoint. If SMF119SC_Flags in the zERT common identification section indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field.",
+          "reserved": false
+        },
+        {
+          "offset": 72,
+          "name": "SMF119SC_IPSec_IKETunRmtEndpt",
+          "length": "16",
+          "format": "Binary",
+          "description": "Remote IP address of tunnel endpoint. If SMF119SC_Flags in the zERT common identification section indicates IPv6, then this is a 16-byte IPv6 address. Otherwise, it is a 4-byte IPv4 address in the first 4 bytes of the field.",
+          "reserved": false
+        },
+        {
+          "offset": 88,
+          "name": "SMF119SC_IPSec_IKETunLclAuthMeth",
+          "length": "2",
+          "format": "Binary",
+          "description": "The authentication method for the local endpoint. One of the following values: X'00': Unknown or manual tunnel X'01': None X'02': RSA signature X'03': Preshared key X'04': ECDSA-256 signature X'05': ECDSA-384 signature X'06': ECDSA-521 sign",
+          "reserved": false
+        },
+        {
+          "offset": 90,
+          "name": "SMF119SC_IPSec_IKETunRmtAuthMeth",
+          "length": "2",
+          "format": "Binary",
+          "description": "The authentication method for the remote endpoint. Same values as SMF119SC_IPSec_IKETunLclAuthMeth.",
+          "reserved": false
+        },
+        {
+          "offset": 92,
+          "name": "SMF119SC_IPSec_IKETunAuthAlg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Tunnel authentication algorithm. Same values as SMF119SC_TLS_CS_Msg_Auth .",
+          "reserved": false
+        },
+        {
+          "offset": 94,
+          "name": "SMF119SC_IPSec_IKETunEncAlg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Tunnel encryption algorithm. Same values as SMF119SC_TLS_CS_Enc_Alg .",
+          "reserved": false
+        },
+        {
+          "offset": 96,
+          "name": "SMF119SC_IPSec_IKETunDHGroup",
+          "length": "2",
+          "format": "Binary",
+          "description": "Diffie-Hellman group used to generate the keying material for this IKE tunnel. One of the following values: X'00': Unknown or manual tunnel X'01': Group1 X'02': Group 2 X'05': Group 5 X'0E': Group 14 X'13': Group 19 X'14': Group 20 X'15': G",
+          "reserved": false
+        },
+        {
+          "offset": 98,
+          "name": "SMF119SC_IPSec_IKETunPseudoRandFunc",
+          "length": "2",
+          "format": "Binary",
+          "description": "Pseudo-random function used for seeding keying material. One of the following values: X'00': Unknown or manual tunnel X'01': None X'02': HMAC-SHA2-256 X'03': HMAC-SHA2-384 X'04': HMAC-SHA2-512 X'05': AES-128-XCBC X'06': HMAC-MD5 X'07': HMAC",
+          "reserved": false
+        },
+        {
+          "offset": 100,
+          "name": "SMF119SC_IPSec_IKETunLifesize",
+          "length": "4",
+          "format": "Binary",
+          "description": "IKE tunnel lifesize. If not 0, this value indicates the lifesize limit for the tunnel, in Kbytes. Otherwise (value is 0), no lifesize enforced. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 104,
+          "name": "SMF119SC_IPSec_IKETunLifetime",
+          "length": "4",
+          "format": "Binary",
+          "description": "IKE tunnel lifetime. This value indicates the total number of minutes the tunnel remains active. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 108,
+          "name": "SMF119SC_IPSec_IKETunReauthIntvl",
+          "length": "4",
+          "format": "Binary",
+          "description": "Reauthentication interval. Indicates the number of minutes between reauthentication operations. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 112,
+          "name": "SMF119SC_IPSec_LclCert_Sign_Meth",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local IKE certificate signature method. Same values as SMF119SC_TLS_SCert_Signature_Method .",
+          "reserved": false
+        },
+        {
+          "offset": 114,
+          "name": "SMF119SC_IPSec_LclCert_Enc_Meth",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local IKE certificate encryption method. Same values as SMF119SC_TLS_SCert_Enc_Method .",
+          "reserved": false
+        },
+        {
+          "offset": 116,
+          "name": "SMF119SC_IPSec_LclCert_Digest_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local IKE certificate digest algorithm. Same values as SMF119SC_TLS_SCert_Digest_Alg .",
+          "reserved": false
+        },
+        {
+          "offset": 118,
+          "name": "SMF119SC_IPsec_Rsvd2",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved.",
+          "reserved": false
+        },
+        {
+          "offset": 119,
+          "name": "SMF119SC_IPSec_LclCert_Serial_Len",
+          "length": "1",
+          "format": "Binary",
+          "description": "Local IKE certificate serial number length in bytes. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 120,
+          "name": "SMF119SC_IPSec_LclCert_Serial",
+          "length": "20",
+          "format": "Binary",
+          "description": "Local IKE certificate serial number, left justified. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 140,
+          "name": "SMF119SC_IPSec_LclCert_Time_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Format of local IKE certificate \"not after\" time: X'00': Manual tunnel - unused X'01': Coordinated Universal Time (UTC) X'02': Generalized Time (GT) Information only",
+          "reserved": false
+        },
+        {
+          "offset": 141,
+          "name": "SMF119SC_IPSec_LclCert_Time",
+          "length": "15",
+          "format": "Binary",
+          "description": "Local IKE certificate \"not after\" time: If the time type is UTC (SMF119SC_IPSec_LclCert_Time_Type = X'01'), the first 13 bytes of this field contain the time in UTC format (YYMMDDhhmmssZ). If the time type is GT (SMF119SC_IPSec_LclCert_Time",
+          "reserved": false
+        },
+        {
+          "offset": 156,
+          "name": "SMF119SC_IPSec_LclCert_Key_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local IKE certificate key type. Same values as SMF119SC_TLS_SCert_Key_Type .",
+          "reserved": false
+        },
+        {
+          "offset": 158,
+          "name": "SMF119SC_IPSec_LclCert_Key_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Local IKE certificate key length in bits.",
+          "reserved": false
+        },
+        {
+          "offset": 160,
+          "name": "SMF119SC_IPSec_RmtCert_Sign_Meth",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote IKE certificate signature method. Same values as SMF119SC_TLS_SCert_Signature_Method .",
+          "reserved": false
+        },
+        {
+          "offset": 162,
+          "name": "SMF119SC_IPSec_RmtCert_Enc_Meth",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote IKE certificate encryption method. Same values as SMF119SC_TLS_SCert_Enc_Method .",
+          "reserved": false
+        },
+        {
+          "offset": 164,
+          "name": "SMF119SC_IPSec_RmtCert_Digest_Alg",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote IKE certificate digest algorithm. Same values as SMF119SC_TLS_SCert_Digest_Alg .",
+          "reserved": false
+        },
+        {
+          "offset": 166,
+          "name": "SMF119SC_IPSec_Rsvd3",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 167,
+          "name": "SMF119SC_IPSec_RmtCert_Serial_Len",
+          "length": "1",
+          "format": "Binary",
+          "description": "Remote IKE certificate serial number length in bytes. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 168,
+          "name": "SMF119SC_IPSec_RmtCert_Serial",
+          "length": "20",
+          "format": "Binary",
+          "description": "Remote IKE certificate serial number, left justified. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 188,
+          "name": "SMF119SC_IPSec_RmtCert_Time_Type",
+          "length": "1",
+          "format": "Binary",
+          "description": "Format of remote IKE certificate \"not after\" time: X'00': Manual tunnel - unused X'01': Coordinated Universal Time (UTC) X'02': Generalized Time (GT) Information only",
+          "reserved": false
+        },
+        {
+          "offset": 189,
+          "name": "SMF119SC_IPSec_RmtCert_Time",
+          "length": "15",
+          "format": "Binary",
+          "description": "Remote IKE certificate \"not after\" time: If the time type is UTC (SMF119SC_IPSec_RmtCert_Time_Type = X'01'), the first 13 bytes of this field contain the time in UTC format (YYMMDDhhmmssZ). If the time type is GT (SMF119SC_IPSec_RmtCert_Tim",
+          "reserved": false
+        },
+        {
+          "offset": 204,
+          "name": "SMF119SC_IPSec_RmtCert_Key_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote IKE certificate key type. Same values as SMF119SC_TLS_SCert_Key_Type .",
+          "reserved": false
+        },
+        {
+          "offset": 206,
+          "name": "SMF119SC_IPSec_RmtCert_Key_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Remote IKE certificate key length in bits. IPsec (Phase 2) tunnel information",
+          "reserved": false
+        },
+        {
+          "offset": 208,
+          "name": "SMF119SC_IPSec_TunID",
+          "length": "4",
+          "format": "Binary",
+          "description": "IPSec tunnel identifier. This value is displayed as Ytunid or Mtunid in ipsec command displays. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 212,
+          "name": "SMF119SC_IPSec_TunFlags",
+          "length": "1",
+          "format": "Binary",
+          "description": "IP tunnel flags: X'80': IPv6 indicator. If set, security endpoint addresses and data endpoint addresses are IPv6; otherwise, they are IPv4. X'40': FIPS 140 mode indicator. If this field is set, cryptographic operations for this tunnel are p",
+          "reserved": false
+        },
+        {
+          "offset": 213,
+          "name": "SMF119SC_IPSec_TunType",
+          "length": "1",
+          "format": "Binary",
+          "description": "Tunnel type. One of the following values: X'01': Manual IPSec tunnel X'02': Dynamic IPSec tunnel X'03': Shadow tunnel",
+          "reserved": false
+        },
+        {
+          "offset": 214,
+          "name": "SMF119SC_IPSec_TunState",
+          "length": "1",
+          "format": "Binary",
+          "description": "One of the following tunnel states: X'01': Manual or dynamic tunnel is active. X'02': Manual tunnel is inactive.",
+          "reserved": false
+        },
+        {
+          "offset": 215,
+          "name": "SMF119SC_IPSec_Rsvd4",
+          "length": "1",
+          "format": "Binary",
+          "description": "Reserved",
+          "reserved": false
+        },
+        {
+          "offset": 216,
+          "name": "SMF119SC_IPSec_EncapMode",
+          "length": "1",
+          "format": "Binary",
+          "description": "One of the following tunnel encapsulation modes: X'01': Tunnel Mode X'02': Transport Mode",
+          "reserved": false
+        },
+        {
+          "offset": 217,
+          "name": "SMF119SC_IPSec_AuthProto",
+          "length": "1",
+          "format": "Binary",
+          "description": "The protocol used for message authentication. One of the following: X'32' Encapsulating Security Payload (ESP) X'33': Authentication Header (AH)",
+          "reserved": false
+        },
+        {
+          "offset": 218,
+          "name": "SMF119SC_IPSec_AuthAlg",
+          "length": "2",
+          "format": "Binary",
+          "description": "One of the following tunnel authentication algorithms. Same values as SMF119SC_TLS_CS_Msg_Auth .",
+          "reserved": false
+        },
+        {
+          "offset": 220,
+          "name": "SMF119SC_IPSec_EncAlg",
+          "length": "2",
+          "format": "Binary",
+          "description": "One of the following tunnel encryption algorithms. Same values as SMF119SC_TLS_CS_Enc_Alg .",
+          "reserved": false
+        },
+        {
+          "offset": 222,
+          "name": "SMF119SC_IPSec_PFSGroup",
+          "length": "2",
+          "format": "Binary",
+          "description": "Diffie-Hellman group used for perfect forward secrecy. Same values as SMF119SC_IPSec_IKETunDHGroup.",
+          "reserved": false
+        },
+        {
+          "offset": 224,
+          "name": "SMF119SC_IPSec_Lifesize",
+          "length": "4",
+          "format": "Binary",
+          "description": "SA lifesize in KBytes. Zero if SMF119SC_IPSec_TunType is set to 1. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 228,
+          "name": "SMF119SC_IPSec_Lifetime",
+          "length": "4",
+          "format": "Binary",
+          "description": "SA lifetime in minutes. Zero if SMF119SC_IPSec_TunType is set to 1. Information only",
+          "reserved": false
+        },
+        {
+          "offset": 232,
+          "name": "SMF119SC_IPSec_VPNLifeExpire",
+          "length": "4",
+          "format": "Binary",
+          "description": "Tunnel VPN lifetime in minutes (length of time after which the tunnel family ceases to be refreshed). Zero indicates no VPN lifetime limit is enforced. Information only",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "triplet": "SMF119S6Off",
+      "fields": [
+        {
+          "offset": 0,
+          "name": "SMF119SC_DN_Len",
+          "length": "2",
+          "format": "Binary",
+          "description": "Length of the DN structure (includes the length of SMF119SC_DN_Len, SMF119SC_DN_Type, and SMF119SC_DN)",
+          "reserved": false
+        },
+        {
+          "offset": 2,
+          "name": "SMF119SC_DN_Type",
+          "length": "2",
+          "format": "Binary",
+          "description": "Type of Distinguished Name: X'0001': IPSec Local Certificate Subject DN X'0002': IPSec Local Certificate Issuer DN X'0003': IPSec Remote Certificate Subject DN X'0004': IPSec Remote Certificate Issuer DN X'0005': TLS Server Certificate Subj",
+          "reserved": false
+        },
+        {
+          "offset": 4,
+          "name": "SMF119SC_DN",
+          "length": "1024",
+          "format": "EBCDIC",
+          "description": "The variable length DN value (up to 1024)",
+          "reserved": false
+        }
+      ]
+    }
+  ]
+}
