@@ -1,0 +1,104 @@
+* ====================================================================
+* SMF TYPE 73 SUBTYPE 1 — Channel path activity
+* Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
+* All supported T_* section fields (no per-section caps)
+* ====================================================================
+TABLE73_1 SMF_START
+
+         SMF_FIELD SMF73RTY-SMF73LEN,TYPE=T_DEC1,JSON=smf_record_type
+
+         SMF_FIELD SMF73SID-SMF73LEN,TYPE=T_CHR4,JSON=smf_system_id
+
+         SMF_FIELD SMF73TME-SMF73LEN,TYPE=T_TME,JSON=time
+
+         SMF_FIELD SMF73DTE-SMF73LEN,TYPE=T_DTE,JSON=date
+
+         SMF_FIELD SMF73SSI-SMF73LEN,TYPE=T_CHR4,JSON=subsystem_id
+
+         SMF_FIELD SMF73STY-SMF73LEN,TYPE=T_DEC2,JSON=subtype
+
+* --- section SMF73_SUBTYPE1_PRODUCT_SECTION via SMF73PRS ---
+         SMF_FIELD SMF73PRD-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_CHR8,JSON=product_name
+
+         SMF_FIELD SMF73DAT-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_DTE,JSON=interval_date
+
+         SMF_FIELD SMF73SAM-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_DEC4,JSON=sample_count
+
+         SMF_FIELD SMF73MVS-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_CHR8,JSON=mvs_level
+
+         SMF_FIELD SMF73SRL-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_DEC1,JSON=rmf_release
+
+         SMF_FIELD SMF73RAO-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_DEC4,JSON=rao
+
+         SMF_FIELD SMF73RAL-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_DEC2,JSON=ral
+
+         SMF_FIELD SMF73RAN-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_DEC2,JSON=ran
+
+         SMF_FIELD SMF73OIL-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_DEC2,JSON=oil
+
+         SMF_FIELD SMF73SYN-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_DEC2,JSON=syn
+
+         SMF_FIELD SMF73XNM-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_CHR8,JSON=sysplex_name
+
+         SMF_FIELD SMF73SNM-SMF73MFV,TRIPLET=SMF73PRS-SMF73LEN,        X
+               TYPE=T_CHR8,JSON=system_name
+
+* --- section SMF73_SUBTYPE1_CHANNEL_PATH_CONTROL_SECTION via SMF73HIS ---
+         SMF_FIELD SMF73SMP-SMF73SMP,TRIPLET=SMF73HIS-SMF73LEN,        X
+               TYPE=T_DEC4,JSON=smp
+
+         SMF_FIELD SMF73TSF-SMF73SMP,TRIPLET=SMF73HIS-SMF73LEN,        X
+               TYPE=T_CHR2,JSON=tsf
+
+         SMF_FIELD SMF73TDT-SMF73SMP,TRIPLET=SMF73HIS-SMF73LEN,        X
+               TYPE=T_CHR8,JSON=tdt
+
+         SMF_FIELD SMF73TTM-SMF73SMP,TRIPLET=SMF73HIS-SMF73LEN,        X
+               TYPE=T_CHR8,JSON=ttm
+
+         SMF_FIELD SMF73CRC-SMF73SMP,TRIPLET=SMF73HIS-SMF73LEN,        X
+               TYPE=T_DEC4,JSON=crc
+
+         SMF_FIELD SMF73CSC-SMF73SMP,TRIPLET=SMF73HIS-SMF73LEN,        X
+               TYPE=T_DEC4,JSON=csc
+
+         SMF_FIELD SMF73CSS-SMF73SMP,TRIPLET=SMF73HIS-SMF73LEN,        X
+               TYPE=T_DEC1,JSON=css
+
+* --- section SMF73_SUBTYPE1_CHANNEL_PATH_DATA_SECTION via SMF73HPS ---
+         SMF_FIELD SMF73BSY-SMF73PID,TRIPLET=SMF73HPS-SMF73LEN,        X
+               TYPE=T_DEC4,JSON=bsy
+
+         SMF_FIELD SMF73PBY-SMF73PID,TRIPLET=SMF73HPS-SMF73LEN,        X
+               TYPE=T_DEC4,JSON=pby
+
+         SMF_FIELD SMF73PTI-SMF73PID,TRIPLET=SMF73HPS-SMF73LEN,        X
+               TYPE=T_DEC4,JSON=pti
+
+         SMF_FIELD SMF73CPD-SMF73PID,TRIPLET=SMF73HPS-SMF73LEN,        X
+               TYPE=T_DEC1,JSON=cpd
+
+         SMF_FIELD SMF73CPP-SMF73PID,TRIPLET=SMF73HPS-SMF73LEN,        X
+               TYPE=T_DEC1,JSON=cpp
+
+         SMF_FIELD SMF73GEN-SMF73PID,TRIPLET=SMF73HPS-SMF73LEN,        X
+               TYPE=T_DEC1,JSON=gen
+
+         SMF_FIELD SMF73EIX-SMF73PID,TRIPLET=SMF73HPS-SMF73LEN,        X
+               TYPE=T_DEC2,JSON=eix
+
+         SMF_FIELD SMF73SPD-SMF73PID,TRIPLET=SMF73HPS-SMF73LEN,        X
+               TYPE=T_DEC2,JSON=spd
+
+         SMF_END

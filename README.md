@@ -64,6 +64,19 @@ Relocate Sections field (Example SMF 80) :
          SMF_FIELD SMF80REL-SMF80LEN,TYPE=T_RS_STR,TAG=T_RS_17,JSON=class_name
 ```
 
+## Mapping Catalog (SMF 30)
+
+Field inventory for extending maps lives in `catalog/smf30/` (generated from Gatherer OpenAPI in `ref/`).
+
+```bash
+python3 tools/build_smf_catalog.py
+```
+
+See `catalog/README.md` for status meanings and the add-field workflow.
+
+All **47** Gatherer OpenAPI type/subtype pairs are wired (plus MAP80/MAP89), with dispatch by type + subtype halfword @ +22.  
+Regenerate maps/dispatch: `python3 tools/gen_gatherer_maps.py` — inventory in `catalog/planned_subtypes.json`.
+
 ## How To: Add New Mappings
 
 Contributions to Mapping Tables are highly encouraged! Any new mapping added to the library automatically benefits from the engine conversion logic and is designed to be thread-safe for future performance upgrades

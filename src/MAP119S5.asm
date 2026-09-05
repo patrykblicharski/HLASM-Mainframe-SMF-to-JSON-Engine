@@ -1,0 +1,480 @@
+* ====================================================================
+* SMF TYPE 119 SUBTYPE 5 — TCP/IP Statistics
+* Generated from temp/smf119-app pacsys layouts. Labels: CommServer/IFASMFR.
+* ====================================================================
+TABLE119_5 SMF_START
+
+* --- header ---
+         SMF_FIELD SMF119RTY-SMF119LEN,TYPE=T_DEC1,JSON=smf_record_type
+
+         SMF_FIELD SMF119TME-SMF119LEN,TYPE=T_TME,JSON=time
+
+         SMF_FIELD SMF119DTE-SMF119LEN,TYPE=T_DTE,JSON=date
+
+         SMF_FIELD SMF119SID-SMF119LEN,TYPE=T_CHR4,JSON=smf_system_id
+
+         SMF_FIELD SMF119SSI-SMF119LEN,TYPE=T_CHR4,JSON=ssi
+
+         SMF_FIELD SMF119STY-SMF119LEN,TYPE=T_DEC2,JSON=subtype
+
+* --- section via SMF119IDOff ---
+         SMF_FIELD SMF119TI_SYSName-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=system_name
+
+         SMF_FIELD SMF119TI_SysplexName-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=sysplex_name
+
+         SMF_FIELD SMF119TI_Stack-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=stack_name
+
+         SMF_FIELD SMF119TI_ReleaseID-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=tireleaseid
+
+         SMF_FIELD SMF119TI_Comp-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=ticomp
+
+         SMF_FIELD SMF119TI_ASName-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=as_name
+
+         SMF_FIELD SMF119TI_UserID-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_CHR8,JSON=user_id
+
+         SMF_FIELD SMF119TI_ASID-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_DEC2,JSON=tiasid
+
+         SMF_FIELD SMF119TI_Reason-SMF119TI_SYSName,TRIPLET=SMF119IDOff-SMF119LEN,        X
+               TYPE=T_DEC1,JSON=tireason
+
+* --- section via SMF119S1Off ---
+         SMF_FIELD SMF119AP_TSIPRecData-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsiprecdata
+
+         SMF_FIELD SMF119AP_TSIPAttFwdData-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipattfwddata
+
+         SMF_FIELD SMF119AP_TSIPDlvData-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipdlvdata
+
+         SMF_FIELD SMF119AP_TSIPXData-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipxdata
+
+         SMF_FIELD SMF119AP_TSIPXDscOth-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipxdscoth
+
+         SMF_FIELD SMF119AP_TSIPXDscRoute-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipxdscroute
+
+         SMF_FIELD SMF119AP_TSIPTimeouts-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsiptimeouts
+
+         SMF_FIELD SMF119AP_TSIPRecDRsbm-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsiprecdrsbm
+
+         SMF_FIELD SMF119AP_TSIPRsmb-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsiprsmb
+
+         SMF_FIELD SMF119AP_TSIPFailRsmb-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipfailrsmb
+
+         SMF_FIELD SMF119AP_TSIPRecFgmt-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsiprecfgmt
+
+         SMF_FIELD SMF119AP_TSIPDscDFgmt-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipdscdfgmt
+
+         SMF_FIELD SMF119AP_TSIPXFgmt-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipxfgmt
+
+         SMF_FIELD SMF119AP_TSIPRouteDisc-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsiproutedisc
+
+         SMF_FIELD SMF119AP_TSIPMaxRsmb-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipmaxrsmb
+
+         SMF_FIELD SMF119AP_TSIPCurRsmb-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipcurrsmb
+
+         SMF_FIELD SMF119AP_TSIPRsmbFlags-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsiprsmbflags
+
+         SMF_FIELD SMF119AP_TSIPInCalls-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipincalls
+
+         SMF_FIELD SMF119AP_TSIPInUerrs-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipinuerrs
+
+         SMF_FIELD SMF119AP_TSIPIDMem-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipidmem
+
+         SMF_FIELD SMF119AP_TSIPODSync-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipodsync
+
+         SMF_FIELD SMF119AP_TSIPODAsyn-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipodasyn
+
+         SMF_FIELD SMF119AP_TSIPODMem-SMF119AP_TSIPRecData,TRIPLET=SMF119S1Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsipodmem
+
+* --- section via SMF119S2Off ---
+         SMF_FIELD SMF119AP_TSTCAlg-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcalg
+
+         SMF_FIELD SMF119AP_TSTCMinRet-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcminret
+
+         SMF_FIELD SMF119AP_TSTCMxRet-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcmxret
+
+         SMF_FIELD SMF119AP_TSTCMxCon-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcmxcon
+
+         SMF_FIELD SMF119AP_TSTCOpenConn-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcopenconn
+
+         SMF_FIELD SMF119AP_TSTCPassConn-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcpassconn
+
+         SMF_FIELD SMF119AP_TSTCOFails-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcofails
+
+         SMF_FIELD SMF119AP_TSTCConReset-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcconreset
+
+         SMF_FIELD SMF119AP_TSTCEstab-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcestab
+
+         SMF_FIELD SMF119AP_TSTCInSegs-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcinsegs
+
+         SMF_FIELD SMF119AP_TSTCOSegs-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcosegs
+
+         SMF_FIELD SMF119AP_TSTCRxSegs-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcrxsegs
+
+         SMF_FIELD SMF119AP_TSTCInErrs-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcinerrs
+
+         SMF_FIELD SMF119AP_TSTCReset-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcreset
+
+         SMF_FIELD SMF119AP_TSTCConCls-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcconcls
+
+         SMF_FIELD SMF119AP_TSTCConAttD-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcconattd
+
+         SMF_FIELD SMF119AP_TSTCTWRef-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstctwref
+
+         SMF_FIELD SMF119AP_TSTCHOKAck-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstchokack
+
+         SMF_FIELD SMF119AP_TSTCHOKDat-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstchokdat
+
+         SMF_FIELD SMF119AP_TSTCIDupAck-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcidupack
+
+         SMF_FIELD SMF119AP_TSTCDscChecksum-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcdscchecksu
+
+         SMF_FIELD SMF119AP_TSTCDscLen-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcdsclen
+
+         SMF_FIELD SMF119AP_TSTCDscInsData-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcdscinsdata
+
+         SMF_FIELD SMF119AP_TSTCDscOldTime-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcdscoldtime
+
+         SMF_FIELD SMF119AP_TSTCICmpDupSeg-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcicmpdupseg
+
+         SMF_FIELD SMF119AP_TSTCIPartDupSeg-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcipartdupse
+
+         SMF_FIELD SMF119AP_TSTCICmpSegsWin-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcicmpsegswi
+
+         SMF_FIELD SMF119AP_TSTCIPartSegsWin-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcipartsegsw
+
+         SMF_FIELD SMF119AP_TSTCIOOrder-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcioorder
+
+         SMF_FIELD SMF119AP_TSTCISegCls-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcisegcls
+
+         SMF_FIELD SMF119AP_TSTCIWinPr-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstciwinpr
+
+         SMF_FIELD SMF119AP_TSTCIWinUp-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstciwinup
+
+         SMF_FIELD SMF119AP_TSTCOWinPr-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcowinpr
+
+         SMF_FIELD SMF119AP_TSTCOWinUp-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcowinup
+
+         SMF_FIELD SMF119AP_TSTCODlAck-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcodlack
+
+         SMF_FIELD SMF119AP_TSTCOKApr-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcokapr
+
+         SMF_FIELD SMF119AP_TSTCRxTim-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcrxtim
+
+         SMF_FIELD SMF119AP_TSTCRxMTU-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcrxmtu
+
+         SMF_FIELD SMF119AP_TSTCPathM-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcpathm
+
+         SMF_FIELD SMF119AP_TSTCDropPr-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcdroppr
+
+         SMF_FIELD SMF119AP_TSTCDropKA-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcdropka
+
+         SMF_FIELD SMF119AP_TSTCDropF2-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcdropf2
+
+         SMF_FIELD SMF119AP_TSTCDropRx-SMF119AP_TSTCAlg,TRIPLET=SMF119S2Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptstcdroprx
+
+* --- section via SMF119S3Off ---
+         SMF_FIELD SMF119AP_TSUDRecNoPort-SMF119AP_TSUDRecNoPort,TRIPLET=SMF119S3Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsudrecnoport
+
+         SMF_FIELD SMF119AP_TSUDNoRec-SMF119AP_TSUDRecNoPort,TRIPLET=SMF119S3Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsudnorec
+
+* --- section via SMF119S4Off ---
+         SMF_FIELD SMF119AP_TSICInMsg-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinmsg
+
+         SMF_FIELD SMF119AP_TSICInError-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinerror
+
+         SMF_FIELD SMF119AP_TSICInDstUnreach-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicindstunrea
+
+         SMF_FIELD SMF119AP_TSICInTimeExcd-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicintimeexcd
+
+         SMF_FIELD SMF119AP_TSICInParmProb-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinparmprob
+
+         SMF_FIELD SMF119AP_TSICInSrcQuench-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinsrcquenc
+
+         SMF_FIELD SMF119AP_TSICInRedirect-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinredirect
+
+         SMF_FIELD SMF119AP_TSICInEcho-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinecho
+
+         SMF_FIELD SMF119AP_TSICInEchoRep-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinechorep
+
+         SMF_FIELD SMF119AP_TSICInTstamp-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicintstamp
+
+         SMF_FIELD SMF119AP_TSICInTstampRep-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicintstampre
+
+         SMF_FIELD SMF119AP_TSICInAddrMask-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinaddrmask
+
+         SMF_FIELD SMF119AP_TSICInAddrMRep-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicinaddrmrep
+
+         SMF_FIELD SMF119AP_TSICOutMsg-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutmsg
+
+         SMF_FIELD SMF119AP_TSICOutError-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicouterror
+
+         SMF_FIELD SMF119AP_TSICOutDstUnreach-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutdstunre
+
+         SMF_FIELD SMF119AP_TSICOutTimeExcd-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicouttimeexc
+
+         SMF_FIELD SMF119AP_TSICOutParmProb-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutparmpro
+
+         SMF_FIELD SMF119AP_TSICOutSrcQuench-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutsrcquen
+
+         SMF_FIELD SMF119AP_TSICOutRedirect-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutredirec
+
+         SMF_FIELD SMF119AP_TSICOutEcho-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutecho
+
+         SMF_FIELD SMF119AP_TSICOutEchoRep-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutechorep
+
+         SMF_FIELD SMF119AP_TSICOutTstamp-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicouttstamp
+
+         SMF_FIELD SMF119AP_TSICOutTstampRep-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicouttstampr
+
+         SMF_FIELD SMF119AP_TSICOutAddrMask-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutaddrmas
+
+         SMF_FIELD SMF119AP_TSICOutAddrMRep-SMF119AP_TSICInMsg,TRIPLET=SMF119S4Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsicoutaddrmre
+
+* --- section via SMF119S5Off ---
+         SMF_FIELD SMF119AP_TSP6RecData-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6recdata
+
+         SMF_FIELD SMF119AP_TSP6AttFwdData-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6attfwddata
+
+         SMF_FIELD SMF119AP_TSP6DlvData-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6dlvdata
+
+         SMF_FIELD SMF119AP_TSP6XData-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6xdata
+
+         SMF_FIELD SMF119AP_TSP6XDscOth-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6xdscoth
+
+         SMF_FIELD SMF119AP_TSP6XDscRoute-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6xdscroute
+
+         SMF_FIELD SMF119AP_TSP6Timeouts-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6timeouts
+
+         SMF_FIELD SMF119AP_TSP6RecDRsmb-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6recdrsmb
+
+         SMF_FIELD SMF119AP_TSP6Rsmb-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6rsmb
+
+         SMF_FIELD SMF119AP_TSP6FailRsmb-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6failrsmb
+
+         SMF_FIELD SMF119AP_TSP6RecFgmt-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6recfgmt
+
+         SMF_FIELD SMF119AP_TSP6DscDFgmt-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6dscdfgmt
+
+         SMF_FIELD SMF119AP_TSP6XFgmt-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6xfgmt
+
+         SMF_FIELD SMF119AP_TSP6RouteDisc-SMF119AP_TSP6RecData,TRIPLET=SMF119S5Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsp6routedisc
+
+* --- section via SMF119S6Off ---
+         SMF_FIELD SMF119AP_TSC6InMsg-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inmsg
+
+         SMF_FIELD SMF119AP_TSC6InError-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inerror
+
+         SMF_FIELD SMF119AP_TSC6InDstUnreach-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6indstunrea
+
+         SMF_FIELD SMF119AP_TSC6InTimeExcd-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6intimeexcd
+
+         SMF_FIELD SMF119AP_TSC6InParmProb-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inparmprob
+
+         SMF_FIELD SMF119AP_TSC6InAdmProhib-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inadmprohi
+
+         SMF_FIELD SMF119AP_TSC6InPktTooBig-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inpkttoobi
+
+         SMF_FIELD SMF119AP_TSC6InEcho-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inecho
+
+         SMF_FIELD SMF119AP_TSC6InEchoRep-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inechorep
+
+         SMF_FIELD SMF119AP_TSC6InRtSolicit-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inrtsolici
+
+         SMF_FIELD SMF119AP_TSC6InRtAdv-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inrtadv
+
+         SMF_FIELD SMF119AP_TSC6InNbSolicit-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6innbsolici
+
+         SMF_FIELD SMF119AP_TSC6InNbAdv-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6innbadv
+
+         SMF_FIELD SMF119AP_TSC6InRedirect-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6inredirect
+
+         SMF_FIELD SMF119AP_TSC6InGrpMemQry-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6ingrpmemqr
+
+         SMF_FIELD SMF119AP_TSC6InGrpMemRsp-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6ingrpmemrs
+
+         SMF_FIELD SMF119AP_TSC6InGrpMemRed-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6ingrpmemre
+
+         SMF_FIELD SMF119AP_TSC6OutMsg-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outmsg
+
+         SMF_FIELD SMF119AP_TSC6OutError-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outerror
+
+         SMF_FIELD SMF119AP_TSC6OutDstUnrch-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outdstunrc
+
+         SMF_FIELD SMF119AP_TSC6OutTimeExcd-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outtimeexc
+
+         SMF_FIELD SMF119AP_TSC6OutParmProb-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outparmpro
+
+         SMF_FIELD SMF119AP_TSC6OutAdmProhib-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outadmproh
+
+         SMF_FIELD SMF119AP_TSC6OutPktTooBig-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outpkttoob
+
+         SMF_FIELD SMF119AP_TSC6OutEcho-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outecho
+
+         SMF_FIELD SMF119AP_TSC6OutEchoRep-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outechorep
+
+         SMF_FIELD SMF119AP_TSC6OutRtSolicit-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outrtsolic
+
+         SMF_FIELD SMF119AP_TSC6OutRtAdv-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outrtadv
+
+         SMF_FIELD SMF119AP_TSC6OutNbSolicit-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outnbsolic
+
+         SMF_FIELD SMF119AP_TSC6OutNbAdv-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outnbadv
+
+         SMF_FIELD SMF119AP_TSC6OutRedirect-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outredirec
+
+         SMF_FIELD SMF119AP_TSC6OutGrpMemQry-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outgrpmemq
+
+         SMF_FIELD SMF119AP_TSC6OutGrpMemRsp-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outgrpmemr
+
+         SMF_FIELD SMF119AP_TSC6OutGrpMemRed-SMF119AP_TSC6InMsg,TRIPLET=SMF119S6Off-SMF119LEN,        X
+               TYPE=T_DEC4,JSON=aptsc6outgrpmem2
+
+         SMF_END

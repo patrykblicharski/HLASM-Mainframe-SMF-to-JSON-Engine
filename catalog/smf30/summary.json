@@ -1,0 +1,92 @@
+{
+  "smf_type": 30,
+  "source_openapi": "ref/openapi_spec.json",
+  "source_fields_dump": "ref/fields_dump.json",
+  "map30_mapped_fields": [
+    "SMF30ARC",
+    "SMF30CPS",
+    "SMF30CPT",
+    "SMF30DTE",
+    "SMF30JBN",
+    "SMF30JNM",
+    "SMF30PGM",
+    "SMF30PNM",
+    "SMF30RTY",
+    "SMF30RVN",
+    "SMF30SCC",
+    "SMF30SID",
+    "SMF30STM",
+    "SMF30STP",
+    "SMF30TME",
+    "SMF30USR",
+    "SMF30WID"
+  ],
+  "subtypes": {
+    "1": {
+      "field_count": 479,
+      "status_counts": {
+        "skip_meta": 91,
+        "todo": 182,
+        "needs_engine": 183,
+        "mapped": 15,
+        "unknown": 8
+      },
+      "file": "subtype_1.json"
+    },
+    "2": {
+      "field_count": 483,
+      "status_counts": {
+        "skip_meta": 91,
+        "todo": 186,
+        "needs_engine": 183,
+        "mapped": 15,
+        "unknown": 8
+      },
+      "file": "subtype_2.json"
+    },
+    "3": {
+      "field_count": 483,
+      "status_counts": {
+        "skip_meta": 91,
+        "todo": 186,
+        "needs_engine": 183,
+        "mapped": 15,
+        "unknown": 8
+      },
+      "file": "subtype_3.json"
+    },
+    "4": {
+      "field_count": 502,
+      "status_counts": {
+        "skip_meta": 92,
+        "todo": 186,
+        "needs_engine": 199,
+        "mapped": 17,
+        "unknown": 8
+      },
+      "file": "subtype_4.json"
+    },
+    "5": {
+      "field_count": 502,
+      "status_counts": {
+        "skip_meta": 92,
+        "todo": 186,
+        "needs_engine": 199,
+        "mapped": 17,
+        "unknown": 8
+      },
+      "file": "subtype_5.json"
+    },
+    "6": {
+      "field_count": 439,
+      "status_counts": {
+        "skip_meta": 90,
+        "todo": 161,
+        "needs_engine": 170,
+        "mapped": 11,
+        "unknown": 7
+      },
+      "file": "subtype_6.json"
+    }
+  }
+}

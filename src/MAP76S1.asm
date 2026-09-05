@@ -1,0 +1,86 @@
+* ====================================================================
+* SMF TYPE 76 SUBTYPE 1 — Trace activity
+* Auto-generated from Gatherer OpenAPI (tools/gen_gatherer_maps.py)
+* All supported T_* section fields (no per-section caps)
+* ====================================================================
+TABLE76_1 SMF_START
+
+         SMF_FIELD SMF76RTY-SMF76LEN,TYPE=T_DEC1,JSON=smf_record_type
+
+         SMF_FIELD SMF76SID-SMF76LEN,TYPE=T_CHR4,JSON=smf_system_id
+
+         SMF_FIELD SMF76TME-SMF76LEN,TYPE=T_TME,JSON=time
+
+         SMF_FIELD SMF76DTE-SMF76LEN,TYPE=T_DTE,JSON=date
+
+         SMF_FIELD SMF76SSI-SMF76LEN,TYPE=T_CHR4,JSON=subsystem_id
+
+         SMF_FIELD SMF76STY-SMF76LEN,TYPE=T_DEC2,JSON=subtype
+
+* --- section SMF76_SUBTYPE1_PRODUCT_SECTION via SMF76PRS ---
+         SMF_FIELD SMF76PRD-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_CHR8,JSON=product_name
+
+         SMF_FIELD SMF76DAT-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_DTE,JSON=interval_date
+
+         SMF_FIELD SMF76SAM-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_DEC4,JSON=sample_count
+
+         SMF_FIELD SMF76MVS-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_CHR8,JSON=mvs_level
+
+         SMF_FIELD SMF76SRL-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_DEC1,JSON=rmf_release
+
+         SMF_FIELD SMF76RAO-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_DEC4,JSON=rao
+
+         SMF_FIELD SMF76RAL-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_DEC2,JSON=ral
+
+         SMF_FIELD SMF76RAN-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_DEC2,JSON=ran
+
+         SMF_FIELD SMF76OIL-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_DEC2,JSON=oil
+
+         SMF_FIELD SMF76SYN-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_DEC2,JSON=syn
+
+         SMF_FIELD SMF76XNM-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_CHR8,JSON=sysplex_name
+
+         SMF_FIELD SMF76SNM-SMF76MFV,TRIPLET=SMF76PRS-SMF76LEN,        X
+               TYPE=T_CHR8,JSON=system_name
+
+* --- section SMF76_SUBTYPE1_TRACE_CONTROL_SECTION via SMF76TCS ---
+         SMF_FIELD SMF76NUM-SMF76NUM,TRIPLET=SMF76TCS-SMF76LEN,        X
+               TYPE=T_DEC2,JSON=num
+
+* --- section SMF76_SUBTYPE1_TRACE_DATA_SECTION via SMF76TDS ---
+         SMF_FIELD SMF76NAM-SMF76NAM,TRIPLET=SMF76TDS-SMF76LEN,        X
+               TYPE=T_CHR8,JSON=nam
+
+         SMF_FIELD SMF76SLN-SMF76NAM,TRIPLET=SMF76TDS-SMF76LEN,        X
+               TYPE=T_DEC1,JSON=sln
+
+         SMF_FIELD SMF76DLN-SMF76NAM,TRIPLET=SMF76TDS-SMF76LEN,        X
+               TYPE=T_DEC1,JSON=dln
+
+         SMF_FIELD SMF76SSS-SMF76NAM,TRIPLET=SMF76TDS-SMF76LEN,        X
+               TYPE=T_DEC2,JSON=sss
+
+         SMF_FIELD SMF76SSL-SMF76NAM,TRIPLET=SMF76TDS-SMF76LEN,        X
+               TYPE=T_DEC2,JSON=ssl
+
+         SMF_FIELD SMF76MIN-SMF76NAM,TRIPLET=SMF76TDS-SMF76LEN,        X
+               TYPE=T_DEC4,JSON=min
+
+         SMF_FIELD SMF76MAX-SMF76NAM,TRIPLET=SMF76TDS-SMF76LEN,        X
+               TYPE=T_DEC4,JSON=max
+
+         SMF_FIELD SMF76ENV-SMF76NAM,TRIPLET=SMF76TDS-SMF76LEN,        X
+               TYPE=T_DEC4,JSON=env
+
+         SMF_END

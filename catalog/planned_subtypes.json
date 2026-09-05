@@ -1,0 +1,429 @@
+{
+  "note": "All Gatherer OpenAPI type/subtype pairs wired in HLASM (+ MAP80/MAP89)",
+  "source": "ref/openapi_spec.json",
+  "count": 47,
+  "engine_types": [
+    "T_CHR1",
+    "T_CHR2",
+    "T_CHR4",
+    "T_CHR8",
+    "T_CHR20",
+    "T_DEC1",
+    "T_DEC2",
+    "T_DEC4",
+    "T_DTE",
+    "T_TME",
+    "T_RS_STR",
+    "T_HEX2"
+  ],
+  "pairs": [
+    {
+      "type": 30,
+      "subtype": 1,
+      "table": "TABLE30_1",
+      "map": "src/MAP30S1.asm",
+      "title": "Job start / start of other work unit",
+      "handcrafted": true
+    },
+    {
+      "type": 30,
+      "subtype": 2,
+      "table": "TABLE30_2",
+      "map": "src/MAP30S2.asm",
+      "title": "Interval activity",
+      "handcrafted": true
+    },
+    {
+      "type": 30,
+      "subtype": 3,
+      "table": "TABLE30_3",
+      "map": "src/MAP30S3.asm",
+      "title": "Last interval before step end",
+      "handcrafted": true
+    },
+    {
+      "type": 30,
+      "subtype": 4,
+      "table": "TABLE30_4",
+      "map": "src/MAP30S4.asm",
+      "title": "Step total",
+      "handcrafted": true
+    },
+    {
+      "type": 30,
+      "subtype": 5,
+      "table": "TABLE30_5",
+      "map": "src/MAP30S5.asm",
+      "title": "Job termination",
+      "handcrafted": true
+    },
+    {
+      "type": 30,
+      "subtype": 6,
+      "table": "TABLE30_6",
+      "map": "src/MAP30S6.asm",
+      "title": "System address space",
+      "handcrafted": true
+    },
+    {
+      "type": 70,
+      "subtype": 1,
+      "table": "TABLE70_1",
+      "map": "src/MAP70S1.asm",
+      "title": "CPU, PR/SM, and ICF activity",
+      "handcrafted": true
+    },
+    {
+      "type": 70,
+      "subtype": 2,
+      "table": "TABLE70_2",
+      "map": "src/MAP70S2.asm",
+      "title": "Cryptographic hardware activity",
+      "handcrafted": true
+    },
+    {
+      "type": 71,
+      "subtype": 1,
+      "table": "TABLE71_1",
+      "map": "src/MAP71S1.asm",
+      "title": "Paging activity",
+      "handcrafted": true
+    },
+    {
+      "type": 72,
+      "subtype": 3,
+      "table": "TABLE72_3",
+      "map": "src/MAP72S3.asm",
+      "title": "Workload activity (WLM)",
+      "handcrafted": true
+    },
+    {
+      "type": 72,
+      "subtype": 4,
+      "table": "TABLE72_4",
+      "map": "src/MAP72S4.asm",
+      "title": "Storage data",
+      "handcrafted": false
+    },
+    {
+      "type": 72,
+      "subtype": 5,
+      "table": "TABLE72_5",
+      "map": "src/MAP72S5.asm",
+      "title": "Serialization delay",
+      "handcrafted": false
+    },
+    {
+      "type": 73,
+      "subtype": 1,
+      "table": "TABLE73_1",
+      "map": "src/MAP73S1.asm",
+      "title": "Channel path activity",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 1,
+      "table": "TABLE74_1",
+      "map": "src/MAP74S1.asm",
+      "title": "Device activity",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 2,
+      "table": "TABLE74_2",
+      "map": "src/MAP74S2.asm",
+      "title": "XCF activity",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 3,
+      "table": "TABLE74_3",
+      "map": "src/MAP74S3.asm",
+      "title": "OMVS kernel activity",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 4,
+      "table": "TABLE74_4",
+      "map": "src/MAP74S4.asm",
+      "title": "Coupling facility activity",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 5,
+      "table": "TABLE74_5",
+      "map": "src/MAP74S5.asm",
+      "title": "Cache subsystem device activity",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 6,
+      "table": "TABLE74_6",
+      "map": "src/MAP74S6.asm",
+      "title": "HFS statistics",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 7,
+      "table": "TABLE74_7",
+      "map": "src/MAP74S7.asm",
+      "title": "FICON director statistics",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 8,
+      "table": "TABLE74_8",
+      "map": "src/MAP74S8.asm",
+      "title": "Enterprise disk system statistics",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 9,
+      "table": "TABLE74_9",
+      "map": "src/MAP74S9.asm",
+      "title": "PCI Express based function activity",
+      "handcrafted": false
+    },
+    {
+      "type": 74,
+      "subtype": 10,
+      "table": "TABLE74_10",
+      "map": "src/MAP74S10.asm",
+      "title": "EADM statistics",
+      "handcrafted": false
+    },
+    {
+      "type": 75,
+      "subtype": 1,
+      "table": "TABLE75_1",
+      "map": "src/MAP75S1.asm",
+      "title": "Page data set activity",
+      "handcrafted": false
+    },
+    {
+      "type": 76,
+      "subtype": 1,
+      "table": "TABLE76_1",
+      "map": "src/MAP76S1.asm",
+      "title": "Trace activity",
+      "handcrafted": false
+    },
+    {
+      "type": 77,
+      "subtype": 1,
+      "table": "TABLE77_1",
+      "map": "src/MAP77S1.asm",
+      "title": "Enqueue activity",
+      "handcrafted": false
+    },
+    {
+      "type": 78,
+      "subtype": 2,
+      "table": "TABLE78_2",
+      "map": "src/MAP78S2.asm",
+      "title": "Virtual storage activity",
+      "handcrafted": false
+    },
+    {
+      "type": 78,
+      "subtype": 3,
+      "table": "TABLE78_3",
+      "map": "src/MAP78S3.asm",
+      "title": "I/O queuing activity",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 1,
+      "table": "TABLE79_1",
+      "map": "src/MAP79S1.asm",
+      "title": "Address space state data",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 2,
+      "table": "TABLE79_2",
+      "map": "src/MAP79S2.asm",
+      "title": "Address space resource data",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 3,
+      "table": "TABLE79_3",
+      "map": "src/MAP79S3.asm",
+      "title": "Storage/processor data",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 4,
+      "table": "TABLE79_4",
+      "map": "src/MAP79S4.asm",
+      "title": "Paging activity",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 5,
+      "table": "TABLE79_5",
+      "map": "src/MAP79S5.asm",
+      "title": "Address space SRM data",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 6,
+      "table": "TABLE79_6",
+      "map": "src/MAP79S6.asm",
+      "title": "Reserve data",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 7,
+      "table": "TABLE79_7",
+      "map": "src/MAP79S7.asm",
+      "title": "Enqueue contention data",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 9,
+      "table": "TABLE79_9",
+      "map": "src/MAP79S9.asm",
+      "title": "Device activity",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 11,
+      "table": "TABLE79_11",
+      "map": "src/MAP79S11.asm",
+      "title": "Page data set activity",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 12,
+      "table": "TABLE79_12",
+      "map": "src/MAP79S12.asm",
+      "title": "Channel path activity",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 14,
+      "table": "TABLE79_14",
+      "map": "src/MAP79S14.asm",
+      "title": "I/O queuing activity",
+      "handcrafted": false
+    },
+    {
+      "type": 79,
+      "subtype": 15,
+      "table": "TABLE79_15",
+      "map": "src/MAP79S15.asm",
+      "title": "IRLM long lock detection",
+      "handcrafted": false
+    },
+    {
+      "type": 99,
+      "subtype": 1,
+      "table": "TABLE99_1",
+      "map": "src/MAP99S1.asm",
+      "title": "System-level / SRM / resource groups",
+      "handcrafted": false
+    },
+    {
+      "type": 99,
+      "subtype": 2,
+      "table": "TABLE99_2",
+      "map": "src/MAP99S2.asm",
+      "title": "Service class data",
+      "handcrafted": false
+    },
+    {
+      "type": 99,
+      "subtype": 6,
+      "table": "TABLE99_6",
+      "map": "src/MAP99S6.asm",
+      "title": "Plot / miscellaneous",
+      "handcrafted": false
+    },
+    {
+      "type": 99,
+      "subtype": 12,
+      "table": "TABLE99_12",
+      "map": "src/MAP99S12.asm",
+      "title": "Subtype 12",
+      "handcrafted": false
+    },
+    {
+      "type": 99,
+      "subtype": 14,
+      "table": "TABLE99_14",
+      "map": "src/MAP99S14.asm",
+      "title": "Subtype 14",
+      "handcrafted": false
+    },
+    {
+      "type": 113,
+      "subtype": 1,
+      "table": "TABLE113_1",
+      "map": "src/MAP113S1.asm",
+      "title": "Hardware capacity / scavenging counters",
+      "handcrafted": false
+    },
+    {
+      "type": 113,
+      "subtype": 2,
+      "table": "TABLE113_2",
+      "map": "src/MAP113S2.asm",
+      "title": "Hardware event counters",
+      "handcrafted": false
+    }
+  ],
+  "also_supported_non_gatherer": [
+    {
+      "type": 14,
+      "map": "src/MAP14.asm",
+      "table": "TABLE14"
+    },
+    {
+      "type": 15,
+      "map": "src/MAP15.asm",
+      "table": "TABLE15"
+    },
+    {
+      "type": 42,
+      "map": "src/MAP42*.asm",
+      "note": "DFSMS catalog via gen_extra_maps"
+    },
+    {
+      "type": 80,
+      "map": "src/MAP80.asm",
+      "table": "TABLE80"
+    },
+    {
+      "type": 89,
+      "map": "src/MAP89.asm",
+      "table": "TABLE89"
+    },
+    {
+      "type": 119,
+      "map": "src/MAP119S*.asm",
+      "note": "TCP/IP via gen_extra_maps"
+    }
+  ]
+}

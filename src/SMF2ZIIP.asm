@@ -118,6 +118,8 @@ BTAB     DS    0F                * Branch Table for Data Types
          DC    A(CASE8)          * 8: SMF Date (4-bytes)
          DC    A(CASE9)          * 9: SMF Time (4-bytes)
          DC    A(CASE10)         * 10: Relocate Section String
+         DC    A(CASE11)         * 11: EBCDIC 20-bytes
+         DC    A(CASE12)         * 12: Binary 2-bytes as hex
 
 *--- Conversion Cases Mapping ---*
 CASE0    EQU   *
@@ -177,6 +179,17 @@ CASE9    EQU   *
 * T_RS_STR    EQU   10    RS Variable Length EBCDIC String
 CASE10   EQU   *
          BAL   R14,GET_RS_STR     * Branch to Value Retrieval routine         
+         J     CONTINUE
+
+* T_CHR20   EQU   11     EBCDIC STRING 20 Bytes
+CASE11   EQU   *
+         LHI   R2,20             * SMF field length
+         BAL   R14,GET_CHR       * Branch to Value Retrieval routine
+         J     CONTINUE
+
+* T_HEX2    EQU   12     Binary 2 bytes -> 4 hex chars
+CASE12   EQU   *
+         BAL   R14,GET_HEX2      * Branch to hex conversion routine
          J     CONTINUE
 
 CONTINUE EQU   *
@@ -311,6 +324,48 @@ CHRNOTRI EQU   *
 MVC_VAL  MVC   1(0,R5),0(R3)       * Copy from SMF(R3) to Buffer(R5+1)
 
 
+
+
+* ------------------------------------------------------------------
+* ROUTINE : GET_HEX2 (2 binary bytes -> "XXXX" hex string)
+* Input   : R8 = Table entry / R9 = SMF base / R5 = JSON cursor
+* Uses    : R0-R4, DW_WORK_DEC as scratch (reentrant via workarea)
+* ------------------------------------------------------------------
+GET_HEX2 EQU   *
+         SR    R0,R0
+         L     R1,4(,R8)           * Triplet offset in table
+         LTR   R1,R1
+         JZ    HEXNOTRI
+         AR    R1,R9
+         ICM   R0,B'1111',0(R1)
+         BNZ   HEXNOTRI
+         MVC   0(2,R5),=C'""'
+         LA    R5,2(,R5)
+         BR    R14
+HEXNOTRI EQU   *
+         L     R3,0(,R8)
+         AR    R3,R9
+         AR    R3,R0               * R3 -> 2 data bytes
+         MVI   0(R5),C'"'
+         LA    R4,1(,R5)           * R4 -> first hex output byte
+         LARL  R15,HEXDIG          * EBCDIC hex digit table
+         LA    R1,2                * two input bytes
+HEXLOOP  EQU   *
+         SR    R2,R2
+         IC    R2,0(,R3)           * current data byte
+         LR    R6,R2
+         SRL   R6,4                * high nibble (R0 cannot be index)
+         N     R2,=F'15'           * low nibble
+         IC    R0,0(R6,R15)
+         STC   R0,0(,R4)
+         IC    R0,0(R2,R15)
+         STC   R0,1(,R4)
+         LA    R4,2(,R4)
+         LA    R3,1(,R3)
+         BCT   R1,HEXLOOP
+         MVI   0(R4),C'"'
+         LA    R5,1(,R4)
+         BR    R14
 
 
 * ------------------------------------------------------------------
@@ -581,6 +636,9 @@ MVC_RS   MVC   0(0,R5),0(R3)      * Copy (R3) to (R5)
 
 * --- Constants Data area for GET_DEC ---     
 ED_PAT   DC    X'40202020202020202021' * Edit Pattern
+
+* --- Constants Data area for GET_HEX2 ---
+HEXDIG   DC    C'0123456789ABCDEF'
 
 * --- Constants Data area for GET_DATE ---
 DT_TAB   DC    AL1(31,28,31,30,31,30,31,31,30,31,30,31)

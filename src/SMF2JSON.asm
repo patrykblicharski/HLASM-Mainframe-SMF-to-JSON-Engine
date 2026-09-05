@@ -1,6 +1,6 @@
 *---------------------------------------------------------------------*
 * PROGRAM: SMF2JSON                                                   *
-* PURPOSE: CONVERT SMF RECORDS (TYPE 30, 80) TO JSON FORMAT           *
+* PURPOSE: CONVERT SMF RECORDS (14/15/30/42/70/71/72/73/74/75/76/77/78/79/80/89/99/113/119) TO JSON *
 * FEATURES: SUPPORTS STANDARD TCB MODE OR zIIP SRB OFFLOAD            *
 *---------------------------------------------------------------------*
 * --- Register definitions ---
@@ -23,7 +23,7 @@ R15      EQU   15
 
       
          COPY  CONFIG         * System-wide configuration
-         IFASMFR (30,80,89)      * IBM SMF Record Mappings
+         IFASMFR (14,15,30,42,70,71,72,73,74,75,76,77,78,79,80,89,99,113,119)  * IBM SMF Record Mappings
 
          
          AIF   (&USEZIIP EQ 0).NOZIIP    Check if zIIP mode
@@ -95,25 +95,473 @@ RDW_OK   CLI   5(R9),X'02'        * type 2 record ?
          CLI   5(R9),X'03'        * type 3 record  ?
          BE    NEXT_SMF           * If Yes Skip-it : Next
 
+* --- BEGIN GENERATED DISPATCH (tools/gen_gatherer_maps.py) ---
 * ---  TYPE 30 ---
-         CLI   5(R9),30          * type 30 record  ?
-         BNE    NO_30            * If Yes Skip-it : Next
-         LARL  R8,TABLE30        * Load Table
+         CLI   5(R9),30
+         BNE   NO_30
+         LH    R1,22(,R9)        * subtype halfword
+T30_1    CHI   R1,1
+         BNE   T30_2
+         LARL  R8,TABLE30_1
          J     JSONOBJ
-NO_30    EQU   *
+T30_2    CHI   R1,2
+         BNE   T30_3
+         LARL  R8,TABLE30_2
+         J     JSONOBJ
+T30_3    CHI   R1,3
+         BNE   T30_4
+         LARL  R8,TABLE30_3
+         J     JSONOBJ
+T30_4    CHI   R1,4
+         BNE   T30_5
+         LARL  R8,TABLE30_4
+         J     JSONOBJ
+T30_5    CHI   R1,5
+         BNE   T30_6
+         LARL  R8,TABLE30_5
+         J     JSONOBJ
+T30_6    CHI   R1,6
+         BNE   T30_DEF
+         LARL  R8,TABLE30_6
+         J     JSONOBJ
+T30_DEF EQU   *
+         LARL  R8,TABLE30        * unknown subtype default
+         J     JSONOBJ
+NO_30   EQU   *
+
+* ---  TYPE 70 ---
+         CLI   5(R9),70
+         BNE   NO_70
+         LH    R1,22(,R9)        * subtype halfword
+T70_1    CHI   R1,1
+         BNE   T70_2
+         LARL  R8,TABLE70_1
+         J     JSONOBJ
+T70_2    CHI   R1,2
+         BNE   T70_DEF
+         LARL  R8,TABLE70_2
+         J     JSONOBJ
+T70_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_70   EQU   *
+
+* ---  TYPE 71 ---
+         CLI   5(R9),71
+         BNE   NO_71
+         LH    R1,22(,R9)        * subtype halfword
+T71_1    CHI   R1,1
+         BNE   T71_DEF
+         LARL  R8,TABLE71_1
+         J     JSONOBJ
+T71_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_71   EQU   *
+
+* ---  TYPE 72 ---
+         CLI   5(R9),72
+         BNE   NO_72
+         LH    R1,22(,R9)        * subtype halfword
+T72_3    CHI   R1,3
+         BNE   T72_4
+         LARL  R8,TABLE72_3
+         J     JSONOBJ
+T72_4    CHI   R1,4
+         BNE   T72_5
+         LARL  R8,TABLE72_4
+         J     JSONOBJ
+T72_5    CHI   R1,5
+         BNE   T72_DEF
+         LARL  R8,TABLE72_5
+         J     JSONOBJ
+T72_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_72   EQU   *
+
+* ---  TYPE 73 ---
+         CLI   5(R9),73
+         BNE   NO_73
+         LH    R1,22(,R9)        * subtype halfword
+T73_1    CHI   R1,1
+         BNE   T73_DEF
+         LARL  R8,TABLE73_1
+         J     JSONOBJ
+T73_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_73   EQU   *
+
+* ---  TYPE 74 ---
+         CLI   5(R9),74
+         BNE   NO_74
+         LH    R1,22(,R9)        * subtype halfword
+T74_1    CHI   R1,1
+         BNE   T74_2
+         LARL  R8,TABLE74_1
+         J     JSONOBJ
+T74_2    CHI   R1,2
+         BNE   T74_3
+         LARL  R8,TABLE74_2
+         J     JSONOBJ
+T74_3    CHI   R1,3
+         BNE   T74_4
+         LARL  R8,TABLE74_3
+         J     JSONOBJ
+T74_4    CHI   R1,4
+         BNE   T74_5
+         LARL  R8,TABLE74_4
+         J     JSONOBJ
+T74_5    CHI   R1,5
+         BNE   T74_6
+         LARL  R8,TABLE74_5
+         J     JSONOBJ
+T74_6    CHI   R1,6
+         BNE   T74_7
+         LARL  R8,TABLE74_6
+         J     JSONOBJ
+T74_7    CHI   R1,7
+         BNE   T74_8
+         LARL  R8,TABLE74_7
+         J     JSONOBJ
+T74_8    CHI   R1,8
+         BNE   T74_9
+         LARL  R8,TABLE74_8
+         J     JSONOBJ
+T74_9    CHI   R1,9
+         BNE   T74_10
+         LARL  R8,TABLE74_9
+         J     JSONOBJ
+T74_10   CHI   R1,10
+         BNE   T74_DEF
+         LARL  R8,TABLE74_10
+         J     JSONOBJ
+T74_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_74   EQU   *
+
+* ---  TYPE 75 ---
+         CLI   5(R9),75
+         BNE   NO_75
+         LH    R1,22(,R9)        * subtype halfword
+T75_1    CHI   R1,1
+         BNE   T75_DEF
+         LARL  R8,TABLE75_1
+         J     JSONOBJ
+T75_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_75   EQU   *
+
+* ---  TYPE 76 ---
+         CLI   5(R9),76
+         BNE   NO_76
+         LH    R1,22(,R9)        * subtype halfword
+T76_1    CHI   R1,1
+         BNE   T76_DEF
+         LARL  R8,TABLE76_1
+         J     JSONOBJ
+T76_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_76   EQU   *
+
+* ---  TYPE 77 ---
+         CLI   5(R9),77
+         BNE   NO_77
+         LH    R1,22(,R9)        * subtype halfword
+T77_1    CHI   R1,1
+         BNE   T77_DEF
+         LARL  R8,TABLE77_1
+         J     JSONOBJ
+T77_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_77   EQU   *
+
+* ---  TYPE 78 ---
+         CLI   5(R9),78
+         BNE   NO_78
+         LH    R1,22(,R9)        * subtype halfword
+T78_2    CHI   R1,2
+         BNE   T78_3
+         LARL  R8,TABLE78_2
+         J     JSONOBJ
+T78_3    CHI   R1,3
+         BNE   T78_DEF
+         LARL  R8,TABLE78_3
+         J     JSONOBJ
+T78_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_78   EQU   *
+
+* ---  TYPE 79 ---
+         CLI   5(R9),79
+         BNE   NO_79
+         LH    R1,22(,R9)        * subtype halfword
+T79_1    CHI   R1,1
+         BNE   T79_2
+         LARL  R8,TABLE79_1
+         J     JSONOBJ
+T79_2    CHI   R1,2
+         BNE   T79_3
+         LARL  R8,TABLE79_2
+         J     JSONOBJ
+T79_3    CHI   R1,3
+         BNE   T79_4
+         LARL  R8,TABLE79_3
+         J     JSONOBJ
+T79_4    CHI   R1,4
+         BNE   T79_5
+         LARL  R8,TABLE79_4
+         J     JSONOBJ
+T79_5    CHI   R1,5
+         BNE   T79_6
+         LARL  R8,TABLE79_5
+         J     JSONOBJ
+T79_6    CHI   R1,6
+         BNE   T79_7
+         LARL  R8,TABLE79_6
+         J     JSONOBJ
+T79_7    CHI   R1,7
+         BNE   T79_9
+         LARL  R8,TABLE79_7
+         J     JSONOBJ
+T79_9    CHI   R1,9
+         BNE   T79_11
+         LARL  R8,TABLE79_9
+         J     JSONOBJ
+T79_11   CHI   R1,11
+         BNE   T79_12
+         LARL  R8,TABLE79_11
+         J     JSONOBJ
+T79_12   CHI   R1,12
+         BNE   T79_14
+         LARL  R8,TABLE79_12
+         J     JSONOBJ
+T79_14   CHI   R1,14
+         BNE   T79_15
+         LARL  R8,TABLE79_14
+         J     JSONOBJ
+T79_15   CHI   R1,15
+         BNE   T79_DEF
+         LARL  R8,TABLE79_15
+         J     JSONOBJ
+T79_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_79   EQU   *
+
+* ---  TYPE 99 ---
+         CLI   5(R9),99
+         BNE   NO_99
+         LH    R1,22(,R9)        * subtype halfword
+T99_1    CHI   R1,1
+         BNE   T99_2
+         LARL  R8,TABLE99_1
+         J     JSONOBJ
+T99_2    CHI   R1,2
+         BNE   T99_6
+         LARL  R8,TABLE99_2
+         J     JSONOBJ
+T99_6    CHI   R1,6
+         BNE   T99_12
+         LARL  R8,TABLE99_6
+         J     JSONOBJ
+T99_12   CHI   R1,12
+         BNE   T99_14
+         LARL  R8,TABLE99_12
+         J     JSONOBJ
+T99_14   CHI   R1,14
+         BNE   T99_DEF
+         LARL  R8,TABLE99_14
+         J     JSONOBJ
+T99_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_99   EQU   *
+
+* ---  TYPE 113 ---
+         CLI   5(R9),113
+         BNE   NO_113
+         LH    R1,22(,R9)        * subtype halfword
+T113_1   CHI   R1,1
+         BNE   T113_2
+         LARL  R8,TABLE113_1
+         J     JSONOBJ
+T113_2   CHI   R1,2
+         BNE   T113_DEF
+         LARL  R8,TABLE113_2
+         J     JSONOBJ
+T113_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_113   EQU   *
+
+* ---  TYPE 14 ---
+         CLI   5(R9),14
+         BNE   NO_14
+         LARL  R8,TABLE14
+         J     JSONOBJ
+NO_14   EQU   *
+
+* ---  TYPE 15 ---
+         CLI   5(R9),15
+         BNE   NO_15
+         LARL  R8,TABLE15
+         J     JSONOBJ
+NO_15   EQU   *
+
+* ---  TYPE 42 ---
+         CLI   5(R9),42
+         BNE   NO_42
+         LH    R1,22(,R9)        * subtype halfword
+T42_1    CHI   R1,1
+         BNE   T42_2
+         LARL  R8,TABLE42_1
+         J     JSONOBJ
+T42_2    CHI   R1,2
+         BNE   T42_3
+         LARL  R8,TABLE42_2
+         J     JSONOBJ
+T42_3    CHI   R1,3
+         BNE   T42_4
+         LARL  R8,TABLE42_3
+         J     JSONOBJ
+T42_4    CHI   R1,4
+         BNE   T42_5
+         LARL  R8,TABLE42_4
+         J     JSONOBJ
+T42_5    CHI   R1,5
+         BNE   T42_6
+         LARL  R8,TABLE42_5
+         J     JSONOBJ
+T42_6    CHI   R1,6
+         BNE   T42_9
+         LARL  R8,TABLE42_6
+         J     JSONOBJ
+T42_9    CHI   R1,9
+         BNE   T42_10
+         LARL  R8,TABLE42_9
+         J     JSONOBJ
+T42_10   CHI   R1,10
+         BNE   T42_11
+         LARL  R8,TABLE42_10
+         J     JSONOBJ
+T42_11   CHI   R1,11
+         BNE   T42_15
+         LARL  R8,TABLE42_11
+         J     JSONOBJ
+T42_15   CHI   R1,15
+         BNE   T42_16
+         LARL  R8,TABLE42_15
+         J     JSONOBJ
+T42_16   CHI   R1,16
+         BNE   T42_17
+         LARL  R8,TABLE42_16
+         J     JSONOBJ
+T42_17   CHI   R1,17
+         BNE   T42_18
+         LARL  R8,TABLE42_17
+         J     JSONOBJ
+T42_18   CHI   R1,18
+         BNE   T42_19
+         LARL  R8,TABLE42_18
+         J     JSONOBJ
+T42_19   CHI   R1,19
+         BNE   T42_20
+         LARL  R8,TABLE42_19
+         J     JSONOBJ
+T42_20   CHI   R1,20
+         BNE   T42_21
+         LARL  R8,TABLE42_20
+         J     JSONOBJ
+T42_21   CHI   R1,21
+         BNE   T42_22
+         LARL  R8,TABLE42_21
+         J     JSONOBJ
+T42_22   CHI   R1,22
+         BNE   T42_23
+         LARL  R8,TABLE42_22
+         J     JSONOBJ
+T42_23   CHI   R1,23
+         BNE   T42_24
+         LARL  R8,TABLE42_23
+         J     JSONOBJ
+T42_24   CHI   R1,24
+         BNE   T42_25
+         LARL  R8,TABLE42_24
+         J     JSONOBJ
+T42_25   CHI   R1,25
+         BNE   T42_27
+         LARL  R8,TABLE42_25
+         J     JSONOBJ
+T42_27   CHI   R1,27
+         BNE   T42_DEF
+         LARL  R8,TABLE42_27
+         J     JSONOBJ
+T42_DEF EQU   *
+         LARL  R8,TABLE42
+         J     JSONOBJ
+NO_42   EQU   *
+
+* ---  TYPE 119 ---
+         CLI   5(R9),119
+         BNE   NO_119
+         LH    R1,22(,R9)        * subtype halfword
+T119_1   CHI   R1,1
+         BNE   T119_2
+         LARL  R8,TABLE119_1
+         J     JSONOBJ
+T119_2   CHI   R1,2
+         BNE   T119_5
+         LARL  R8,TABLE119_2
+         J     JSONOBJ
+T119_5   CHI   R1,5
+         BNE   T119_6
+         LARL  R8,TABLE119_5
+         J     JSONOBJ
+T119_6   CHI   R1,6
+         BNE   T119_7
+         LARL  R8,TABLE119_6
+         J     JSONOBJ
+T119_7   CHI   R1,7
+         BNE   T119_8
+         LARL  R8,TABLE119_7
+         J     JSONOBJ
+T119_8   CHI   R1,8
+         BNE   T119_10
+         LARL  R8,TABLE119_8
+         J     JSONOBJ
+T119_10  CHI   R1,10
+         BNE   T119_11
+         LARL  R8,TABLE119_10
+         J     JSONOBJ
+T119_11  CHI   R1,11
+         BNE   T119_12
+         LARL  R8,TABLE119_11
+         J     JSONOBJ
+T119_12  CHI   R1,12
+         BNE   T119_20
+         LARL  R8,TABLE119_12
+         J     JSONOBJ
+T119_20  CHI   R1,20
+         BNE   T119_21
+         LARL  R8,TABLE119_20
+         J     JSONOBJ
+T119_21  CHI   R1,21
+         BNE   T119_DEF
+         LARL  R8,TABLE119_21
+         J     JSONOBJ
+T119_DEF EQU   *
+         J     NEXT_SMF          * unsupported subtype
+NO_119   EQU   *
+
 * ---  TYPE 80 ---
-         CLI   5(R9),80          * type 80 record  ?
-         BNE    NO_80            * If Yes Skip-it : Next
-         LARL  R8,TABLE80        * Load Table
+         CLI   5(R9),80
+         BNE   NO_80
+         LARL  R8,TABLE80
          J     JSONOBJ
 NO_80    EQU   *
-         CLI   5(R9),89          * type 89 record  ?
-         BNE    NO_89
+
+* ---  TYPE 89 ---
+         CLI   5(R9),89
+         BNE   NO_89
          LARL  R8,TABLE89
          J     JSONOBJ
 NO_89    J     NEXT_SMF
-         
-
+* --- END GENERATED DISPATCH ---
 JSONOBJ  EQU   *
 
          LARL  R5,BUF_DATA       * New Ligne R5=BUF_DATA
@@ -268,9 +716,92 @@ JSONOUT  DCB   DDNAME=JSONOUT,                                         X
 
 *--- Mapping Tables ---*
          DS    0F                  * Alignement
-         COPY  MAP30
-         COPY  MAP80 
-         COPY  MAP89  
+         COPY  TYPES               * T_* datatype constants
+         COPY  MAP30               * type 30 default
+         COPY  MAP30S1
+         COPY  MAP30S2
+         COPY  MAP30S3
+         COPY  MAP30S4
+         COPY  MAP30S5
+         COPY  MAP30S6
+         COPY  MAP14
+         COPY  MAP15
+         COPY  MAP42
+         COPY  MAP42S1
+         COPY  MAP42S2
+         COPY  MAP42S3
+         COPY  MAP42S4
+         COPY  MAP42S5
+         COPY  MAP42S6
+         COPY  MAP42S9
+         COPY  MAP42S10
+         COPY  MAP42S11
+         COPY  MAP42S15
+         COPY  MAP42S16
+         COPY  MAP42S17
+         COPY  MAP42S18
+         COPY  MAP42S19
+         COPY  MAP42S20
+         COPY  MAP42S21
+         COPY  MAP42S22
+         COPY  MAP42S23
+         COPY  MAP42S24
+         COPY  MAP42S25
+         COPY  MAP42S27
+         COPY  MAP70S1
+         COPY  MAP70S2
+         COPY  MAP71S1
+         COPY  MAP72S3
+         COPY  MAP72S4
+         COPY  MAP72S5
+         COPY  MAP73S1
+         COPY  MAP74S1
+         COPY  MAP74S2
+         COPY  MAP74S3
+         COPY  MAP74S4
+         COPY  MAP74S5
+         COPY  MAP74S6
+         COPY  MAP74S7
+         COPY  MAP74S8
+         COPY  MAP74S9
+         COPY  MAP74S10
+         COPY  MAP75S1
+         COPY  MAP76S1
+         COPY  MAP77S1
+         COPY  MAP78S2
+         COPY  MAP78S3
+         COPY  MAP79S1
+         COPY  MAP79S2
+         COPY  MAP79S3
+         COPY  MAP79S4
+         COPY  MAP79S5
+         COPY  MAP79S6
+         COPY  MAP79S7
+         COPY  MAP79S9
+         COPY  MAP79S11
+         COPY  MAP79S12
+         COPY  MAP79S14
+         COPY  MAP79S15
+         COPY  MAP99S1
+         COPY  MAP99S2
+         COPY  MAP99S6
+         COPY  MAP99S12
+         COPY  MAP99S14
+         COPY  MAP113S1
+         COPY  MAP113S2
+         COPY  MAP119S1
+         COPY  MAP119S2
+         COPY  MAP119S5
+         COPY  MAP119S6
+         COPY  MAP119S7
+         COPY  MAP119S8
+         COPY  MAP119S10
+         COPY  MAP119S11
+         COPY  MAP119S12
+         COPY  MAP119S20
+         COPY  MAP119S21
+         COPY  MAP80
+         COPY  MAP89
 
 DYNAMIC_WORK DSECT
 DW_SAVEAREA  DS    18F
