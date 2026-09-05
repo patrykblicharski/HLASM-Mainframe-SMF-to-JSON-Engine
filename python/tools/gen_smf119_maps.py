@@ -21,8 +21,23 @@ sys.path.insert(0, str(APP))
 
 from parser import layouts_loader  # noqa: E402, F401  — registers stXX slots
 from parser.layout import field_size  # noqa: E402
+from parser.nmtp_layouts import PROFILE_SECTIONS  # noqa: E402
 from parser.registry import SUBTYPE_SECTIONS  # noqa: E402
 from parser.subtypes import SUBTYPES  # noqa: E402
+
+# Stable NMTP profile sections (triplet index after Ident). Full PROFILE_SECTIONS
+# has PORT/INTF/IPSec/… which are useful but inflate the desktop table; keep
+# common + stack cfg here and document partial coverage in ROADMAP.
+NMTP_PARTIAL_SECTIONS = {
+    "PICommon",
+    "PIDS",
+    "ALPROC",
+    "V4CFG",
+    "V6CFG",
+    "TCPCFG",
+    "UDPCFG",
+    "GBLCFG",
+}
 
 # Absolute offset of Ident triplet (SMF119IDOff) from RDW / SMF119LEN.
 IDENT_TRIPLET = 28
@@ -82,6 +97,26 @@ IBM_JSON_KEYS = {
     "SMF119FT_FSBytes": "bytes_transferred",
     "SMF119FT_FSSUser": "server_user",
     "SMF119FT_FSHostname": "hostname",
+    # NMTP (119-4) — keep short desktop keys for the common profile sections
+    "NMTP_PICOChangeRsn": "change_rsn",
+    "NMTP_PICOFlags": "pico_flags",
+    "NMTP_PICOSecChanged": "sections_changed",
+    "NMTP_PICOConsName": "console",
+    "NMTP_PICOSysplexGrpName": "sysplex_grp",
+    "NMTP_PIDSName": "profile_dsn",
+    "NMTP_ALPRName": "autolog_proc",
+    "NMTP_ALPRJobName": "autolog_job",
+    "NMTP_V4CFTcpSrcVipaAddr": "tcp_src_vipa",
+    "NMTP_V4CFDynXcfAddr": "dynxcf_v4",
+    "NMTP_V4CFPrimaryIntfName": "primary_intf",
+    "NMTP_TCCFSoMaxConn": "somaxconn",
+    "NMTP_TCCFRcvBufSize": "tcp_rcvbuf",
+    "NMTP_TCCFSendBufSize": "tcp_sndbuf",
+    "NMTP_TCCFEphemPortBegNum": "tcp_ephem_beg",
+    "NMTP_TCCFEphemPortEndNum": "tcp_ephem_end",
+    "NMTP_UDCFRcvBufSize": "udp_rcvbuf",
+    "NMTP_UDCFSendBufSize": "udp_sndbuf",
+    "NMTP_GBCFFlags": "gbl_flags",
 }
 
 
@@ -93,7 +128,7 @@ def triplet_offset(triplet_index: int) -> int:
 def ibm_to_key(name: str) -> str:
     if name in IBM_JSON_KEYS:
         return IBM_JSON_KEYS[name]
-    s = re.sub(r"^SMF119(?:[A-Z]{1,2})?_", "", name)
+    s = re.sub(r"^(?:SMF119(?:[A-Z]{1,2})?_|NMTP_)", "", name)
     s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", s)
     s = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", s)
     s = s.replace("-", "_").replace(" ", "_")
@@ -227,6 +262,29 @@ def collect_subtype(sty: int) -> list[str]:
     return lines
 
 
+def collect_nmtp_partial() -> list[str]:
+    """Subtype 4: Ident is COMMON; map stable NMTP sections via fixed triplets."""
+    used: set[str] = set()
+    lines: list[str] = []
+    for idx, (name, layout, _eye) in enumerate(PROFILE_SECTIONS):
+        if name not in NMTP_PARTIAL_SECTIONS:
+            continue
+        # triplet 0 = Ident; PROFILE_SECTIONS[i] is triplet i+1
+        trip = triplet_offset(idx + 1)
+        for f in layout.fields:
+            rec = map_field(f, used)
+            if rec is None:
+                continue
+            # Skip opaque blobs that only clutter the desktop grid
+            if rec["ftype"] in ("HEX",) and (rec.get("length") or 0) > 32:
+                continue
+            if f.name.endswith("UserToken") or f.name.endswith("PFs") or f.name.endswith("UEIDList"):
+                continue
+            rec["off"] = layout.offsets[f.name]
+            lines.append(emit_field(rec, trip))
+    return lines
+
+
 def main() -> int:
     if not APP.is_dir():
         print(f"missing layout source: {APP}", file=sys.stderr)
@@ -237,6 +295,9 @@ def main() -> int:
         "",
         "Do not edit by hand. Regenerate with:",
         "    python python/tools/gen_smf119_maps.py",
+        "",
+        "Subtype 4 (NMTP profile) is partial: PICommon/PIDS/ALPROC/V4CFG/V6CFG/",
+        "TCPCFG/UDPCFG/GBLCFG only. PORT/INTF/route/IPSec/… stay unmapped.",
         '"""',
         "",
         "from __future__ import annotations",
@@ -263,11 +324,21 @@ def main() -> int:
         chunks.append(f"    {sty}: [")
         chunks.extend(body)
         chunks.append("    ],")
+
+    nmtp_body = collect_nmtp_partial()
+    if nmtp_body:
+        mapped.append(4)
+        title = SUBTYPES.get(4, "TCP/IP profile event")
+        chunks.append(f"    # 4: {title} (NMTP partial — see module docstring)")
+        chunks.append("    4: [")
+        chunks.extend(nmtp_body)
+        chunks.append("    ],")
+
     chunks.append("}")
     chunks.append("")
 
     OUT.write_text("\n".join(chunks) + "\n", encoding="utf-8")
-    print(f"Wrote {OUT} ({len(mapped)} subtypes: {mapped})")
+    print(f"Wrote {OUT} ({len(mapped)} subtypes: {sorted(mapped)})")
     return 0
 
 

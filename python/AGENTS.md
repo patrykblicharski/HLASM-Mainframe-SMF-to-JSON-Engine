@@ -18,7 +18,7 @@ python/
     progress.py        Byte bar + elapsed-time formatting (CLI stderr / GUI status)
     gui.py             Tkinter: notebook tabs, column picker, tooltips
     column_config.py   Visible columns persisted per type/subtype
-    sample_dump.py     Synthetic VB records for 30, 80, 119-1/2/3/10
+    sample_dump.py     Synthetic VB records for 14, 15, 17, 30-1/4/5, 42, 61/65/66, 80, 119-1/2/3/4/10
     terse.py           AMATERSE/TERSE unpacker (PACK/SPACK); `python -m smf2json.terse`
   tools/
     gen_smf119_maps.py Regenerate maps/smf119_generated.py from temp/smf119-app layouts
@@ -34,10 +34,10 @@ No pip packages. Python 3.10+ (`from __future__ import annotations` is used thro
 
 1. `reader.iter_dump(path)` / `read_dump(path)` → records. Each `data` **includes the 4-byte RDW** so IBM offsets (from SMFxLEN) apply as-is. The GUI uses `iter_dump` so it never builds a full `list[SmfRecord]`.
 2. `engine.convert_record` looks up `maps.fields_for(type, subtype)`.
-   - `MAPS_BY_TYPE[rty]` — types without distinct subtype layouts (30, 80, 89).
-   - `MAPS_BY_SUBTYPE[(rty, sty)]` — types whose sections differ by subtype (119).
+   - `MAPS_BY_TYPE[rty]` — types without distinct subtype layouts (14, 15, 17, 80 common, 89).
+   - `MAPS_BY_SUBTYPE[(rty, sty)]` — types whose sections differ by subtype (30 subtypes 1–6 via `SMF30STP`, 42 subtypes 20–25, 119).
    - If a type has **any** subtype map, unmapped subtypes are **skipped**.
-3. `gui` groups converted rows by `(smf_record_type, smf_subtype|None)` into notebook tabs. Subtype is taken only from the mapped `smf_subtype` field (do not invent it from raw bytes 22–23 on types 30/80).
+3. `gui` groups converted rows by `(smf_record_type, smf_subtype|None)` into notebook tabs. Subtype is taken only from the mapped `smf_subtype` field (do not invent it from raw bytes 22–23 when the map has no `smf_subtype` — e.g. type 80 uses `SMF80USR` there, not STY). Type 80 discriminates by `SMF80EVT` / qualifier, not `SMFxSTY`.
 4. Export: JSON = all rows; CSV = **current tab** (visible columns).
 
 ## Input dump format
@@ -56,15 +56,15 @@ Port of `SMF_FIELD` macros. `FieldSpec`:
 | `description` | Tooltip second line |
 | `offset` | Relative to section base (absolute if `triplet_offset` is None) |
 | `triplet_offset` | Absolute offset of the section triplet (offset/length/number) in the header |
-| `ftype` | See `types.TYPE_LENGTHS` + `convert_value` |
-| `tag` | Relocate-section tag (`RS_STR` only) |
+| `ftype` | See `types.TYPE_LENGTHS` + `convert_value` (`RS_STR` / `RS_HEX` / `RS2_*` for type-80 relocate) |
+| `tag` | Relocate-section tag (`RS_STR` / `RS_HEX` / `RS2_STR` / `RS2_HEX`) |
 
 Register in `maps/__init__.py`. Add converters in `types.py` only when the IBM format is new. Add `sample_dump.build_*` + a `tests/test_engine.py` case.
 
 PACSYS HTML tables (e.g. smf119_subtype01) are a valid layout source; keep IBM names exact.
 SMF 119 subtype sections live in `maps/smf119_generated.py` (header + ident in `maps/smf119.py`).
 
-**Mapped today:** 30 (common sections), 80 (RACF header + RS tags 1/17), 89 (header), 119 subtypes 1–3, 5–8, 10–12, 20–24, 32–45, 48–52, 70–81. Not mapped: 119-4 (NMTP profile), 119-94..98 (OpenSSH, external).
+**Mapped today:** 14 (INPUT DS activity), 15 (OUTPUT DS activity), 17 (scratch DSN status), 30 subtypes 1–6 (common address space work via `SMF30STP`), 42 subtypes 20–25 (DFSMS STOW/member/DFSMSrmm), 61/65/66 (ICF DEFINE/DELETE/ALTER), 80 (RACF z/OS 3.1 fixed section + relocate tags 1/2/3/4/8/9/13/15/16/17/20; event-class samples TBD), 89 (header), 119 subtypes 1–4, 5–8, 10–12, 20–24, 32–45, 48–52, 70–81 (119-4 NMTP **partial** — common/cfg sections only). Not mapped: remaining NMTP sections (PORT/INTF/…), 119-94..98 (OpenSSH, external). Next map work (80 event-group samples / ext relocate, …): see `ROADMAP.md`.
 
 ## GUI conventions
 
@@ -98,4 +98,5 @@ python -m unittest discover -s tests -v
 - Parse dumps as text / assume little-endian integers.
 - Apply a 119-1 section map to other 119 subtypes.
 - Treat type-30/80 bytes 22–23 as `SMFxSTY`.
+- Port SMF 80 field layouts from pre-2.4 / ≤2.3 RACF shapes; target **z/OS 3.1 (3.01.00)** IFASMFR / RACF macros.
 - Re-read the whole package for column/tooltip/tab behavior — it is all in `gui.py` + `column_config.py`.

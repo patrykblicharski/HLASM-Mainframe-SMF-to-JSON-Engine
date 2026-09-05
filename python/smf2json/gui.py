@@ -801,7 +801,7 @@ class SmfApp(tk.Tk):
             "About",
             "SMF2JSON Desktop\n\n"
             "Python port of the HLASM table-driven SMF converter.\n"
-            "Supports SMF types 30, 80, 89, and 119 (TCP/IP subtypes) from VB/VBS binary dumps.\n"
+            "Supports SMF 14/15/17, 30 (1–6), 42 (20–25), 61/65/66, 80, 89, and 119 from VB/VBS dumps.\n"
             "Records are grouped into tabs by type / subtype.\n"
             f"Column layout is saved to {config_path()}.",
             parent=self,

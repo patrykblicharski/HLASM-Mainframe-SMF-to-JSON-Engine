@@ -11,11 +11,23 @@ from smf2json.engine import convert_dump, convert_path, ordered_columns
 from smf2json.maps import MAPS_BY_SUBTYPE, fields_for
 from smf2json.reader import iter_dump, read_dump
 from smf2json.sample_dump import (
+    build_smf14,
+    build_smf15,
+    build_smf17,
     build_smf30,
+    build_smf30_st01,
+    build_smf30_st05,
+    build_smf42_st20,
+    build_smf42_st21,
+    build_smf42_st24,
+    build_smf61,
+    build_smf65,
+    build_smf66,
     build_smf80,
     build_smf119_st01,
     build_smf119_st02,
     build_smf119_st03,
+    build_smf119_st04,
     build_smf119_st10,
     build_smf119_st32,
 )
@@ -78,6 +90,7 @@ class DumpTests(unittest.TestCase):
         self.assertEqual(len(rows), 2)
         r30 = rows[0]
         self.assertEqual(r30["smf_record_type"], "30")
+        self.assertEqual(r30["smf_subtype"], "4")
         self.assertEqual(r30["smf_system_id"], "PROD")
         self.assertEqual(r30["time"], "12:13:59")
         self.assertEqual(r30["date"], "2026-03-25")
@@ -90,8 +103,78 @@ class DumpTests(unittest.TestCase):
         r80 = rows[1]
         self.assertEqual(r80["smf_record_type"], "80")
         self.assertEqual(r80["user_id"], "IBMUSER")
+        self.assertEqual(r80["group_name"], "SYS1")
+        self.assertEqual(r80["event_code"], "2")
+        self.assertEqual(r80["event_qualifier"], "0")
+        self.assertEqual(r80["terminal_id"], "TSO001")
+        self.assertEqual(r80["job_name"], "IBMUSER")
+        self.assertEqual(r80["racf_fmid"], "77E0")
+        self.assertEqual(r80["security_label"], "SYSLOW")
+        self.assertEqual(r80["authorities_used"], "80")
         self.assertEqual(r80["class_name"], "DATASET")
         self.assertEqual(r80["old_resource"], "IBMUSER.REXX")
+        self.assertEqual(r80["volser"], "SYS001")
+        self.assertEqual(r80["access_requested"], "02")
+        self.assertEqual(r80["access_allowed"], "08")
+        self.assertEqual(r80["mfa_factor_name"], "AZFTOTP1")
+        # Type 80 stays on MAPS_BY_TYPE; bytes 22–23 are USR, not STY.
+        self.assertFalse(any(rty == 80 for rty, _sty in MAPS_BY_SUBTYPE))
+        self.assertEqual(len(fields_for(80)), len(fields_for(80, subtype=2)))
+
+    def test_convert_type80_jobinit(self) -> None:
+        from smf2json.sample_dump import build_smf80_jobinit
+
+        path = Path(self.tmp.name) / "smf80-evt1.smf"
+        path.write_bytes(build_smf80_jobinit())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "80")
+        self.assertEqual(row["event_code"], "1")
+        self.assertEqual(row["user_id"], "WITADM4")
+        self.assertEqual(row["group_name"], "WITADMGP")
+        self.assertEqual(row["job_name"], "XH4AMGS")
+        self.assertEqual(row["application_name"], "TSO")
+        self.assertEqual(row["racf_fmid"], "77E0")
+
+    def test_convert_type30_st01(self) -> None:
+        path = Path(self.tmp.name) / "smf30-1.smf"
+        path.write_bytes(build_smf30_st01())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "30")
+        self.assertEqual(row["smf_subtype"], "1")
+        self.assertEqual(row["job_name"], "INITJOB1")
+        self.assertEqual(row["product_name"], "SMF")
+        self.assertNotIn("cpu_step_time", row)
+        self.assertNotIn("step_comp_code", row)
+
+    def test_convert_type30_st05(self) -> None:
+        path = Path(self.tmp.name) / "smf30-5.smf"
+        path.write_bytes(build_smf30_st05())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "30")
+        self.assertEqual(row["smf_subtype"], "5")
+        self.assertEqual(row["job_name"], "TERMJOB1")
+        self.assertEqual(row["step_comp_code"], "0")
+        self.assertEqual(row["cpu_step_time"], "2500")
+        self.assertEqual(row["srb_time"], "100")
+
+    def test_smf30_subtype_registry(self) -> None:
+        for sty in (1, 2, 3, 4, 5, 6):
+            self.assertTrue(fields_for(30, sty), f"missing map for 30-{sty}")
+        self.assertEqual(fields_for(30, 7), ())
+        mapped = {sty for rty, sty in MAPS_BY_SUBTYPE if rty == 30}
+        self.assertEqual(mapped, {1, 2, 3, 4, 5, 6})
+        keys1 = {f.json_key for f in fields_for(30, 1)}
+        keys4 = {f.json_key for f in fields_for(30, 4)}
+        self.assertIn("job_name", keys1)
+        self.assertNotIn("cpu_step_time", keys1)
+        self.assertIn("cpu_step_time", keys4)
+        self.assertIn("step_comp_code", keys4)
 
     def test_json_roundtrip(self) -> None:
         rows = convert_dump(read_dump(str(self.path)))
@@ -148,6 +231,178 @@ class DumpTests(unittest.TestCase):
             count += 1
             self.assertEqual(row["smf_record_type"], "30")
         self.assertEqual(count, 300)
+
+    def test_convert_type17(self) -> None:
+        path = Path(self.tmp.name) / "smf17.smf"
+        path.write_bytes(build_smf17())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "17")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["time"], "15:30:00")
+        self.assertEqual(row["date"], "2026-03-25")
+        self.assertEqual(row["job_name"], "SCRJOB01")
+        self.assertEqual(row["reader_start_t"], "09:00:00")
+        self.assertEqual(row["reader_start_d"], "2026-03-25")
+        self.assertEqual(row["user_id_field"], "IBMUSER")
+        self.assertEqual(row["dsname"], "IBMUSER.TEMP.DATA")
+        self.assertEqual(row["volume_count"], "1")
+        self.assertEqual(row["volume_serial"], "SCR001")
+        self.assertTrue(fields_for(17))
+
+    def test_convert_type15(self) -> None:
+        path = Path(self.tmp.name) / "smf15.smf"
+        path.write_bytes(build_smf15())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "15")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["job_name"], "PAYROLL")
+        self.assertEqual(row["time"], "15:30:45")
+        self.assertEqual(row["date"], "2026-03-25")
+        self.assertEqual(row["ddname"], "SYSOUT")
+        self.assertEqual(row["dsname"], "SYS1.PAYROLL.OUT")
+        self.assertEqual(row["member_name"], "MEMBER1")
+        self.assertEqual(row["volser_1"], "WORK01")
+        self.assertEqual(row["blksize"], "32760")
+        self.assertEqual(row["lrecl"], "80")
+        self.assertEqual(row["device_number"], "1A2B")
+        self.assertEqual(row["ucb_volser"], "WORK01")
+        self.assertEqual(row["excp_count"], "1234")
+        self.assertEqual(row["tracks_allocated"], "150")
+        self.assertEqual(row["extent_count"], "3")
+        self.assertEqual(row["open_time"], "15:00:00")
+        self.assertEqual(row["open_date"], "2026-03-25")
+
+    def test_convert_type14(self) -> None:
+        path = Path(self.tmp.name) / "smf14.smf"
+        path.write_bytes(build_smf14())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "14")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["time"], "09:15:30")
+        self.assertEqual(row["date"], "2026-03-25")
+        self.assertEqual(row["job_name"], "PAYROLL")
+        self.assertEqual(row["ddname"], "INFILE")
+        self.assertEqual(row["dsname"], "SYS1.PAYROLL.MASTER")
+        self.assertEqual(row["blksize"], "27998")
+        self.assertEqual(row["lrecl"], "80")
+        self.assertEqual(row["volser_1"], "SCR001")
+        self.assertEqual(row["excp_count"], "4200")
+        self.assertEqual(row["device_number"], "1234")
+        self.assertEqual(row["ucb_volser"], "SCR001")
+        self.assertEqual(row["open_date"], "2026-03-25")
+
+    def test_convert_type61(self) -> None:
+        path = Path(self.tmp.name) / "smf61.smf"
+        path.write_bytes(build_smf61())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "61")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["time"], "11:31:13")
+        self.assertEqual(row["date"], "2026-03-25")
+        self.assertEqual(row["catalog_action"], "IN")
+        self.assertEqual(row["job_name"], "DEFJOB01")
+        self.assertEqual(row["reader_start_t"], "08:00:00")
+        self.assertEqual(row["reader_start_d"], "2026-03-25")
+        self.assertEqual(row["user_id_field"], "IBMUSER")
+        self.assertEqual(row["catalog_name"], "CATALOG.USER.ICF")
+        self.assertEqual(row["entry_type"], "A")
+        self.assertEqual(row["entry_name"], "IBMUSER.NEW.DATASET")
+        self.assertEqual(row["product_name"], "IGG0CLX0")
+        self.assertTrue(fields_for(61))
+
+    def test_convert_type65(self) -> None:
+        path = Path(self.tmp.name) / "smf65.smf"
+        path.write_bytes(build_smf65())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "65")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["time"], "11:41:07")
+        self.assertEqual(row["catalog_action"], "DE")
+        self.assertEqual(row["function_indicator"], "S")
+        self.assertEqual(row["job_name"], "DELJOB01")
+        self.assertEqual(row["catalog_name"], "CATALOG.USER.ICF")
+        self.assertEqual(row["entry_type"], "A")
+        self.assertEqual(row["entry_name"], "IBMUSER.OLD.DATASET")
+        self.assertTrue(fields_for(65))
+
+    def test_convert_type66(self) -> None:
+        path = Path(self.tmp.name) / "smf66.smf"
+        path.write_bytes(build_smf66())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "66")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["time"], "11:45:00")
+        self.assertEqual(row["catalog_action"], "UP")
+        self.assertEqual(row["function_indicator"], "R")
+        self.assertEqual(row["job_name"], "ALTJOB01")
+        self.assertEqual(row["catalog_name"], "CATALOG.USER.ICF")
+        self.assertEqual(row["entry_name"], "IBMUSER.OLD.NAME")
+        self.assertEqual(row["new_entry_name"], "IBMUSER.NEW.NAME")
+        self.assertTrue(fields_for(66))
+
+    def test_convert_type42_st20(self) -> None:
+        path = Path(self.tmp.name) / "smf42-20.smf"
+        path.write_bytes(build_smf42_st20())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "42")
+        self.assertEqual(row["smf_subtype"], "20")
+        self.assertEqual(row["smf_system_id"], "PROD")
+        self.assertEqual(row["smf_subsystem_id"], "SMS")
+        self.assertEqual(row["product_name"], "DFSMS")
+        self.assertEqual(row["job_name"], "STOWJOB1")
+        self.assertEqual(row["step_name"], "STEP1")
+        self.assertEqual(row["dsname"], "SYS1.PROCLIB")
+        self.assertEqual(row["volser"], "SYSRES")
+
+    def test_convert_type42_st21(self) -> None:
+        path = Path(self.tmp.name) / "smf42-21.smf"
+        path.write_bytes(build_smf42_st21())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "42")
+        self.assertEqual(row["smf_subtype"], "21")
+        self.assertEqual(row["job_name"], "DELJOB01")
+        self.assertEqual(row["dsname"], "IBMUSER.SOURCE.PDS")
+        self.assertEqual(row["volser"], "TSO001")
+        self.assertEqual(row["member_name"], "MEMBER1")
+        self.assertEqual(row["member_name_len"], "7")
+        self.assertEqual(row["alias_count"], "0")
+
+    def test_convert_type42_st24(self) -> None:
+        path = Path(self.tmp.name) / "smf42-24.smf"
+        path.write_bytes(build_smf42_st24())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_record_type"], "42")
+        self.assertEqual(row["smf_subtype"], "24")
+        self.assertEqual(row["job_name"], "ADDJOB01")
+        self.assertEqual(row["dsname"], "IBMUSER.SOURCE.PDSE")
+        self.assertEqual(row["volser"], "WORK01")
+        self.assertEqual(row["member_name"], "NEWMEM")
+        self.assertEqual(row["member_flags"], "40")
+
+    def test_smf42_subtype_registry(self) -> None:
+        for sty in (20, 21, 22, 23, 24, 25):
+            self.assertTrue(fields_for(42, sty), f"missing map for 42-{sty}")
+        self.assertEqual(fields_for(42, 1), ())
+        mapped = {sty for rty, sty in MAPS_BY_SUBTYPE if rty == 42}
+        self.assertEqual(mapped, {20, 21, 22, 23, 24, 25})
 
     def test_convert_type119_st01(self) -> None:
         path = Path(self.tmp.name) / "smf119.smf"
@@ -215,6 +470,25 @@ class DumpTests(unittest.TestCase):
         self.assertEqual(row["in_bytes"], "100")
         self.assertEqual(row["out_bytes"], "200")
 
+    def test_convert_type119_st04_nmtp_partial(self) -> None:
+        path = Path(self.tmp.name) / "smf119-4.smf"
+        path.write_bytes(build_smf119_st04())
+        rows = convert_dump(read_dump(str(path)))
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["smf_subtype"], "4")
+        self.assertEqual(row["tcp_component"], "STACK")
+        self.assertEqual(row["change_rsn"], "1")
+        self.assertEqual(row["pico_flags"], "80")
+        self.assertEqual(row["console"], "CONS01")
+        self.assertEqual(row["sysplex_grp"], "PLEXGRP")
+        self.assertEqual(row["pico_change_date"], "2026-03-25")
+        self.assertEqual(row["somaxconn"], "1024")
+        self.assertEqual(row["tcp_rcvbuf"], "65535")
+        self.assertEqual(row["tcp_sndbuf"], "65535")
+        self.assertEqual(row["tcp_ephem_beg"], "1024")
+        self.assertEqual(row["tcp_ephem_end"], "65535")
+
     def test_convert_type119_st32_ipunion(self) -> None:
         path = Path(self.tmp.name) / "smf119-32.smf"
         path.write_bytes(build_smf119_st32())
@@ -226,8 +500,8 @@ class DumpTests(unittest.TestCase):
 
     def test_smf119_unmapped_subtype_skipped(self) -> None:
         rec = bytearray(build_smf119_st01())
-        rec[22:24] = (4).to_bytes(2, "big")
-        path = Path(self.tmp.name) / "smf119-4.smf"
+        rec[22:24] = (94).to_bytes(2, "big")
+        path = Path(self.tmp.name) / "smf119-94.smf"
         path.write_bytes(bytes(rec))
         rows = convert_dump(read_dump(str(path)))
         self.assertEqual(rows, [])
@@ -235,12 +509,12 @@ class DumpTests(unittest.TestCase):
     def test_smf119_subtype_registry(self) -> None:
         self.assertTrue(fields_for(119, 1))
         self.assertTrue(fields_for(119, 2))
+        self.assertTrue(fields_for(119, 4))
         self.assertTrue(fields_for(119, 70))
-        self.assertEqual(fields_for(119, 4), ())
         self.assertEqual(fields_for(119, 94), ())
         mapped = {sty for rty, sty in MAPS_BY_SUBTYPE if rty == 119}
-        self.assertGreaterEqual(len(mapped), 46)
-        self.assertNotIn(4, mapped)
+        self.assertGreaterEqual(len(mapped), 47)
+        self.assertIn(4, mapped)
 
 
 if __name__ == "__main__":

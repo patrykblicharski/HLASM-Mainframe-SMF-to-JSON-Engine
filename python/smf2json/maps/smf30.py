@@ -1,4 +1,17 @@
-"""SMF type 30 field map — port of MAP30.asm (common sections, no subtypes)."""
+"""SMF type 30 — Common address space work (subtypes 1–6 via SMF30STP).
+
+Layouts from IBM z/OS SMF (IFASMFR) / PACSYS smf30 tables and MAP30.asm.
+Header + subsystem + identification are shared; resource sections vary by subtype.
+Register via ``MAPS_BY_SUBTYPE[(30, sty)]`` — do not use a flat type-30 map.
+
+Section presence (IBM / PACSYS):
+  1 Job initiation — no resource sections (identifies the work unit only)
+  2 Interval — I/O, processor, storage, performance (no completion)
+  3 Last interval before step end — same as 2
+  4 Step total — I/O, completion, processor, storage, performance, operator
+  5 Job termination — same as 4
+  6 System address space — I/O, processor, storage, performance (partial fields)
+"""
 
 from __future__ import annotations
 
@@ -6,6 +19,7 @@ from ..types import FieldSpec as F
 
 # Header triplet absolute offsets (from SMF30LEN / record start including RDW)
 SOF, IOF, UOF, TOF, COF, ROF, POF, OOF = 24, 32, 40, 48, 56, 72, 80, 88
+# AOF (accounting @64) and EXCP / APPC / USS / … triplets exist but are unmapped here.
 
 
 def _h(key, ibm, ftype, off, desc):
@@ -16,21 +30,25 @@ def _s(key, ibm, ftype, off, trip, desc):
     return F(key, ibm, ftype, off, trip, description=desc)
 
 
-FIELDS = [
-    # Header
+HEADER = [
     _h("smf_sys_flag", "SMF30FLG", "DEC1", 4, "System indicator flags"),
     _h("smf_record_type", "SMF30RTY", "DEC1", 5, "Record type (30)"),
     _h("time", "SMF30TME", "TME", 6, "Time record moved to SMF buffer (HH:MM:SS)"),
     _h("date", "SMF30DTE", "DTE", 10, "Date record moved to SMF buffer (YYYY-MM-DD)"),
     _h("smf_system_id", "SMF30SID", "CHR4", 14, "System identification (SID)"),
     _h("work_type", "SMF30WID", "CHR4", 18, "Work type indicator (JOB/STC/TSO/...)"),
-    # Subsystem
+    _h("smf_subtype", "SMF30STP", "DEC2", 22, "Record subtype (SMF30STP)"),
+]
+
+SUBSYSTEM = [
     _s("rec_version", "SMF30RVN", "CHR2", 4, SOF, "Record version number"),
     _s("product_name", "SMF30PNM", "CHR8", 6, SOF, "Subsystem / product name (e.g. SMF)"),
     _s("os_level", "SMF30OSL", "CHR8", 14, SOF, "MVS software level"),
     _s("sys_name", "SMF30SYN", "CHR8", 22, SOF, "System name (SYSNAME)"),
     _s("sysplex_name", "SMF30SYP", "CHR8", 30, SOF, "Sysplex name"),
-    # Identification
+]
+
+IDENTIFICATION = [
     _s("job_name", "SMF30JBN", "CHR8", 0, IOF, "Job or session name"),
     _s("program_name", "SMF30PGM", "CHR8", 8, IOF, "Program name (PGM=)"),
     _s("step_name", "SMF30STM", "CHR8", 16, IOF, "Step name"),
@@ -57,7 +75,9 @@ FIELDS = [
     _s("job_class_8", "SMF30CL8", "CHR8", 140, IOF, "8-character job class"),
     _s("substep_num", "SMF30SSN", "DEC4", 164, IOF, "Substep number (OpenMVS)"),
     _s("omvs_pgm_name", "SMF30EXN", "CHR16", 168, IOF, "OpenMVS / program name"),
-    # I/O activity
+]
+
+IO_ACTIVITY = [
     _s("card_images", "SMF30INP", "DEC4", 0, UOF, "Card-image records read"),
     _s("total_blocks", "SMF30TEP", "DEC4", 4, UOF, "Total blocks transferred (EXCP)"),
     _s("tput_count", "SMF30TPT", "DEC4", 8, UOF, "TPUT count (TSO)"),
@@ -75,11 +95,15 @@ FIELDS = [
     _s("ie_disc_t", "SMF30EID", "DEC4", 52, UOF, "Indep. enclave DASD disconnect"),
     _s("ie_pend_t", "SMF30EIW", "DEC4", 56, UOF, "Indep. enclave DASD pending"),
     _s("ie_ssch_ct", "SMF30EIS", "DEC4", 60, UOF, "Indep. enclave SSCH count"),
-    # Completion
+]
+
+COMPLETION = [
     _s("step_comp_code", "SMF30SCC", "DEC2", 0, TOF, "Step / job completion code"),
     _s("term_indicator", "SMF30STI", "DEC2", 2, TOF, "Termination indicator flags"),
     _s("abend_reason", "SMF30ARC", "DEC4", 4, TOF, "Abend reason code"),
-    # Processor
+]
+
+PROCESSOR = [
     _s("timer_flags", "SMF30TFL", "DEC2", 2, COF, "Invalid timer flags"),
     _s("cpu_step_time", "SMF30CPT", "DEC4", 4, COF, "Step TCB CPU time (0.01s)"),
     _s("srb_time", "SMF30CPS", "DEC4", 8, COF, "Step SRB CPU time (0.01s)"),
@@ -102,7 +126,9 @@ FIELDS = [
     _s("dep_enclave_t", "SMF30DET", "DEC4", 76, COF, "Dependent enclave CPU time"),
     _s("enqueue_cpu_t", "SMF30CEP", "DEC4", 80, COF, "Enqueue-promoted CPU time"),
     _s("timer_flags2", "SMF30TF2", "DEC2", 82, COF, "Additional timer flags"),
-    # Storage
+]
+
+STORAGE = [
     _s("storage_flags", "SMF30SFL", "DEC1", 2, ROF, "Storage flags"),
     _s("storage_key", "SMF30SPK", "DEC1", 3, ROF, "Storage protect key"),
     _s("priv_below_k", "SMF30PRV", "DEC2", 4, ROF, "Private below 16M (K)"),
@@ -142,7 +168,9 @@ FIELDS = [
     _s("shared_pg_aux", "SMF30PAI", "DEC4", 152, ROF, "Shared pages in from aux"),
     _s("shared_pg_exp", "SMF30PEI", "DEC4", 156, ROF, "Shared pages in from expanded"),
     _s("memlimit_src", "SMF30MLS", "DEC1", 176, ROF, "MEMLIMIT source"),
-    # Performance
+]
+
+PERFORMANCE = [
     _s("total_service", "SMF30SRV", "DEC4", 0, POF, "Total service units"),
     _s("cpu_service", "SMF30CSU", "DEC4", 4, POF, "CPU service units"),
     _s("srb_service", "SMF30SRB", "DEC4", 8, POF, "SRB service units"),
@@ -167,9 +195,60 @@ FIELDS = [
     _s("perf_flag1", "SMF30PF1", "DEC1", 112, POF, "Performance flag byte 1"),
     _s("perf_flag2", "SMF30PF2", "DEC1", 113, POF, "Performance flag byte 2"),
     _s("subsys_coll", "SMF30JPN", "CHR8", 116, POF, "Subsystem collection name"),
-    # Operator
+]
+
+OPERATOR = [
     _s("nonspec_dasd", "SMF30PDM", "DEC4", 0, OOF, "Non-specific DASD mounts"),
     _s("spec_dasd_mnt", "SMF30PRD", "DEC4", 4, OOF, "Specific DASD mounts"),
     _s("nonspec_tape", "SMF30PTM", "DEC4", 8, OOF, "Non-specific tape mounts"),
     _s("spec_tape_mnt", "SMF30TPR", "DEC4", 12, OOF, "Specific tape mounts"),
+]
+
+COMMON = HEADER + SUBSYSTEM + IDENTIFICATION
+
+# Resource sections typically present (absent triplets decode as empty fields).
+_INTERVAL = IO_ACTIVITY + PROCESSOR + STORAGE + PERFORMANCE
+_STEP_OR_JOB = IO_ACTIVITY + COMPLETION + PROCESSOR + STORAGE + PERFORMANCE + OPERATOR
+_SYSTEM_AS = IO_ACTIVITY + PROCESSOR + STORAGE + PERFORMANCE
+
+SUBTYPE_TITLES = {
+    1: "Job initiation",
+    2: "Interval",
+    3: "Step or interval termination",
+    4: "Step total",
+    5: "Job termination",
+    6: "System address space",
+}
+
+SECTION_FIELDS: dict[int, list[F]] = {
+    1: [],  # initiation: header + subsystem + identification only
+    2: list(_INTERVAL),
+    3: list(_INTERVAL),
+    4: list(_STEP_OR_JOB),
+    5: list(_STEP_OR_JOB),
+    6: list(_SYSTEM_AS),
+}
+
+FIELDS_BY_SUBTYPE: dict[int, list[F]] = {
+    sty: COMMON + list(sections) for sty, sections in SECTION_FIELDS.items()
+}
+
+# Back-compat alias (subtype 4 step total — historical flat map shape).
+FIELDS = FIELDS_BY_SUBTYPE[4]
+
+__all__ = [
+    "COMMON",
+    "COMPLETION",
+    "FIELDS",
+    "FIELDS_BY_SUBTYPE",
+    "HEADER",
+    "IDENTIFICATION",
+    "IO_ACTIVITY",
+    "OPERATOR",
+    "PERFORMANCE",
+    "PROCESSOR",
+    "SECTION_FIELDS",
+    "STORAGE",
+    "SUBSYSTEM",
+    "SUBTYPE_TITLES",
 ]

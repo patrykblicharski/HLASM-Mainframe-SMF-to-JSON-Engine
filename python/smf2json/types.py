@@ -43,6 +43,9 @@ TYPE_LENGTHS = {
     "DTE": 4,
     "TME": 4,
     "RS_STR": 0,
+    "RS_HEX": 0,
+    "RS2_STR": 0,
+    "RS2_HEX": 0,
     "VAR_CHR": 0,
 }
 

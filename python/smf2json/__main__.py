@@ -174,22 +174,48 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.make_sample:
         from .sample_dump import (
+            build_smf14,
+            build_smf15,
+            build_smf17,
             build_smf30,
+            build_smf30_st01,
+            build_smf30_st05,
+            build_smf42_st20,
+            build_smf42_st21,
+            build_smf42_st24,
+            build_smf61,
+            build_smf65,
+            build_smf66,
             build_smf80,
+            build_smf80_jobinit,
             build_smf119_st01,
             build_smf119_st02,
             build_smf119_st03,
+            build_smf119_st04,
             build_smf119_st10,
         )
 
         path = Path(args.make_sample)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(
-            build_smf30()
+            build_smf14()
+            + build_smf15()
+            + build_smf17()
+            + build_smf30_st01()
+            + build_smf30()
+            + build_smf30_st05()
+            + build_smf42_st20()
+            + build_smf42_st21()
+            + build_smf42_st24()
+            + build_smf61()
+            + build_smf65()
+            + build_smf66()
             + build_smf80()
+            + build_smf80_jobinit()
             + build_smf119_st01()
             + build_smf119_st02()
             + build_smf119_st03()
+            + build_smf119_st04()
             + build_smf119_st10()
         )
         print(f"Wrote sample dump {path}")

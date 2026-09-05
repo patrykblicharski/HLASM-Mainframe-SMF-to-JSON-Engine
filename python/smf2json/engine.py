@@ -49,14 +49,27 @@ def resolve_address(data: bytes, spec: FieldSpec, log: Optional[LogFn] = None) -
     return section_off + spec.offset
 
 
-def extract_rs_string(data: bytes, control_offset: int, tag: int, log: Optional[LogFn] = None) -> str:
+def _rs_scan(
+    data: bytes,
+    control_offset: int,
+    tag: int,
+    *,
+    as_hex: bool = False,
+    log: Optional[LogFn] = None,
+) -> str:
+    """Find a 1-byte-tag relocate payload.
+
+    IBM SMF80REL / SMF80RL2 are offsets from SMF80FLG (absolute = value + 4
+    when the RDW is present in ``data``).
+    """
     if control_offset + 4 > len(data):
         return ""
     rel = _u16(data, control_offset)
     cnt = _u16(data, control_offset + 2)
     if rel == 0 or cnt == 0:
         return ""
-    pos = rel
+    # Offset from SMF80FLG (== RDW length when RDW is kept in the buffer).
+    pos = rel + 4
     for _ in range(cnt):
         if pos + 2 > len(data):
             break
@@ -68,15 +81,76 @@ def extract_rs_string(data: bytes, control_offset: int, tag: int, log: Optional[
         payload = data[pos : pos + dln]
         pos += dln
         if dtp == tag:
-            from .types import ebcdic_to_str
-
-            val = ebcdic_to_str(payload)
+            if as_hex:
+                val = payload.hex().upper()
+            else:
+                val = ebcdic_to_str(payload)
             if log:
                 log(f"DEBUG: RS tag={tag} hit len={dln} value={val!r}")
             return val
     if log:
         log(f"DEBUG: RS tag={tag} not found (cnt={cnt})")
     return ""
+
+
+def extract_rs_string(data: bytes, control_offset: int, tag: int, log: Optional[LogFn] = None) -> str:
+    return _rs_scan(data, control_offset, tag, as_hex=False, log=log)
+
+
+def extract_rs_hex(data: bytes, control_offset: int, tag: int, log: Optional[LogFn] = None) -> str:
+    return _rs_scan(data, control_offset, tag, as_hex=True, log=log)
+
+
+def _rs2_scan(
+    data: bytes,
+    control_offset: int,
+    tag: int,
+    *,
+    as_hex: bool = False,
+    log: Optional[LogFn] = None,
+) -> str:
+    """Find an extended-length relocate payload (SMF80TP2 / DL2 / DA2).
+
+    Control word at ``SMF80RL2`` (offset 92): offset + count, both u16.
+    Offset is from SMF80FLG (absolute = value + 4 with RDW). Each entry is
+    2-byte type, 2-byte length, then data (PACSYS / IBM IFASMFR).
+    """
+    if control_offset + 4 > len(data):
+        return ""
+    rel = _u16(data, control_offset)
+    cnt = _u16(data, control_offset + 2)
+    if rel == 0 or cnt == 0:
+        return ""
+    pos = rel + 4
+    for _ in range(cnt):
+        if pos + 4 > len(data):
+            break
+        dtp = _u16(data, pos)
+        dln = _u16(data, pos + 2)
+        pos += 4
+        if dln < 0 or pos + dln > len(data):
+            break
+        payload = data[pos : pos + dln]
+        pos += dln
+        if dtp == tag:
+            if as_hex:
+                val = payload.hex().upper()
+            else:
+                val = ebcdic_to_str(payload)
+            if log:
+                log(f"DEBUG: RS2 tag={tag} hit len={dln} value={val!r}")
+            return val
+    if log:
+        log(f"DEBUG: RS2 tag={tag} not found (cnt={cnt})")
+    return ""
+
+
+def extract_rs2_string(data: bytes, control_offset: int, tag: int, log: Optional[LogFn] = None) -> str:
+    return _rs2_scan(data, control_offset, tag, as_hex=False, log=log)
+
+
+def extract_rs2_hex(data: bytes, control_offset: int, tag: int, log: Optional[LogFn] = None) -> str:
+    return _rs2_scan(data, control_offset, tag, as_hex=True, log=log)
 
 
 def _extract_var_chr(data: bytes, spec: FieldSpec, log: Optional[LogFn] = None) -> str:
@@ -123,11 +197,21 @@ def convert_record(rec: SmfRecord, log: Optional[LogFn] = None) -> Optional[Dict
 
     for spec in fields:
         try:
-            if spec.ftype == "RS_STR":
+            ft = spec.ftype.upper()
+            if ft == "RS_STR":
                 out[spec.json_key] = extract_rs_string(data, spec.offset, spec.tag or 0, log)
                 continue
+            if ft == "RS_HEX":
+                out[spec.json_key] = extract_rs_hex(data, spec.offset, spec.tag or 0, log)
+                continue
+            if ft == "RS2_STR":
+                out[spec.json_key] = extract_rs2_string(data, spec.offset, spec.tag or 0, log)
+                continue
+            if ft == "RS2_HEX":
+                out[spec.json_key] = extract_rs2_hex(data, spec.offset, spec.tag or 0, log)
+                continue
 
-            if spec.ftype.upper() in ("VAR_CHR", "VARCHR"):
+            if ft in ("VAR_CHR", "VARCHR"):
                 out[spec.json_key] = _extract_var_chr(data, spec, log)
                 continue
 
