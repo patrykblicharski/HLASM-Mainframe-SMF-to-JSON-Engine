@@ -6,6 +6,7 @@ from typing import Any
 
 from . import db
 from .helpers import scrub_text
+from .window import event_window
 
 
 ALLOWED_TABLES = frozenset(
@@ -126,7 +127,7 @@ def fetch_full_details(
 
     lim = max(1, min(int(limit), 200))
     off = max(0, min(int(offset), 50_000))
-    day_sql = db.date_filter(days)
+    day_sql = event_window(days)
     sources: list[dict[str, Any]] = []
     applied_all: dict[str, str] = {}
 

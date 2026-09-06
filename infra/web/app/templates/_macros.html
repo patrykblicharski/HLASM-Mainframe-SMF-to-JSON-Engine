@@ -6,3 +6,22 @@
         data-filters="{{ filters|tojson }}"
         onclick="SMFDetails.open(this)">Full details</button>
 {%- endmacro %}
+
+{% macro load_more(name, limit, has_more, step=40) -%}
+{% if has_more %}
+<div class="load-more">
+  <a class="btn btn-load-more" href="{{ more_url(name, limit, step) }}">Load more</a>
+  <span class="muted">Showing {{ limit }} · more available</span>
+</div>
+{% endif %}
+{%- endmacro %}
+
+{% macro ts_th() -%}<th>Timestamp</th>{%- endmacro %}
+
+{% macro ts_td(row) -%}
+<td class="mono ts-cell">{%-
+  if row.last_ts -%}{{ row.last_ts|string|replace('T',' ')|truncate(19, True, '') }}{%-
+  elif row.event_date -%}{{ row.event_date }}{% if row.time %} {{ row.time }}{% endif %}{%-
+  else -%}—{%- endif -%}
+</td>
+{%- endmacro %}

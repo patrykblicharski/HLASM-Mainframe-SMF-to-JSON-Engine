@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button %}
+{% from "_macros.html" import details_button, ts_th, ts_td %}
 {% block subtitle %}<p>Lifecycle for <code class="mono">{{ data.dsname or '(blank)' }}</code> — I/O, scratch, catalog, RACF.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-4">
@@ -14,13 +14,13 @@
     <h2>I/O activity (14/15)</h2>
     {% if data.io %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Time</th><th>Dir</th><th>Job</th><th>DD</th><th>Vol</th><th>EXCP</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Dir</th><th>Job</th><th>DD</th><th>Vol</th><th>EXCP</th><th></th></tr></thead>
       <tbody>
       {% for r in data.io %}
         <tr>
-          <td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
+          {{ ts_td(r) }}
           <td><span class="badge {{ 'in' if r.direction=='INPUT' else 'out' }}">{{ r.direction }}</span></td>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
           <td class="mono">{{ display_cell(r.ddname) }}</td>
           <td class="mono">{{ display_cell(r.volser) }}</td>
           <td>{{ display_cell(r.excp_count) }}</td>
@@ -36,12 +36,12 @@
     <h2>Scratches (17)</h2>
     {% if data.scratch %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Time</th><th>Job</th><th>Vol</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Job</th><th>Vol</th><th></th></tr></thead>
       <tbody>
       {% for r in data.scratch %}
         <tr>
-          <td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
           <td class="mono">{{ display_cell(r.volser) }}</td>
           <td>{{ details_button('smf_17', {'dsname': data.dsname, 'job_name': r.job_name, 'event_date': r.event_date|string, 'time': r.time}) }}</td>
         </tr>
@@ -55,12 +55,13 @@
     <h2>Catalog (61/65/66)</h2>
     {% if data.catalog %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Action</th><th>Date</th><th>Time</th><th>Job</th><th>Catalog</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Action</th><th>Job</th><th>Catalog</th><th></th></tr></thead>
       <tbody>
       {% for r in data.catalog %}
         <tr>
-          <td>{{ r.action }}</td><td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+          {{ ts_td(r) }}
+          <td>{{ r.action }}</td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
           <td class="mono">{{ display_cell(r.catalog_name) }}</td>
           <td>{{ details_button(
                 'smf_61' if r.action=='DEFINE' else ('smf_65' if r.action=='DELETE' else 'smf_66'),
@@ -77,12 +78,12 @@
     <h2>RACF on resource</h2>
     {% if data.racf %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Time</th><th>User</th><th>EVT</th><th>Class</th><th>Req</th><th>Allow</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>User</th><th>EVT</th><th>Class</th><th>Req</th><th>Allow</th><th></th></tr></thead>
       <tbody>
       {% for r in data.racf %}
         <tr>
-          <td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
-          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, **window_args) }}">{{ display_cell(r.user_id) }}</a></td>
           <td>{{ display_cell(r.event_code) }}</td>
           <td>{{ display_cell(r.class_name) }}</td>
           <td>{{ display_cell(r.access_requested) }}</td>

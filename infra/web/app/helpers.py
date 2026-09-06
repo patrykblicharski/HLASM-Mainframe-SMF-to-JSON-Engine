@@ -69,6 +69,18 @@ def fmt_cpu_timer(n: Any) -> str:
     return f"{intish(n):,} timer"
 
 
+def fmt_ts(date_val: Any = None, time_val: Any = None, combined: Any = None) -> str:
+    """Single timestamp label for table first column."""
+    if combined is not None and str(combined).strip():
+        text = str(combined).replace("T", " ").strip()
+        return text[:19] if len(text) >= 19 else text
+    d = scrub_text(date_val)
+    t = scrub_text(time_val)
+    if d and t:
+        return f"{d} {t}"
+    return d or t or "—"
+
+
 NAV = [
     {"endpoint": "overview", "label": "Overview", "icon": "grid"},
     {"endpoint": "datasets", "label": "Datasets", "icon": "disk"},

@@ -1,13 +1,10 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button %}
-{% block subtitle %}<p>Security events, failed logons (EVT 1), users and classes.</p>{% endblock %}
-{% block export %}
-<a class="btn" href="{{ url_for('smf.export_csv', kind='racf', days=days, q=q) }}">Export CSV</a>
-{% endblock %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td %}
+{% block subtitle %}<p>Security events, failed logons (EVT 1), users and classes. Click a chart point/bar to filter.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
   <div class="panel">
-    <h2>Events / failed logons by hour</h2>
+    <h2>Events / failed logons by hour <span>click to filter</span></h2>
     <div class="chart-wrap"><canvas id="racfHourly"></canvas></div>
   </div>
   <div class="panel">
@@ -20,25 +17,28 @@
   <div class="panel">
     <h2>Top users</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>User</th><th>Events</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>User</th><th>Events</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.users %}
         <tr>
-          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, **window_args) }}">{{ display_cell(r.user_id) }}</a></td>
           <td>{{ fmt_int(r.rows) }}</td>
           <td>{{ details_button('smf_80', {'user_id': r.user_id}) }}</td>
         </tr>
       {% endfor %}
       </tbody>
     </table></div>
+    {{ load_more('users', limit_users, has_more_users) }}
   </div>
   <div class="panel">
     <h2>Top classes</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Class</th><th>Events</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Class</th><th>Events</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.classes %}
         <tr>
+          {{ ts_td(r) }}
           <td class="mono">{{ display_cell(r.class_name) }}</td>
           <td>{{ fmt_int(r.rows) }}</td>
           <td>{{ details_button('smf_80', {'class_name': r.class_name}) }}</td>
@@ -46,6 +46,7 @@
       {% endfor %}
       </tbody>
     </table></div>
+    {{ load_more('classes', limit_classes, has_more_classes) }}
   </div>
 </section>
 
@@ -53,13 +54,13 @@
   <h2>Recent events</h2>
   {% if events %}
   <div class="table-wrap"><table class="data">
-    <thead><tr><th>Date</th><th>Time</th><th>User</th><th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req</th><th>Allow</th><th></th></tr></thead>
+    <thead><tr>{{ ts_th() }}<th>User</th><th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req</th><th>Allow</th><th></th></tr></thead>
     <tbody>
     {% for r in events %}
       <tr>
-        <td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
-        <td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td>
-        <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+        {{ ts_td(r) }}
+        <td><a href="{{ url_for('smf.user_detail', user=r.user_id, **window_args) }}">{{ display_cell(r.user_id) }}</a></td>
+        <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
         <td>{{ display_cell(r.event_code) }}</td>
         <td>{{ display_cell(r.class_name) }}</td>
         <td class="mono">{{ display_cell(r.old_resource) }}</td>
@@ -70,6 +71,7 @@
     {% endfor %}
     </tbody>
   </table></div>
+  {{ load_more('events', limit_events, has_more_events) }}
   {% else %}<div class="empty">No RACF events.</div>{% endif %}
 </section>
 {% endblock %}
@@ -83,7 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
     [
       { label: "Events", data: hourly.map(r => Number(r.events)), borderColor: "#e35d6a", backgroundColor: "#e35d6a33", fill: true },
       { label: "Failed logon EVT1", data: hourly.map(r => Number(r.failed_logon)), borderColor: "#e6a23c", backgroundColor: "#e6a23c33", fill: true },
-    ]
+    ],
+    { hourBrush: true }
   );
   const codes = {{ summary.codes|tojson_chart }};
   SMFCharts.doughnut(

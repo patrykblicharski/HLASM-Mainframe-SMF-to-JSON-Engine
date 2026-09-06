@@ -18,36 +18,63 @@
     <nav class="nav">
       {% for item in nav %}
       <a class="{{ 'active' if active == item.endpoint else '' }}"
-         href="{{ url_for('smf.' + item.endpoint, days=days) }}">
+         href="{{ url_for('smf.' + item.endpoint, **window_args) }}">
         <span class="dot"></span>{{ item.label }}
       </a>
       {% endfor %}
     </nav>
     <p class="muted" style="padding:.75rem;font-size:.75rem;margin-top:1.5rem;line-height:1.45">
-      Default window: last {{ days }} day(s). Sample dumps often concentrate on a single day — hourly charts stay informative.
+      Click any hourly chart bar to filter tables to that hour. Custom From/To overrides the relative window.
     </p>
   </aside>
   <main class="main">
     <div class="topbar">
-      <div>
+      <div class="topbar-title">
         <h1>{{ title }}</h1>
         {% block subtitle %}<p>ClickHouse-backed analytics for mapped SMF types.</p>{% endblock %}
       </div>
-      <div class="controls">
-        <form method="get">
-          {% if q is defined and request.endpoint in ['smf.datasets','smf.jobs','smf.racf'] %}
-          <input type="search" name="q" value="{{ q }}" placeholder="Search…">
-          {% endif %}
-          <select name="days" onchange="this.form.submit()">
-            {% for d in [1,2,4,7,10,14,30] %}
-            <option value="{{ d }}" {% if days == d %}selected{% endif %}>Last {{ d }}d</option>
-            {% endfor %}
-          </select>
-          <button class="btn-primary" type="submit">Apply</button>
-        </form>
-        {% block export %}{% endblock %}
-      </div>
     </div>
+
+    <div class="toolbar">
+      <form method="get" class="toolbar-form" id="smf-range-form">
+        {% if show_search %}
+        <input type="search" name="q" value="{{ q }}" placeholder="Search…" aria-label="Search">
+        {% endif %}
+        <select name="days" aria-label="Relative range">
+          {% for d in [1,2,4,7,10,14,30] %}
+          <option value="{{ d }}" {% if days == d and not date_from and not date_to %}selected{% endif %}>Last {{ d }}d</option>
+          {% endfor %}
+        </select>
+        <label class="toolbar-label">From
+          <input type="datetime-local" name="date_from" value="{{ date_from_local }}" aria-label="From">
+        </label>
+        <label class="toolbar-label">To
+          <input type="datetime-local" name="date_to" value="{{ date_to_local }}" aria-label="To">
+        </label>
+        {% if hour_from %}<input type="hidden" name="hour_from" value="{{ hour_from }}">{% endif %}
+        {% if hour_to %}<input type="hidden" name="hour_to" value="{{ hour_to }}">{% endif %}
+        {% for key, val in request.args.items() %}
+          {% if key.startswith('limit_') %}
+          <input type="hidden" name="{{ key }}" value="{{ val }}">
+          {% endif %}
+        {% endfor %}
+        <button class="btn-primary" type="submit">Apply</button>
+        <button class="btn" type="button" id="smf-save-range">Save</button>
+        {% if export_kind %}
+        <a class="btn" href="{{ url_for('smf.export_csv', kind=export_kind, days=days, q=q, date_from=date_from, date_to=date_to) }}">Export</a>
+        {% endif %}
+        {% block export %}{% endblock %}
+      </form>
+    </div>
+
+    {% if hour_from %}
+    <div class="panel hour-filter-banner">
+      <strong>Hour filter:</strong>
+      <span class="mono">{{ hour_from }}</span>
+      {% if hour_to %}→ <span class="mono">{{ hour_to }}</span>{% endif %}
+      <a class="btn" style="margin-left:.75rem" href="{{ clear_hour_url() }}">Clear hour</a>
+    </div>
+    {% endif %}
 
     {% if error %}
     <div class="error">ClickHouse error: {{ error }}</div>

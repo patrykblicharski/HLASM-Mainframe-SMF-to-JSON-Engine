@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button %}
+{% from "_macros.html" import details_button, ts_th, ts_td %}
 {% block subtitle %}<p>Multi-level detail for job <strong class="mono">{{ data.job }}</strong>.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-4">
@@ -14,15 +14,15 @@
     <h2>Step / program ends (SMF 30-4) <span>primary source for step &amp; program</span></h2>
     {% if data.steps %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Time</th><th>Step</th><th>Program</th><th>Class</th><th>User</th><th>CPU (timer)</th><th>CC</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Step</th><th>Program</th><th>Class</th><th>User</th><th>CPU (timer)</th><th>CC</th><th></th></tr></thead>
       <tbody>
       {% for r in data.steps %}
         <tr>
-          <td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
+          {{ ts_td(r) }}
           <td>{{ display_cell(r.step_name) }}</td>
           <td class="mono">{{ display_cell(r.program_name) }}</td>
           <td>{{ display_cell(r.job_class) }}</td>
-          <td><a href="{{ url_for('smf.user_detail', user=r.racf_user, days=days) }}">{{ display_cell(r.racf_user) }}</a></td>
+          <td><a href="{{ url_for('smf.user_detail', user=r.racf_user, **window_args) }}">{{ display_cell(r.racf_user) }}</a></td>
           <td>{{ fmt_cpu_timer(r.cpu_step_time) }}</td>
           <td>{{ display_cell(r.step_comp_code) }}</td>
           <td>{{ details_button('smf_30_4', {'job_name': data.job, 'event_date': r.event_date|string, 'time': r.time, 'step_name': r.step_name, 'program_name': r.program_name}) }}</td>
@@ -37,12 +37,12 @@
     <h2>Job ends (SMF 30-5) <span>often blank step/program in dumps</span></h2>
     {% if data.ends %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Time</th><th>User</th><th>CPU (timer)</th><th>CC</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>User</th><th>CPU (timer)</th><th>CC</th><th></th></tr></thead>
       <tbody>
       {% for r in data.ends %}
         <tr>
-          <td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
-          <td><a href="{{ url_for('smf.user_detail', user=r.racf_user, days=days) }}">{{ display_cell(r.racf_user) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.user_detail', user=r.racf_user, **window_args) }}">{{ display_cell(r.racf_user) }}</a></td>
           <td>{{ fmt_cpu_timer(r.cpu_step_time) }}</td>
           <td>{{ display_cell(r.step_comp_code) }}</td>
           <td>{{ details_button('smf_30_5', {'job_name': data.job, 'event_date': r.event_date|string, 'time': r.time}) }}</td>
@@ -57,14 +57,14 @@
     <h2>Dataset activity for this job</h2>
     {% if data.datasets %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Dir</th><th>DD</th><th>Dataset</th><th>Vol</th><th>EXCP</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Dir</th><th>DD</th><th>Dataset</th><th>Vol</th><th>EXCP</th><th></th></tr></thead>
       <tbody>
       {% for r in data.datasets %}
         <tr>
-          <td>{{ r.event_date }} {{ r.time }}</td>
+          {{ ts_td(r) }}
           <td><span class="badge {{ 'in' if r.direction=='INPUT' else 'out' }}">{{ r.direction }}</span></td>
           <td class="mono">{{ display_cell(r.ddname) }}</td>
-          <td>{% if r.dsname %}<a href="{{ url_for('smf.dataset_detail', dsname=r.dsname, days=days) }}">{{ r.dsname_display }}</a>{% else %}<span class="badge blank">{{ r.dsname_display }}</span>{% endif %}</td>
+          <td>{% if r.dsname %}<a href="{{ url_for('smf.dataset_detail', dsname=r.dsname, **window_args) }}">{{ r.dsname_display }}</a>{% else %}<span class="badge blank">{{ r.dsname_display }}</span>{% endif %}</td>
           <td class="mono">{{ display_cell(r.volser) }}</td>
           <td>{{ display_cell(r.excp_count) }}</td>
           <td>{{ details_button('smf_14' if r.direction=='INPUT' else 'smf_15', {'job_name': data.job, 'dsname': r.dsname or '', 'ddname': r.ddname or '', 'event_date': r.event_date|string, 'time': r.time}) }}</td>
@@ -79,12 +79,12 @@
     <h2>RACF events</h2>
     {% if data.racf %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>User</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req/Allow</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>User</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req/Allow</th><th></th></tr></thead>
       <tbody>
       {% for r in data.racf %}
         <tr>
-          <td>{{ r.event_date }} {{ r.time }}</td>
-          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, **window_args) }}">{{ display_cell(r.user_id) }}</a></td>
           <td>{{ display_cell(r.event_code) }}</td>
           <td>{{ display_cell(r.class_name) }}</td>
           <td class="mono">{{ display_cell(r.old_resource) }}</td>
@@ -101,12 +101,12 @@
     <h2>TCP terminations (resource / AS match)</h2>
     {% if data.tcp %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Remote</th><th>Local</th><th>In</th><th>Out</th><th>Term</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Remote</th><th>Local</th><th>In</th><th>Out</th><th>Term</th><th></th></tr></thead>
       <tbody>
       {% for r in data.tcp %}
         <tr>
-          <td>{{ r.event_date }} {{ r.time }}</td>
-          <td><a href="{{ url_for('smf.ip_detail', ip=r.remote_ip, days=days) }}">{{ display_cell(r.remote_ip) }}:{{ display_cell(r.remote_port) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.ip_detail', ip=r.remote_ip, **window_args) }}">{{ display_cell(r.remote_ip) }}:{{ display_cell(r.remote_port) }}</a></td>
           <td class="mono">{{ display_cell(r.local_ip) }}:{{ display_cell(r.local_port) }}</td>
           <td>{{ fmt_bytes(r.in_bytes) }}</td>
           <td>{{ fmt_bytes(r.out_bytes) }}</td>

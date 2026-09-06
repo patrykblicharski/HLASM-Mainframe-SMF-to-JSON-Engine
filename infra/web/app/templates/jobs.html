@@ -1,18 +1,7 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td %}
 {% block subtitle %}<p>SMF 30 job ends (30-5) with program/step/CPU from step-end records (30-4). Click a bar to filter tables to that hour.</p>{% endblock %}
-{% block export %}
-<a class="btn" href="{{ url_for('smf.export_csv', kind='jobs', days=days, q=q) }}">Export CSV</a>
-{% endblock %}
 {% block content %}
-{% if hour_from %}
-<div class="panel" style="margin-bottom:1rem">
-  <strong>Hour filter:</strong>
-  <span class="mono">{{ hour_from }}</span>
-  {% if hour_to %}→ <span class="mono">{{ hour_to }}</span>{% endif %}
-  <a class="btn" style="margin-left:.75rem" href="{{ url_for('smf.jobs', days=days, q=q) }}">Clear</a>
-</div>
-{% endif %}
 <section class="grid grid-2">
   <div class="panel">
     <h2>Job ends by hour <span>click a bar to filter</span></h2>
@@ -28,11 +17,12 @@
   <h2>Top jobs <span>ends=30-5 · program/step/CPU=30-4</span></h2>
   {% if top %}
   <div class="table-wrap"><table class="data">
-    <thead><tr><th>Job</th><th>SID</th><th>Ends</th><th>Programs (top)</th><th>Steps (top)</th><th>CPU (timer units)</th><th></th></tr></thead>
+    <thead><tr>{{ ts_th() }}<th>Job</th><th>SID</th><th>Ends</th><th>Programs (top)</th><th>Steps (top)</th><th>CPU (timer units)</th><th></th></tr></thead>
     <tbody>
     {% for r in top %}
       <tr>
-        <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+        {{ ts_td(r) }}
+        <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
         <td class="mono">{{ display_cell(r.smf_system_id) }}</td>
         <td>{{ fmt_int(r.ends) }}</td>
         <td class="mono">{{ display_cell(r.programs) }}</td>
@@ -43,6 +33,7 @@
     {% endfor %}
     </tbody>
   </table></div>
+  {{ load_more('jobs', limit_jobs, has_more_jobs) }}
   {% else %}<div class="empty">No SMF 30 rows in this window.</div>{% endif %}
 </section>
 {% endblock %}
@@ -56,24 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "jobHourly",
     labels,
     [{ label: "Ends", data: hourly.map(r => Number(r.ends)), backgroundColor: "#9b7bffcc", borderColor: "#9b7bff" }],
-    {
-      onClick: (_evt, elements) => {
-        if (!elements.length) return;
-        const i = elements[0].index;
-        const start = labels[i];
-        if (!start) return;
-        const endDate = new Date(start.replace(" ", "T"));
-        endDate.setHours(endDate.getHours() + 1);
-        const pad = (n) => String(n).padStart(2, "0");
-        const end =
-          endDate.getFullYear() + "-" + pad(endDate.getMonth() + 1) + "-" + pad(endDate.getDate()) +
-          " " + pad(endDate.getHours()) + ":00:00";
-        const u = new URL(window.location.href);
-        u.searchParams.set("hour_from", start.length === 16 ? start + ":00" : start);
-        u.searchParams.set("hour_to", end);
-        window.location.href = u.toString();
-      },
-    }
+    { hourBrush: true }
   );
   SMFCharts.doughnut(
     "jobClass",

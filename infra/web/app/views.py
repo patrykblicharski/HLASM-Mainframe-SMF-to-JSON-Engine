@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, Optional
 
 from flask import (
     Blueprint,
     Response,
     current_app,
-    flash,
     redirect,
     render_template,
     request,
@@ -18,32 +17,56 @@ from flask import (
 from markupsafe import Markup
 
 from . import db, details, queries
-from .helpers import NAV, display_cell, display_dsname, fmt_bytes, fmt_cpu_timer, fmt_int, scrub_text
+from .helpers import (
+    NAV,
+    display_cell,
+    display_dsname,
+    fmt_bytes,
+    fmt_cpu_timer,
+    fmt_int,
+    fmt_ts,
+    scrub_text,
+)
+from .window import bind_window
 
 bp = Blueprint("smf", __name__)
 
 
 def _days() -> int:
-    raw = request.args.get("days") or request.form.get("days") or current_app.config["DEFAULT_DAYS"]
+    return bind_window(current_app.config["DEFAULT_DAYS"]).days
+
+
+def _limit(name: str, default: int) -> int:
+    raw = request.args.get(f"limit_{name}")
     try:
-        return max(1, min(int(raw), 90))
+        n = int(raw) if raw is not None else default
     except ValueError:
-        return int(current_app.config["DEFAULT_DAYS"])
+        n = default
+    return max(10, min(n, 500))
+
+
+def _slice(rows: Optional[list], limit: int) -> tuple[list, bool]:
+    rows = list(rows or [])
+    return rows[:limit], len(rows) > limit
 
 
 def _ctx(**extra: Any) -> dict[str, Any]:
-    days = _days()
+    win = bind_window(current_app.config["DEFAULT_DAYS"])
+    q = scrub_text(request.args.get("q", ""))
     ctx = {
         "nav": NAV,
-        "days": days,
         "fmt_int": fmt_int,
         "fmt_bytes": fmt_bytes,
         "fmt_cpu_timer": fmt_cpu_timer,
+        "fmt_ts": fmt_ts,
         "display_cell": display_cell,
         "display_dsname": display_dsname,
         "scrub_text": scrub_text,
-        "q": scrub_text(request.args.get("q", "")),
+        "q": q,
         "error": None,
+        "show_search": False,
+        "export_kind": None,
+        **win.to_template(),
     }
     ctx.update(extra)
     return ctx
@@ -60,6 +83,22 @@ def _safe(fn, *args, **kwargs):
 def tojson_chart(value: Any) -> Markup:
     """Serialize for inline <script> — must be Markup or Jinja escapes quotes to &#34;."""
     return Markup(json.dumps(value, default=str, ensure_ascii=False))
+
+
+@bp.app_template_global()
+def more_url(name: str, limit: int, step: int = 40) -> str:
+    """Build current-page URL with a bumped limit_* for Load more."""
+    args = request.args.to_dict(flat=True)
+    args[f"limit_{name}"] = str(int(limit) + int(step))
+    return url_for(request.endpoint, **{**(request.view_args or {}), **args})
+
+
+@bp.app_template_global()
+def clear_hour_url() -> str:
+    args = request.args.to_dict(flat=True)
+    args.pop("hour_from", None)
+    args.pop("hour_to", None)
+    return url_for(request.endpoint, **{**(request.view_args or {}), **args})
 
 
 @bp.route("/")
@@ -85,17 +124,27 @@ def overview():
 def datasets():
     days = _days()
     q = scrub_text(request.args.get("q", ""))
-    top, err = _safe(queries.top_datasets, days, 80, q)
-    scratch, _ = _safe(queries.scratch_top, days, 40)
+    lim_ds = _limit("datasets", 80)
+    lim_sc = _limit("scratch", 40)
+    top_raw, err = _safe(queries.top_datasets, days, lim_ds + 1, q)
+    scratch_raw, _ = _safe(queries.scratch_top, days, lim_sc + 1)
+    top, has_more_datasets = _slice(top_raw, lim_ds)
+    scratch, has_more_scratch = _slice(scratch_raw, lim_sc)
     hourly, _ = _safe(queries.dataset_hourly, days)
     return render_template(
         "datasets.html",
         **_ctx(
             active="datasets",
             title="Datasets",
-            top=top or [],
-            scratch=scratch or [],
+            top=top,
+            scratch=scratch,
             hourly=hourly or [],
+            limit_datasets=lim_ds,
+            limit_scratch=lim_sc,
+            has_more_datasets=has_more_datasets,
+            has_more_scratch=has_more_scratch,
+            show_search=True,
+            export_kind="datasets",
             error=err,
         ),
     )
@@ -120,21 +169,23 @@ def dataset_detail(dsname: str):
 def jobs():
     days = _days()
     q = scrub_text(request.args.get("q", ""))
-    hour_from = scrub_text(request.args.get("hour_from", ""))
-    hour_to = scrub_text(request.args.get("hour_to", ""))
-    top, err = _safe(queries.jobs_top, days, 80, q, hour_from, hour_to)
+    lim = _limit("jobs", 80)
+    top_raw, err = _safe(queries.jobs_top, days, lim + 1, q)
+    top, has_more_jobs = _slice(top_raw, lim)
     hourly, _ = _safe(queries.jobs_hourly, days)
-    classes, _ = _safe(queries.job_class_mix, days, hour_from, hour_to)
+    classes, _ = _safe(queries.job_class_mix, days)
     return render_template(
         "jobs.html",
         **_ctx(
             active="jobs",
             title="Jobs / SMF 30",
-            top=top or [],
+            top=top,
             hourly=hourly or [],
             classes=classes or [],
-            hour_from=hour_from,
-            hour_to=hour_to,
+            limit_jobs=lim,
+            has_more_jobs=has_more_jobs,
+            show_search=True,
+            export_kind="jobs",
             error=err,
         ),
     )
@@ -168,15 +219,37 @@ def job_detail(job: str):
 def racf():
     days = _days()
     q = scrub_text(request.args.get("q", ""))
-    summary, err = _safe(queries.racf_summary, days)
-    events, _ = _safe(queries.racf_events, days, q, 120)
+    lim_users = _limit("users", 40)
+    lim_classes = _limit("classes", 20)
+    lim_events = _limit("events", 120)
+    summary, err = _safe(
+        queries.racf_summary,
+        days,
+        users_limit=lim_users + 1,
+        classes_limit=lim_classes + 1,
+    )
+    summary = summary or {"codes": [], "users": [], "classes": [], "hourly": []}
+    users, has_more_users = _slice(summary.get("users"), lim_users)
+    classes, has_more_classes = _slice(summary.get("classes"), lim_classes)
+    summary["users"] = users
+    summary["classes"] = classes
+    events_raw, _ = _safe(queries.racf_events, days, q, lim_events + 1)
+    events, has_more_events = _slice(events_raw, lim_events)
     return render_template(
         "racf.html",
         **_ctx(
             active="racf",
             title="RACF / SMF 80",
-            summary=summary or {"codes": [], "users": [], "classes": [], "hourly": []},
-            events=events or [],
+            summary=summary,
+            events=events,
+            limit_users=lim_users,
+            limit_classes=lim_classes,
+            limit_events=lim_events,
+            has_more_users=has_more_users,
+            has_more_classes=has_more_classes,
+            has_more_events=has_more_events,
+            show_search=True,
+            export_kind="racf",
             error=err,
         ),
     )
@@ -200,13 +273,35 @@ def user_detail(user: str):
 @bp.route("/tcp")
 def tcp():
     days = _days()
-    summary, err = _safe(queries.tcp_summary, days)
+    lim_remotes = _limit("remotes", 40)
+    lim_ports = _limit("ports", 30)
+    lim_stacks = _limit("stacks", 20)
+    summary, err = _safe(
+        queries.tcp_summary,
+        days,
+        remotes_limit=lim_remotes + 1,
+        ports_limit=lim_ports + 1,
+        stacks_limit=lim_stacks + 1,
+    )
+    summary = summary or {"hourly": [], "remotes": [], "terms": [], "ports": [], "stacks": []}
+    remotes, has_more_remotes = _slice(summary.get("remotes"), lim_remotes)
+    ports, has_more_ports = _slice(summary.get("ports"), lim_ports)
+    stacks, has_more_stacks = _slice(summary.get("stacks"), lim_stacks)
+    summary["remotes"] = remotes
+    summary["ports"] = ports
+    summary["stacks"] = stacks
     return render_template(
         "tcp.html",
         **_ctx(
             active="tcp",
             title="TCP / SMF 119",
-            summary=summary or {"hourly": [], "remotes": [], "terms": [], "ports": [], "stacks": []},
+            summary=summary,
+            limit_remotes=lim_remotes,
+            limit_ports=lim_ports,
+            limit_stacks=lim_stacks,
+            has_more_remotes=has_more_remotes,
+            has_more_ports=has_more_ports,
+            has_more_stacks=has_more_stacks,
             error=err,
         ),
     )
@@ -245,13 +340,29 @@ def ftp():
 @bp.route("/lifecycle")
 def lifecycle():
     days = _days()
-    summary, err = _safe(queries.lifecycle_summary, days)
+    lim_tops = _limit("tops", 50)
+    lim_catalogs = _limit("catalogs", 20)
+    summary, err = _safe(
+        queries.lifecycle_summary,
+        days,
+        tops_limit=lim_tops + 1,
+        catalogs_limit=lim_catalogs + 1,
+    )
+    summary = summary or {"hourly": [], "tops": [], "catalogs": []}
+    tops, has_more_tops = _slice(summary.get("tops"), lim_tops)
+    catalogs, has_more_catalogs = _slice(summary.get("catalogs"), lim_catalogs)
+    summary["tops"] = tops
+    summary["catalogs"] = catalogs
     return render_template(
         "lifecycle.html",
         **_ctx(
             active="lifecycle",
             title="Dataset Lifecycle",
-            summary=summary or {"hourly": [], "tops": [], "catalogs": []},
+            summary=summary,
+            limit_tops=lim_tops,
+            limit_catalogs=lim_catalogs,
+            has_more_tops=has_more_tops,
+            has_more_catalogs=has_more_catalogs,
             error=err,
         ),
     )
@@ -260,13 +371,29 @@ def lifecycle():
 @bp.route("/cross")
 def cross():
     days = _days()
-    summary, err = _safe(queries.cross_summary, days)
+    lim_job = _limit("jobsec", 40)
+    lim_net = _limit("network", 40)
+    summary, err = _safe(
+        queries.cross_summary,
+        days,
+        job_limit=lim_job + 1,
+        net_limit=lim_net + 1,
+    )
+    summary = summary or {"job_security": [], "net_work": []}
+    job_security, has_more_jobsec = _slice(summary.get("job_security"), lim_job)
+    net_work, has_more_network = _slice(summary.get("net_work"), lim_net)
+    summary["job_security"] = job_security
+    summary["net_work"] = net_work
     return render_template(
         "cross.html",
         **_ctx(
             active="cross",
             title="Cross Analysis",
-            summary=summary or {"job_security": [], "net_work": []},
+            summary=summary,
+            limit_jobsec=lim_job,
+            limit_network=lim_net,
+            has_more_jobsec=has_more_jobsec,
+            has_more_network=has_more_network,
             error=err,
         ),
     )
@@ -289,7 +416,7 @@ def api_details():
     filters = {
         k: v
         for k, v in request.args.items()
-        if k not in {"tables", "table", "days", "limit", "offset"}
+        if k not in {"tables", "table", "days", "limit", "offset", "date_from", "date_to", "hour_from", "hour_to"}
     }
     try:
         payload = details.fetch_full_details(tables, filters, days, limit=limit, offset=offset)
@@ -319,10 +446,10 @@ def export_csv(kind: str):
     fields: list[str] = []
     if kind == "datasets":
         rows = queries.top_datasets(days, 500, q)
-        fields = ["direction", "job_name", "dsname", "volser", "rows", "excp", "dsname_display"]
+        fields = ["last_ts", "direction", "job_name", "dsname", "volser", "rows", "excp", "dsname_display"]
     elif kind == "jobs":
         rows = queries.jobs_top(days, 500, q)
-        fields = ["job_name", "smf_system_id", "ends", "programs", "steps", "cpu_sum"]
+        fields = ["last_ts", "job_name", "smf_system_id", "ends", "programs", "steps", "cpu_sum"]
     elif kind == "racf":
         rows = queries.racf_events(days, q, 1000)
         fields = [

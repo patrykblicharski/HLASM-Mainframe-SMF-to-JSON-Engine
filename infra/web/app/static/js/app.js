@@ -29,6 +29,47 @@ window.SMFCharts = {
     div.textContent = msg || "No chart data in this time window.";
     (wrap || document.body).appendChild(div);
   },
+  applyHourRange(startLabel) {
+    const start = String(startLabel || "").trim();
+    if (!start) return;
+    const endDate = new Date(start.replace(" ", "T"));
+    if (Number.isNaN(endDate.getTime())) return;
+    endDate.setHours(endDate.getHours() + 1);
+    const pad = (n) => String(n).padStart(2, "0");
+    const end =
+      endDate.getFullYear() +
+      "-" +
+      pad(endDate.getMonth() + 1) +
+      "-" +
+      pad(endDate.getDate()) +
+      " " +
+      pad(endDate.getHours()) +
+      ":00:00";
+    const u = new URL(window.location.href);
+    u.searchParams.set("hour_from", start.length === 16 ? start + ":00" : start);
+    u.searchParams.set("hour_to", end);
+    window.location.href = u.toString();
+  },
+  _mergeBrush(options, labels, enabled) {
+    if (!enabled) return options;
+    const prev = options.onClick;
+    options.onClick = (evt, elements, chart) => {
+      if (typeof prev === "function") prev(evt, elements, chart);
+      if (!elements.length) return;
+      const i = elements[0].index;
+      this.applyHourRange(labels[i]);
+    };
+    options.plugins = options.plugins || {};
+    const tip = options.plugins.tooltip || {};
+    tip.callbacks = tip.callbacks || {};
+    const oldFooter = tip.callbacks.footer;
+    tip.callbacks.footer = (items) => {
+      const base = typeof oldFooter === "function" ? oldFooter(items) : "";
+      return (base ? base + "\n" : "") + "Click to filter this hour";
+    };
+    options.plugins.tooltip = tip;
+    return options;
+  },
   stackedBar(canvasId, labels, datasets, extraOptions) {
     const el = this._el(canvasId);
     if (!el) return;
@@ -36,6 +77,8 @@ window.SMFCharts = {
       this._empty(canvasId);
       return;
     }
+    const extra = extraOptions || {};
+    const hourBrush = !!extra.hourBrush;
     const options = {
       responsive: true,
       maintainAspectRatio: false,
@@ -45,30 +88,40 @@ window.SMFCharts = {
         y: { stacked: true, beginAtZero: true },
       },
     };
-    if (extraOptions) Object.assign(options, extraOptions);
+    Object.keys(extra).forEach((k) => {
+      if (k !== "hourBrush") options[k] = extra[k];
+    });
+    this._mergeBrush(options, labels, hourBrush);
     new Chart(el, {
       type: "bar",
       data: { labels, datasets },
       options,
     });
   },
-  line(canvasId, labels, datasets) {
+  line(canvasId, labels, datasets, extraOptions) {
     const el = this._el(canvasId);
     if (!el) return;
     if (!labels.length || !datasets.length) {
       this._empty(canvasId);
       return;
     }
+    const extra = extraOptions || {};
+    const hourBrush = !!extra.hourBrush;
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom" } },
+      scales: { y: { beginAtZero: true } },
+      elements: { line: { tension: 0.25, borderWidth: 2 }, point: { radius: 2, hitRadius: 8 } },
+    };
+    Object.keys(extra).forEach((k) => {
+      if (k !== "hourBrush") options[k] = extra[k];
+    });
+    this._mergeBrush(options, labels, hourBrush);
     new Chart(el, {
       type: "line",
       data: { labels, datasets },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: "bottom" } },
-        scales: { y: { beginAtZero: true } },
-        elements: { line: { tension: 0.25, borderWidth: 2 }, point: { radius: 0 } },
-      },
+      options,
     });
   },
   doughnut(canvasId, labels, values) {
@@ -122,8 +175,53 @@ window.SMFCharts = {
   },
 };
 
+window.SMFRange = {
+  KEY: "smf-analytics-range",
+  save() {
+    const form = document.getElementById("smf-range-form");
+    if (!form) return;
+    const data = {
+      days: form.days?.value || "4",
+      date_from: form.date_from?.value || "",
+      date_to: form.date_to?.value || "",
+      q: form.q?.value || "",
+    };
+    try {
+      localStorage.setItem(this.KEY, JSON.stringify(data));
+    } catch (_e) { /* ignore */ }
+    const btn = document.getElementById("smf-save-range");
+    if (btn) {
+      const prev = btn.textContent;
+      btn.textContent = "Saved";
+      setTimeout(() => { btn.textContent = prev; }, 1200);
+    }
+  },
+  restoreIfEmpty() {
+    const form = document.getElementById("smf-range-form");
+    if (!form) return;
+    const u = new URL(window.location.href);
+    if (u.searchParams.has("days") || u.searchParams.has("date_from") || u.searchParams.has("date_to")) {
+      return;
+    }
+    let saved;
+    try {
+      saved = JSON.parse(localStorage.getItem(this.KEY) || "null");
+    } catch (_e) {
+      saved = null;
+    }
+    if (!saved) return;
+    if (saved.days && form.days) form.days.value = saved.days;
+    if (saved.date_from && form.date_from) form.date_from.value = saved.date_from;
+    if (saved.date_to && form.date_to) form.date_to.value = saved.date_to;
+    if (saved.q && form.q) form.q.value = saved.q;
+  },
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   SMFCharts.darkDefaults();
+  SMFRange.restoreIfEmpty();
+  const saveBtn = document.getElementById("smf-save-range");
+  if (saveBtn) saveBtn.addEventListener("click", () => SMFRange.save());
 });
 
 window.SMFDetails = {
@@ -207,6 +305,17 @@ window.SMFDetails = {
       .replace(/"/g, "&quot;");
   },
 
+  _isMatchKey(k) {
+    const filters = this._state.appliedFilters || {};
+    if (Object.prototype.hasOwnProperty.call(filters, k)) return true;
+    // UI may send volser while the row shows volser_1 / volume_serial
+    if (k === "volser_1" || k === "volume_serial") {
+      return Object.prototype.hasOwnProperty.call(filters, "volser") ||
+        Object.prototype.hasOwnProperty.call(filters, k);
+    }
+    return false;
+  },
+
   setSource(i) {
     this._state.si = i;
     this._state.ri = 0;
@@ -223,7 +332,6 @@ window.SMFDetails = {
       this._render();
       return;
     }
-    // Page to next/prev chunk of matching rows
     const matched = Number(src.matched) || 0;
     const lim = this._state.limit;
     const off = this._state.offset;
@@ -285,9 +393,14 @@ window.SMFDetails = {
     const row = src.rows[this._state.ri] || src.rows[0];
     if (title) title.textContent = src.table + " · matching row " + absIndex + " / " + matched;
 
+    const matchKeys = [];
     const filled = [];
     const empty = [];
     Object.keys(row).forEach((k) => {
+      if (this._isMatchKey(k)) {
+        matchKeys.push(k);
+        return;
+      }
       const v = row[k];
       const blank = v === null || v === undefined || String(v).trim() === "";
       (blank ? empty : filled).push(k);
@@ -327,11 +440,20 @@ window.SMFDetails = {
           this._esc(src.table) +
           " — showing every column.</p>";
 
+    const matchSection = matchKeys.length
+      ? '<div class="details-section"><h3>Match fields (' +
+        matchKeys.length +
+        ')</h3><dl class="details-grid">' +
+        grid(matchKeys, "is-match") +
+        "</dl></div>"
+      : "";
+
     body.innerHTML =
       '<div class="details-tabs">' +
       tabs +
       "</div>" +
       nav +
+      matchSection +
       '<div class="details-section"><h3>Filled fields (' +
       filled.length +
       ')</h3><dl class="details-grid">' +

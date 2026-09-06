@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button %}
+{% from "_macros.html" import details_button, ts_th, ts_td %}
 {% block subtitle %}<p>Sessions for IP <strong class="mono">{{ data.ip }}</strong>.</p>{% endblock %}
 {% block content %}
 <section class="stack">
@@ -7,12 +7,12 @@
     <h2>Terminations (119-2)</h2>
     {% if data.sessions %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Resource</th><th>Remote</th><th>Local</th><th>In</th><th>Out</th><th>Term</th><th>Conn</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Resource</th><th>Remote</th><th>Local</th><th>In</th><th>Out</th><th>Term</th><th>Conn</th><th></th></tr></thead>
       <tbody>
       {% for r in data.sessions %}
         <tr>
-          <td>{{ r.event_date }} {{ r.time }}</td>
-          <td><a href="{{ url_for('smf.job_detail', job=r.resource_name or r.as_name, days=days) }}">{{ display_cell(r.resource_name or r.as_name) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.resource_name or r.as_name, **window_args) }}">{{ display_cell(r.resource_name or r.as_name) }}</a></td>
           <td class="mono">{{ display_cell(r.remote_ip) }}:{{ display_cell(r.remote_port) }}</td>
           <td class="mono">{{ display_cell(r.local_ip) }}:{{ display_cell(r.local_port) }}</td>
           <td>{{ fmt_bytes(r.in_bytes) }}</td>
@@ -30,11 +30,11 @@
     <h2>Initiations (119-1)</h2>
     {% if data.inits %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Resource</th><th>Remote</th><th>Local</th><th>Conn</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Resource</th><th>Remote</th><th>Local</th><th>Conn</th><th></th></tr></thead>
       <tbody>
       {% for r in data.inits %}
         <tr>
-          <td>{{ r.event_date }} {{ r.time }}</td>
+          {{ ts_td(r) }}
           <td>{{ display_cell(r.resource_name) }}</td>
           <td class="mono">{{ display_cell(r.remote_ip) }}:{{ display_cell(r.remote_port) }}</td>
           <td class="mono">{{ display_cell(r.local_ip) }}:{{ display_cell(r.local_port) }}</td>

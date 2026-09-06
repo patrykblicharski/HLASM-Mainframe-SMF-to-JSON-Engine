@@ -6,10 +6,26 @@ from typing import Any
 
 from . import db
 from .helpers import display_dsname, scrub_text
+from .window import active_window, last_ts_select
 
 
 def _days(days: int) -> str:
-    return db.date_filter(days)
+    """Date (+ optional custom range / hour brush) from the active request window."""
+    return active_window(days).event_sql()
+
+
+def _chart_days(days: int) -> str:
+    """Date window only — charts ignore hour brush so bars stay clickable."""
+    return active_window(days).date_sql()
+
+
+def _hour_days(days: int) -> str:
+    """Window filter for pre-aggregated `hour` columns (tables/KPIs)."""
+    return active_window(days).hour_column_sql("hour")
+
+
+def _chart_hour_days(days: int) -> str:
+    return active_window(days).date_sql("hour")
 
 
 def overview_kpis(days: int) -> dict[str, Any]:
@@ -36,7 +52,7 @@ def records_by_table(days: int) -> list[dict[str, Any]]:
         f"""
         SELECT table_name, sum(row_count) AS rows
         FROM smf.stats_records_daily
-        WHERE {_days(days)}
+        WHERE {_chart_days(days)}
         GROUP BY table_name
         ORDER BY rows DESC
         LIMIT 40
@@ -45,28 +61,29 @@ def records_by_table(days: int) -> list[dict[str, Any]]:
 
 
 def hourly_activity(days: int) -> list[dict[str, Any]]:
+    w = _chart_days(days)
     return db.query(
         f"""
         SELECT hour, source, sum(cnt) AS rows FROM (
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                  'INPUT-14' AS source, count() AS cnt
-          FROM smf.smf_14 WHERE {_days(days)} GROUP BY hour
+          FROM smf.smf_14 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                  'OUTPUT-15' AS source, count() AS cnt
-          FROM smf.smf_15 WHERE {_days(days)} GROUP BY hour
+          FROM smf.smf_15 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                  'RACF-80' AS source, count() AS cnt
-          FROM smf.smf_80 WHERE {_days(days)} GROUP BY hour
+          FROM smf.smf_80 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                  'TCP-119-2' AS source, count() AS cnt
-          FROM smf.smf_119_2 WHERE {_days(days)} GROUP BY hour
+          FROM smf.smf_119_2 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                  'JOB-30-5' AS source, count() AS cnt
-          FROM smf.smf_30_5 WHERE {_days(days)} GROUP BY hour
+          FROM smf.smf_30_5 WHERE {w} GROUP BY hour
         )
         GROUP BY hour, source
         ORDER BY hour
@@ -81,15 +98,19 @@ def top_datasets(days: int, limit: int = 50, q: str = "") -> list[dict[str, Any]
         filt = f"AND (positionCaseInsensitive(dsname, '{qq}') > 0 OR positionCaseInsensitive(job_name, '{qq}') > 0 OR positionCaseInsensitive(volser, '{qq}') > 0)"
     rows = db.query(
         f"""
-        SELECT direction, job_name, dsname, volser, sum(rows) AS rows, sum(excp) AS excp FROM (
+        SELECT direction, job_name, dsname, volser, sum(rows) AS rows, sum(excp) AS excp,
+               max(last_ts) AS last_ts
+        FROM (
           SELECT 'INPUT' AS direction, job_name,
                  if(trim(BOTH ' ' FROM dsname) = '' OR match(dsname, '^[\\\\x00-\\\\x1f\\\\x7f-\\\\x9f\\\\x{{fffd}}?]+$'), '', dsname) AS dsname,
-                 volser_1 AS volser, count() AS rows, sum(toUInt64OrZero(excp_count)) AS excp
+                 volser_1 AS volser, count() AS rows, sum(toUInt64OrZero(excp_count)) AS excp,
+                 {last_ts_select()}
           FROM smf.smf_14 WHERE {_days(days)} GROUP BY job_name, dsname, volser
           UNION ALL
           SELECT 'OUTPUT', job_name,
                  if(trim(BOTH ' ' FROM dsname) = '' OR match(dsname, '^[\\\\x00-\\\\x1f\\\\x7f-\\\\x9f\\\\x{{fffd}}?]+$'), '', dsname) AS dsname,
-                 volser_1 AS volser, count(), sum(toUInt64OrZero(excp_count))
+                 volser_1 AS volser, count(), sum(toUInt64OrZero(excp_count)),
+                 {last_ts_select()}
           FROM smf.smf_15 WHERE {_days(days)} GROUP BY job_name, dsname, volser
         )
         WHERE 1=1 {filt}
@@ -108,7 +129,8 @@ def scratch_top(days: int, limit: int = 40) -> list[dict[str, Any]]:
         f"""
         SELECT job_name,
                if(trim(BOTH ' ' FROM dsname) = '', '', dsname) AS dsname,
-               volume_serial AS volser, count() AS rows
+               volume_serial AS volser, count() AS rows,
+               {last_ts_select()}
         FROM smf.smf_17
         WHERE {_days(days)}
         GROUP BY job_name, dsname, volser
@@ -122,20 +144,21 @@ def scratch_top(days: int, limit: int = 40) -> list[dict[str, Any]]:
 
 
 def dataset_hourly(days: int) -> list[dict[str, Any]]:
+    w = _chart_days(days)
     return db.query(
         f"""
         SELECT hour, direction, sum(cnt) AS rows FROM (
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                  'INPUT' AS direction, count() AS cnt
-          FROM smf.smf_14 WHERE {_days(days)} GROUP BY hour
+          FROM smf.smf_14 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                  'OUTPUT' AS direction, count() AS cnt
-          FROM smf.smf_15 WHERE {_days(days)} GROUP BY hour
+          FROM smf.smf_15 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                  'SCRATCH' AS direction, count() AS cnt
-          FROM smf.smf_17 WHERE {_days(days)} GROUP BY hour
+          FROM smf.smf_17 WHERE {w} GROUP BY hour
         )
         GROUP BY hour, direction ORDER BY hour
         """
@@ -198,22 +221,21 @@ def dataset_detail(dsname: str, days: int) -> dict[str, Any]:
     }
 
 
-def jobs_top(days: int, limit: int = 50, q: str = "", hour_from: str = "", hour_to: str = "") -> list[dict[str, Any]]:
+def jobs_top(days: int, limit: int = 50, q: str = "") -> list[dict[str, Any]]:
     filt = ""
     if q:
         qq = scrub_text(q).replace("'", "\\'")
         filt = f"AND positionCaseInsensitive(job_name, '{qq}') > 0"
-    hf = _hour_bounds(hour_from, hour_to)
     return db.query(
         f"""
-        SELECT e.job_name, e.smf_system_id, e.ends,
+        SELECT e.job_name, e.smf_system_id, e.ends, e.last_ts,
                coalesce(p.programs, '') AS programs,
                coalesce(p.steps, '') AS steps,
                coalesce(p.cpu_sum, 0) AS cpu_sum
         FROM (
-          SELECT job_name, smf_system_id, count() AS ends
+          SELECT job_name, smf_system_id, count() AS ends, {last_ts_select()}
           FROM smf.smf_30_5
-          WHERE {_days(days)} AND job_name != '' {filt} {hf}
+          WHERE {_days(days)} AND job_name != '' {filt}
           GROUP BY job_name, smf_system_id
         ) e
         LEFT JOIN (
@@ -222,7 +244,7 @@ def jobs_top(days: int, limit: int = 50, q: str = "", hour_from: str = "", hour_
                  arrayStringConcat(arrayFilter(x -> x != '', topK(3)(step_name)), ', ') AS steps,
                  sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum
           FROM smf.smf_30_4
-          WHERE {_days(days)} AND job_name != '' {filt} {hf}
+          WHERE {_days(days)} AND job_name != '' {filt}
           GROUP BY job_name, smf_system_id
         ) p USING (job_name, smf_system_id)
         ORDER BY e.ends DESC
@@ -231,43 +253,26 @@ def jobs_top(days: int, limit: int = 50, q: str = "", hour_from: str = "", hour_
     )
 
 
-def _hour_bounds(hour_from: str, hour_to: str) -> str:
-    """Optional brush filter: restrict to [hour_from, hour_to) wall-clock hours."""
-    a = scrub_text(hour_from).replace("'", "\\'")
-    b = scrub_text(hour_to).replace("'", "\\'")
-    if not a and not b:
-        return ""
-    h = (
-        "toStartOfHour(parseDateTimeBestEffort("
-        "concat(toString(event_date),' ',if(time='','00:00:00',time))))"
-    )
-    parts = []
-    if a:
-        parts.append(f"{h} >= parseDateTimeBestEffort('{a}')")
-    if b:
-        parts.append(f"{h} < parseDateTimeBestEffort('{b}')")
-    return (" AND " + " AND ".join(parts)) if parts else ""
-
-
 def jobs_hourly(days: int) -> list[dict[str, Any]]:
+    # Hourly chart stays on the full day window (ignore hour brush) so bars remain clickable.
+    w = _chart_days(days)
     return db.query(
         f"""
         SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                count() AS ends
         FROM smf.smf_30_5
-        WHERE {_days(days)}
+        WHERE {w}
         GROUP BY hour ORDER BY hour
         """
     )
 
 
-def job_class_mix(days: int, hour_from: str = "", hour_to: str = "") -> list[dict[str, Any]]:
-    hf = _hour_bounds(hour_from, hour_to)
+def job_class_mix(days: int) -> list[dict[str, Any]]:
     return db.query(
         f"""
         SELECT if(job_class = '', '(blank)', job_class) AS job_class, count() AS rows
         FROM smf.smf_30_4
-        WHERE {_days(days)} {hf}
+        WHERE {_days(days)}
         GROUP BY job_class ORDER BY rows DESC LIMIT 20
         """
     )
@@ -345,7 +350,12 @@ def job_detail(job: str, days: int) -> dict[str, Any]:
     }
 
 
-def racf_summary(days: int) -> dict[str, Any]:
+def racf_summary(
+    days: int,
+    *,
+    users_limit: int = 40,
+    classes_limit: int = 20,
+) -> dict[str, Any]:
     codes = db.query(
         f"""
         SELECT event_code, count() AS rows
@@ -355,24 +365,25 @@ def racf_summary(days: int) -> dict[str, Any]:
     )
     users = db.query(
         f"""
-        SELECT user_id, count() AS rows
+        SELECT user_id, count() AS rows, {last_ts_select()}
         FROM smf.smf_80 WHERE {_days(days)} AND user_id != ''
-        GROUP BY user_id ORDER BY rows DESC LIMIT 40
+        GROUP BY user_id ORDER BY rows DESC LIMIT {int(users_limit)}
         """
     )
     classes = db.query(
         f"""
-        SELECT if(class_name='', '(blank)', class_name) AS class_name, count() AS rows
+        SELECT if(class_name='', '(blank)', class_name) AS class_name, count() AS rows, {last_ts_select()}
         FROM smf.smf_80 WHERE {_days(days)}
-        GROUP BY class_name ORDER BY rows DESC LIMIT 20
+        GROUP BY class_name ORDER BY rows DESC LIMIT {int(classes_limit)}
         """
     )
+    w = _chart_days(days)
     hourly = db.query(
         f"""
         SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
                count() AS events,
                countIf(event_code = '1') AS failed_logon
-        FROM smf.smf_80 WHERE {_days(days)}
+        FROM smf.smf_80 WHERE {w}
         GROUP BY hour ORDER BY hour
         """
     )
@@ -416,12 +427,18 @@ def user_detail(user: str, days: int) -> dict[str, Any]:
     return {"user": name, "events": events, "jobs": jobs}
 
 
-def tcp_summary(days: int) -> dict[str, Any]:
+def tcp_summary(
+    days: int,
+    *,
+    remotes_limit: int = 40,
+    ports_limit: int = 30,
+    stacks_limit: int = 20,
+) -> dict[str, Any]:
     hourly = db.query(
         f"""
         SELECT hour AS hour, sum(conn_count) AS conns, sum(in_bytes) AS in_bytes, sum(out_bytes) AS out_bytes
         FROM smf.stats_tcp_hourly
-        WHERE toDate(hour) >= today() - {int(days)}
+        WHERE {_chart_hour_days(days)}
         GROUP BY hour ORDER BY hour
         """
     )
@@ -429,10 +446,11 @@ def tcp_summary(days: int) -> dict[str, Any]:
         f"""
         SELECT remote_ip, count() AS conns,
                sum(toUInt64OrZero(in_bytes)) AS in_bytes,
-               sum(toUInt64OrZero(out_bytes)) AS out_bytes
+               sum(toUInt64OrZero(out_bytes)) AS out_bytes,
+               {last_ts_select()}
         FROM smf.smf_119_2
         WHERE {_days(days)} AND remote_ip != ''
-        GROUP BY remote_ip ORDER BY conns DESC LIMIT 40
+        GROUP BY remote_ip ORDER BY conns DESC LIMIT {int(remotes_limit)}
         """
     )
     terms = db.query(
@@ -444,18 +462,19 @@ def tcp_summary(days: int) -> dict[str, Any]:
     )
     ports = db.query(
         f"""
-        SELECT local_port, count() AS conns
+        SELECT local_port, count() AS conns, {last_ts_select()}
         FROM smf.smf_119_1 WHERE {_days(days)} AND local_port != ''
-        GROUP BY local_port ORDER BY conns DESC LIMIT 30
+        GROUP BY local_port ORDER BY conns DESC LIMIT {int(ports_limit)}
         """
     )
     stacks = db.query(
         f"""
         SELECT tcp_stack, count() AS conns,
                sum(toUInt64OrZero(in_bytes)) AS in_bytes,
-               sum(toUInt64OrZero(out_bytes)) AS out_bytes
+               sum(toUInt64OrZero(out_bytes)) AS out_bytes,
+               {last_ts_select()}
         FROM smf.smf_119_2 WHERE {_days(days)}
-        GROUP BY tcp_stack ORDER BY conns DESC LIMIT 20
+        GROUP BY tcp_stack ORDER BY conns DESC LIMIT {int(stacks_limit)}
         """
     )
     return {"hourly": hourly, "remotes": remotes, "terms": terms, "ports": ports, "stacks": stacks}
@@ -512,7 +531,7 @@ def ftp_summary(days: int) -> dict[str, Any]:
         f"""
         SELECT direction, local_user, sum(bytes_sum) AS bytes, sum(xfer_count) AS transfers
         FROM smf.stats_ftp_daily
-        WHERE {_days(days)}
+        WHERE {_chart_days(days)}
         GROUP BY direction, local_user
         ORDER BY bytes DESC LIMIT 40
         """
@@ -520,63 +539,87 @@ def ftp_summary(days: int) -> dict[str, Any]:
     return {"client": int(c3), "server": int(c70), "fail72": int(c72), "subtypes": subtypes, "users": users}
 
 
-def lifecycle_summary(days: int) -> dict[str, Any]:
+def lifecycle_summary(
+    days: int,
+    *,
+    tops_limit: int = 50,
+    catalogs_limit: int = 20,
+) -> dict[str, Any]:
+    w = _chart_days(days)
     hourly = db.query(
         f"""
         SELECT hour, action, sum(cnt) AS rows FROM (
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
-                 'DEFINE-61' AS action, count() AS cnt FROM smf.smf_61 WHERE {_days(days)} GROUP BY hour
+                 'DEFINE-61' AS action, count() AS cnt FROM smf.smf_61 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
-                 'DELETE-65' AS action, count() AS cnt FROM smf.smf_65 WHERE {_days(days)} GROUP BY hour
+                 'DELETE-65' AS action, count() AS cnt FROM smf.smf_65 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
-                 'ALTER-66' AS action, count() AS cnt FROM smf.smf_66 WHERE {_days(days)} GROUP BY hour
+                 'ALTER-66' AS action, count() AS cnt FROM smf.smf_66 WHERE {w} GROUP BY hour
           UNION ALL
           SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
-                 'SCRATCH-17' AS action, count() AS cnt FROM smf.smf_17 WHERE {_days(days)} GROUP BY hour
+                 'SCRATCH-17' AS action, count() AS cnt FROM smf.smf_17 WHERE {w} GROUP BY hour
         ) GROUP BY hour, action ORDER BY hour
         """
     )
     tops = db.query(
         f"""
-        SELECT action, entry_name, job_name, count() AS rows FROM (
-          SELECT 'DEFINE' AS action, entry_name, job_name FROM smf.smf_61 WHERE {_days(days)}
+        SELECT action, entry_name, job_name, count() AS rows, max(ts) AS last_ts FROM (
+          SELECT 'DEFINE' AS action, entry_name, job_name,
+                 parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time))) AS ts
+          FROM smf.smf_61 WHERE {_days(days)}
           UNION ALL
-          SELECT 'DELETE', entry_name, job_name FROM smf.smf_65 WHERE {_days(days)}
+          SELECT 'DELETE', entry_name, job_name,
+                 parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))
+          FROM smf.smf_65 WHERE {_days(days)}
           UNION ALL
-          SELECT 'ALTER', entry_name, job_name FROM smf.smf_66 WHERE {_days(days)}
+          SELECT 'ALTER', entry_name, job_name,
+                 parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))
+          FROM smf.smf_66 WHERE {_days(days)}
         )
         WHERE entry_name != ''
         GROUP BY action, entry_name, job_name
-        ORDER BY rows DESC LIMIT 50
+        ORDER BY rows DESC LIMIT {int(tops_limit)}
         """
     )
     catalogs = db.query(
         f"""
-        SELECT catalog_name, count() AS rows FROM (
-          SELECT catalog_name FROM smf.smf_61 WHERE {_days(days)} AND catalog_name != ''
+        SELECT catalog_name, count() AS rows, max(ts) AS last_ts FROM (
+          SELECT catalog_name,
+                 parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time))) AS ts
+          FROM smf.smf_61 WHERE {_days(days)} AND catalog_name != ''
           UNION ALL
-          SELECT catalog_name FROM smf.smf_65 WHERE {_days(days)} AND catalog_name != ''
+          SELECT catalog_name,
+                 parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))
+          FROM smf.smf_65 WHERE {_days(days)} AND catalog_name != ''
           UNION ALL
-          SELECT catalog_name FROM smf.smf_66 WHERE {_days(days)} AND catalog_name != ''
+          SELECT catalog_name,
+                 parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))
+          FROM smf.smf_66 WHERE {_days(days)} AND catalog_name != ''
         )
-        GROUP BY catalog_name ORDER BY rows DESC LIMIT 20
+        GROUP BY catalog_name ORDER BY rows DESC LIMIT {int(catalogs_limit)}
         """
     )
     return {"hourly": hourly, "tops": tops, "catalogs": catalogs}
 
 
-def cross_summary(days: int) -> dict[str, Any]:
+def cross_summary(
+    days: int,
+    *,
+    job_limit: int = 40,
+    net_limit: int = 40,
+) -> dict[str, Any]:
     """ANALYTICS.md priority crosses as practical tables."""
     job_security = db.query(
         f"""
         SELECT j.job_name,
                j.ends,
                j.cpu_sum,
+               j.last_ts,
                coalesce(r.events, 0) AS racf_events
         FROM (
-          SELECT job_name, count() AS ends, sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum
+          SELECT job_name, count() AS ends, sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum, {last_ts_select()}
           FROM smf.smf_30_5 WHERE {_days(days)} AND job_name != ''
           GROUP BY job_name
         ) j
@@ -586,7 +629,7 @@ def cross_summary(days: int) -> dict[str, Any]:
           GROUP BY job_name
         ) r USING (job_name)
         ORDER BY racf_events DESC, ends DESC
-        LIMIT 40
+        LIMIT {int(job_limit)}
         """
     )
     net_work = db.query(
@@ -594,12 +637,13 @@ def cross_summary(days: int) -> dict[str, Any]:
         SELECT if(resource_name='', as_name, resource_name) AS workload,
                count() AS conns,
                sum(toUInt64OrZero(in_bytes)) AS in_bytes,
-               sum(toUInt64OrZero(out_bytes)) AS out_bytes
+               sum(toUInt64OrZero(out_bytes)) AS out_bytes,
+               {last_ts_select()}
         FROM smf.smf_119_2
         WHERE {_days(days)}
         GROUP BY workload
         ORDER BY (in_bytes + out_bytes) DESC
-        LIMIT 40
+        LIMIT {int(net_limit)}
         """
     )
     return {"job_security": job_security, "net_work": net_work}

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button %}
-{% block subtitle %}<p>TCP connection terminations, talkers, ports, stacks.</p>{% endblock %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td %}
+{% block subtitle %}<p>TCP connection terminations, talkers, ports, stacks. Click a chart point to filter.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
   <div class="panel">
-    <h2>Connections &amp; bytes / hour</h2>
+    <h2>Connections &amp; bytes / hour <span>click to filter</span></h2>
     <div class="chart-wrap"><canvas id="tcpHourly"></canvas></div>
   </div>
   <div class="panel">
@@ -17,11 +17,12 @@
   <div class="panel">
     <h2>Top remote IPs</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>IP</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>IP</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.remotes %}
         <tr>
-          <td><a href="{{ url_for('smf.ip_detail', ip=r.remote_ip, days=days) }}">{{ display_cell(r.remote_ip) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.ip_detail', ip=r.remote_ip, **window_args) }}">{{ display_cell(r.remote_ip) }}</a></td>
           <td>{{ fmt_int(r.conns) }}</td>
           <td>{{ fmt_bytes(r.in_bytes) }}</td>
           <td>{{ fmt_bytes(r.out_bytes) }}</td>
@@ -30,14 +31,16 @@
       {% endfor %}
       </tbody>
     </table></div>
+    {{ load_more('remotes', limit_remotes, has_more_remotes) }}
   </div>
   <div class="panel">
     <h2>Local ports (119-1)</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Port</th><th>Conns</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Port</th><th>Conns</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.ports %}
         <tr>
+          {{ ts_td(r) }}
           <td class="mono">{{ display_cell(r.local_port) }}</td>
           <td>{{ fmt_int(r.conns) }}</td>
           <td>{{ details_button('smf_119_1', {'local_port': r.local_port}) }}</td>
@@ -45,14 +48,16 @@
       {% endfor %}
       </tbody>
     </table></div>
+    {{ load_more('ports', limit_ports, has_more_ports) }}
   </div>
   <div class="panel">
     <h2>Stacks</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Stack</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Stack</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.stacks %}
         <tr>
+          {{ ts_td(r) }}
           <td class="mono">{{ display_cell(r.tcp_stack) }}</td>
           <td>{{ fmt_int(r.conns) }}</td>
           <td>{{ fmt_bytes(r.in_bytes) }}</td>
@@ -62,6 +67,7 @@
       {% endfor %}
       </tbody>
     </table></div>
+    {{ load_more('stacks', limit_stacks, has_more_stacks) }}
   </div>
 </section>
 {% endblock %}
@@ -75,7 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
     [
       { label: "Connections", data: hourly.map(r => Number(r.conns)), borderColor: "#5b8def", backgroundColor: "#5b8def33", fill: true },
       { label: "In bytes", data: hourly.map(r => Number(r.in_bytes)), borderColor: "#3db8a8", backgroundColor: "#3db8a833", fill: false },
-    ]
+    ],
+    { hourBrush: true }
   );
   const terms = {{ summary.terms|tojson_chart }};
   SMFCharts.doughnut(

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td %}
 {% block subtitle %}<p>Highest-value crosses from ANALYTICS.md — job×RACF and TCP×workload.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
@@ -7,11 +7,12 @@
     <h2>30 × 80 — jobs with security events</h2>
     {% if summary.job_security %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Job</th><th>Ends</th><th>CPU</th><th>RACF events</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Job</th><th>Ends</th><th>CPU</th><th>RACF events</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.job_security %}
         <tr>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
           <td>{{ fmt_int(r.ends) }}</td>
           <td>{{ fmt_int(r.cpu_sum) }}</td>
           <td>{{ fmt_int(r.racf_events) }}</td>
@@ -20,17 +21,19 @@
       {% endfor %}
       </tbody>
     </table></div>
+    {{ load_more('jobsec', limit_jobsec, has_more_jobsec) }}
     {% else %}<div class="empty">No join rows.</div>{% endif %}
   </div>
   <div class="panel">
     <h2>119 × workload — network bytes by resource/AS</h2>
     {% if summary.net_work %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Workload</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Workload</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.net_work %}
         <tr>
-          <td><a href="{{ url_for('smf.job_detail', job=r.workload, days=days) }}">{{ display_cell(r.workload) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.workload, **window_args) }}">{{ display_cell(r.workload) }}</a></td>
           <td>{{ fmt_int(r.conns) }}</td>
           <td>{{ fmt_bytes(r.in_bytes) }}</td>
           <td>{{ fmt_bytes(r.out_bytes) }}</td>
@@ -39,6 +42,7 @@
       {% endfor %}
       </tbody>
     </table></div>
+    {{ load_more('network', limit_network, has_more_network) }}
     {% else %}<div class="empty">No TCP workload rows.</div>{% endif %}
   </div>
 </section>

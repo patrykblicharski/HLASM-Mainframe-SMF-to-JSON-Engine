@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button %}
+{% from "_macros.html" import details_button, ts_th, ts_td %}
 {% block subtitle %}<p>RACF user <strong class="mono">{{ data.user }}</strong> — events and related job CPU.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
@@ -7,12 +7,12 @@
     <h2>Security events</h2>
     {% if data.events %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req/Allow</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}<th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req/Allow</th><th></th></tr></thead>
       <tbody>
       {% for r in data.events %}
         <tr>
-          <td>{{ r.event_date }} {{ r.time }}</td>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
           <td>{{ display_cell(r.event_code) }}</td>
           <td>{{ display_cell(r.class_name) }}</td>
           <td class="mono">{{ display_cell(r.old_resource) }}</td>
@@ -32,7 +32,7 @@
       <tbody>
       {% for r in data.jobs %}
         <tr>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
           <td>{{ fmt_int(r.ends) }}</td>
           <td>{{ fmt_int(r.cpu_sum) }}</td>
           <td>{{ details_button('smf_30_4,smf_30_5', {'job_name': r.job_name}) }}</td>

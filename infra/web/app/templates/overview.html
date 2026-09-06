@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block subtitle %}<p>Workload pulse across storage, security, network, and batch.</p>{% endblock %}
+{% block subtitle %}<p>Workload pulse across storage, security, network, and batch. Click a bar to filter.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-4">
   <div class="kpi teal"><div class="label">INPUT 14</div><div class="value">{{ fmt_int(kpis.get('in14',0)) }}</div></div>
@@ -14,7 +14,7 @@
 
 <section class="grid grid-2" style="margin-top:1rem">
   <div class="panel">
-    <h2>Hourly activity <span>bars stay useful on single-day dumps</span></h2>
+    <h2>Hourly activity <span>click a bar to filter</span></h2>
     <div class="chart-wrap"><canvas id="hourlyChart"></canvas></div>
   </div>
   <div class="panel">
@@ -47,7 +47,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const hourly = {{ hourly|tojson_chart }};
   const packed = SMFCharts.groupSeries(hourly, "hour", "source", "rows");
-  SMFCharts.stackedBar("hourlyChart", packed.labels, packed.datasets);
+  SMFCharts.stackedBar("hourlyChart", packed.labels, packed.datasets, { hourBrush: true });
   const tables = {{ tables|tojson_chart }};
   SMFCharts.doughnut(
     "tablesChart",
