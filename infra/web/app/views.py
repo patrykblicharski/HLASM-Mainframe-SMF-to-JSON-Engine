@@ -279,12 +279,20 @@ def api_details():
     raw_tables = request.args.get("tables") or request.args.get("table") or ""
     tables = [t.strip() for t in raw_tables.split(",") if t.strip()]
     try:
-        limit = int(request.args.get("limit") or 8)
+        limit = int(request.args.get("limit") or 100)
     except ValueError:
-        limit = 8
-    filters = {k: v for k, v in request.args.items() if k not in {"tables", "table", "days", "limit"}}
+        limit = 100
     try:
-        payload = details.fetch_full_details(tables, filters, days, limit=limit)
+        offset = int(request.args.get("offset") or 0)
+    except ValueError:
+        offset = 0
+    filters = {
+        k: v
+        for k, v in request.args.items()
+        if k not in {"tables", "table", "days", "limit", "offset"}
+    }
+    try:
+        payload = details.fetch_full_details(tables, filters, days, limit=limit, offset=offset)
     except ValueError as exc:
         return Response(
             json.dumps({"error": str(exc)}),

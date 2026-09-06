@@ -112,9 +112,10 @@ def fetch_full_details(
     filters: dict[str, str],
     days: int,
     *,
-    limit: int = 8,
+    limit: int = 100,
+    offset: int = 0,
 ) -> dict[str, Any]:
-    """Return SELECT * sample rows per allowed table matching filters."""
+    """Return full SELECT * rows matching filters (paginated, not a random sample)."""
     clean_tables: list[str] = []
     for t in tables:
         name = scrub_text(t).removeprefix("smf.")
@@ -123,7 +124,8 @@ def fetch_full_details(
     if not clean_tables:
         raise ValueError("no allowed tables")
 
-    lim = max(1, min(int(limit), 25))
+    lim = max(1, min(int(limit), 200))
+    off = max(0, min(int(offset), 50_000))
     day_sql = db.date_filter(days)
     sources: list[dict[str, Any]] = []
     applied_all: dict[str, str] = {}
@@ -141,16 +143,27 @@ def fetch_full_details(
                 FROM smf.{table}
                 WHERE {day_sql}{filt_sql}
                 ORDER BY event_date DESC, time DESC
-                LIMIT {lim}
+                LIMIT {lim} OFFSET {off}
                 """
             )
-            sources.append({"table": table, "matched": matched, "rows": rows, "error": None})
+            sources.append(
+                {
+                    "table": table,
+                    "matched": matched,
+                    "offset": off,
+                    "rows": rows,
+                    "error": None,
+                }
+            )
         except db.ClickHouseError as exc:
-            sources.append({"table": table, "matched": 0, "rows": [], "error": str(exc)})
+            sources.append(
+                {"table": table, "matched": 0, "offset": off, "rows": [], "error": str(exc)}
+            )
 
     return {
         "days": days,
         "filters": applied_all,
         "limit": lim,
+        "offset": off,
         "sources": sources,
     }

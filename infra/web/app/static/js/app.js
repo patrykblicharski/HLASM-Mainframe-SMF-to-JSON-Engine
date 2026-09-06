@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.SMFDetails = {
-  _state: { sources: [], si: 0, ri: 0 },
+  _state: { sources: [], si: 0, ri: 0, days: "4", tables: "", filters: {}, limit: 100, offset: 0 },
 
   open(btn) {
     const dlg = document.getElementById("smf-details-modal");
@@ -144,15 +144,33 @@ window.SMFDetails = {
     }
     const tables = btn.getAttribute("data-tables") || "";
     const days = btn.getAttribute("data-days") || "4";
-    const params = new URLSearchParams({ tables, days, limit: "8" });
-    Object.entries(filters).forEach(([k, v]) => {
-      if (v !== null && v !== undefined && String(v) !== "") params.set(k, String(v));
-    });
+    this._state.tables = tables;
+    this._state.days = days;
+    this._state.filters = filters;
+    this._state.limit = 100;
+    this._state.offset = 0;
+    this._state.si = 0;
+    this._state.ri = 0;
 
     title.textContent = "Full details";
     sub.textContent = tables + " · loading…";
-    body.innerHTML = '<div class="empty">Loading full SMF fields…</div>';
+    body.innerHTML = '<div class="empty">Loading all SMF fields for matching rows…</div>';
     dlg.showModal();
+    this._load();
+  },
+
+  _load() {
+    const body = document.getElementById("smf-details-body");
+    const sub = document.getElementById("smf-details-sub");
+    const params = new URLSearchParams({
+      tables: this._state.tables,
+      days: this._state.days,
+      limit: String(this._state.limit),
+      offset: String(this._state.offset),
+    });
+    Object.entries(this._state.filters || {}).forEach(([k, v]) => {
+      if (v !== null && v !== undefined && String(v) !== "") params.set(k, String(v));
+    });
 
     fetch("/api/details?" + params.toString())
       .then((r) => r.json())
@@ -161,15 +179,18 @@ window.SMFDetails = {
           body.innerHTML = '<div class="error">' + this._esc(data.error) + "</div>";
           return;
         }
-        this._state = { sources: data.sources || [], si: 0, ri: 0, filters: data.filters || {} };
-        const filt = Object.entries(this._state.filters)
+        this._state.sources = data.sources || [];
+        this._state.limit = data.limit || this._state.limit;
+        this._state.offset = data.offset || 0;
+        this._state.appliedFilters = data.filters || {};
+        const filt = Object.entries(this._state.appliedFilters)
           .map(([k, v]) => k + "=" + v)
           .join(", ");
-        sub.textContent = (filt || "no filters") + " · last " + days + "d";
+        if (sub) sub.textContent = (filt || "no filters") + " · last " + this._state.days + "d";
         this._render();
       })
       .catch((err) => {
-        body.innerHTML = '<div class="error">' + this._esc(String(err)) + "</div>";
+        if (body) body.innerHTML = '<div class="error">' + this._esc(String(err)) + "</div>";
       });
   },
 
@@ -196,8 +217,25 @@ window.SMFDetails = {
     const src = this._state.sources[this._state.si];
     if (!src || !src.rows || !src.rows.length) return;
     const n = src.rows.length;
-    this._state.ri = (this._state.ri + delta + n) % n;
-    this._render();
+    const next = this._state.ri + delta;
+    if (next >= 0 && next < n) {
+      this._state.ri = next;
+      this._render();
+      return;
+    }
+    // Page to next/prev chunk of matching rows
+    const matched = Number(src.matched) || 0;
+    const lim = this._state.limit;
+    const off = this._state.offset;
+    if (delta > 0 && off + n < matched) {
+      this._state.offset = off + lim;
+      this._state.ri = 0;
+      this._load();
+    } else if (delta < 0 && off > 0) {
+      this._state.offset = Math.max(0, off - lim);
+      this._state.ri = 0;
+      this._load();
+    }
   },
 
   _render() {
@@ -213,7 +251,7 @@ window.SMFDetails = {
     const tabs = sources
       .map((s, i) => {
         const active = i === this._state.si ? " active" : "";
-        const label = s.table + " (" + (s.matched || 0) + ")";
+        const label = s.table + " · " + (s.matched || 0) + " match";
         return (
           '<button type="button" class="details-tab' +
           active +
@@ -229,11 +267,7 @@ window.SMFDetails = {
     const src = sources[this._state.si] || sources[0];
     if (src.error) {
       body.innerHTML =
-        '<div class="details-tabs">' +
-        tabs +
-        '</div><div class="error">' +
-        this._esc(src.error) +
-        "</div>";
+        '<div class="details-tabs">' + tabs + '</div><div class="error">' + this._esc(src.error) + "</div>";
       return;
     }
     if (!src.rows || !src.rows.length) {
@@ -246,8 +280,10 @@ window.SMFDetails = {
       return;
     }
 
+    const matched = Number(src.matched) || src.rows.length;
+    const absIndex = this._state.offset + this._state.ri + 1;
     const row = src.rows[this._state.ri] || src.rows[0];
-    title.textContent = src.table + " · record " + (this._state.ri + 1) + "/" + src.rows.length;
+    if (title) title.textContent = src.table + " · matching row " + absIndex + " / " + matched;
 
     const filled = [];
     const empty = [];
@@ -267,7 +303,7 @@ window.SMFDetails = {
             cls +
             '"><dt>' +
             this._esc(k) +
-            "</dt><dd class=\"mono\">" +
+            '</dt><dd class="mono">' +
             this._esc(shown) +
             "</dd></div>"
           );
@@ -275,23 +311,21 @@ window.SMFDetails = {
         .join("");
 
     const nav =
-      src.rows.length > 1
+      matched > 1
         ? '<div class="details-nav">' +
           '<button type="button" class="btn" onclick="SMFDetails.setRow(-1)">← Prev</button>' +
-          "<span>Sample " +
-          (this._state.ri + 1) +
-          " of " +
-          src.rows.length +
-          " (matched " +
-          src.matched +
-          ")</span>" +
+          "<span>Matching row <strong>" +
+          absIndex +
+          "</strong> of <strong>" +
+          matched +
+          "</strong> — all columns from " +
+          this._esc(src.table) +
+          "</span>" +
           '<button type="button" class="btn" onclick="SMFDetails.setRow(1)">Next →</button>' +
           "</div>"
-        : '<p class="muted" style="margin:.5rem 0">Matched ' +
-          src.matched +
-          " row(s); showing up to " +
-          src.rows.length +
-          " sample(s).</p>";
+        : '<p class="muted" style="margin:.5rem 0">1 matching row in ' +
+          this._esc(src.table) +
+          " — showing every column.</p>";
 
     body.innerHTML =
       '<div class="details-tabs">' +
@@ -300,11 +334,11 @@ window.SMFDetails = {
       nav +
       '<div class="details-section"><h3>Filled fields (' +
       filled.length +
-      ")</h3><dl class=\"details-grid\">" +
+      ')</h3><dl class="details-grid">' +
       grid(filled, "") +
       '</dl></div><div class="details-section"><h3>Empty fields (' +
       empty.length +
-      ")</h3><dl class=\"details-grid muted-grid\">" +
+      ')</h3><dl class="details-grid muted-grid">' +
       grid(empty, "is-empty") +
       "</dl></div>";
   },
