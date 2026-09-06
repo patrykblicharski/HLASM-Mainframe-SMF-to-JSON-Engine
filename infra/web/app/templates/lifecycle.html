@@ -1,63 +1,126 @@
-{% extends "base.html" %}
-{% from "_macros.html" import details_button, load_more, panel_h2, ts_th, ts_td, th with context %}
-{% block subtitle %}<p>Catalog DEFINE/DELETE/ALTER + scratch churn. Click a bar to filter.</p>{% endblock %}
-{% block content %}
-<section class="panel">
-  <h2>Catalog &amp; scratch by hour <span>click a bar</span></h2>
-  <div class="chart-wrap"><canvas id="lifeHourly"></canvas></div>
-</section>
-<section class="grid grid-2" style="margin-top:1rem">
-  <div class="panel">
-    {{ panel_h2('Top catalog entries', 'smf_61,smf_65,smf_66') }}
-    {% if summary.tops %}
-    <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}{{ th('Action', 'action') }}{{ th('Entry', 'entry_name') }}{{ th('Job', 'job_name') }}{{ th('Rows', 'rows') }}<th></th></tr></thead>
-      <tbody>
-      {% for r in summary.tops %}
-        <tr>
-          {{ ts_td(r) }}
-          <td>{{ r.action }}</td>
-          <td><a href="{{ url_for('smf.dataset_detail', dsname=r.entry_name, **window_args) }}">{{ display_cell(r.entry_name) }}</a></td>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
-          <td>{{ fmt_int(r.rows) }}</td>
-          <td>{{ details_button(
-                'smf_61' if r.action=='DEFINE' else ('smf_65' if r.action=='DELETE' else 'smf_66'),
-                {'entry_name': r.entry_name}
-              ) }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-    {{ load_more('tops', limit_tops, has_more_tops) }}
-    {% else %}<div class="empty">No catalog activity.</div>{% endif %}
-  </div>
-  <div class="panel">
-    {{ panel_h2('Top catalogs', 'smf_61,smf_65,smf_66') }}
-    {% if summary.catalogs %}
-    <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}{{ th('Catalog', 'catalog_name') }}{{ th('Rows', 'rows') }}<th></th></tr></thead>
-      <tbody>
-      {% for r in summary.catalogs %}
-        <tr>
-          {{ ts_td(r) }}
-          <td class="mono">{{ display_cell(r.catalog_name) }}</td>
-          <td>{{ fmt_int(r.rows) }}</td>
-          <td>{{ details_button('smf_61,smf_65,smf_66', {'catalog_name': r.catalog_name}) }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-    {{ load_more('catalogs', limit_catalogs, has_more_catalogs) }}
-    {% else %}<div class="empty">No catalog names.</div>{% endif %}
-  </div>
-</section>
-{% endblock %}
-{% block scripts %}
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const hourly = {{ summary.hourly|tojson_chart }};
-  const packed = SMFCharts.groupSeries(hourly, "hour", "action", "rows");
-  SMFCharts.stackedBar("lifeHourly", packed.labels, packed.datasets, { hourBrush: true });
-});
-</script>
-{% endblock %}
+{% extends "base.html" %}
+
+{% from "_macros.html" import details_button, load_more, panel_h2, ts_th, ts_td, th with context %}
+
+{% block subtitle %}<p>Catalog DEFINE/DELETE/ALTER + scratch churn. Click a bar to filter.</p>{% endblock %}
+
+{% block content %}
+
+<section class="panel">
+
+  <h2>Catalog &amp; scratch by hour <span>click a bar</span></h2>
+
+  <div class="chart-wrap"><canvas id="lifeHourly"></canvas></div>
+
+</section>
+
+<section class="grid grid-2" style="margin-top:1rem">
+
+  <div class="panel">
+
+    {{ panel_h2('Top catalog entries', 'smf_61,smf_65,smf_66') }}
+
+    {% if summary.tops %}
+
+    <div class="table-wrap"><table class="data">
+
+      <thead><tr>{{ ts_th() }}{{ th('Action', 'action') }}{{ th('Entry', 'entry_name') }}{{ th('Job', 'job_name') }}{{ th('Rows', 'rows') }}<th></th></tr></thead>
+
+      <tbody>
+
+      {% for r in summary.tops %}
+
+        <tr>
+
+          {{ ts_td(r) }}
+
+          <td>{{ r.action }}</td>
+
+          <td><a href="{{ url_for('smf.dataset_detail', dsname=r.entry_name, **window_args) }}">{{ display_cell(r.entry_name) }}</a></td>
+
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+
+          <td>{{ fmt_int(r.rows) }}</td>
+
+          <td>{{ details_button(
+
+                'smf_61' if r.action=='DEFINE' else ('smf_65' if r.action=='DELETE' else 'smf_66'),
+
+                {'entry_name': r.entry_name}
+
+              ) }}</td>
+
+        </tr>
+
+      {% endfor %}
+
+      </tbody>
+
+    </table></div>
+
+    {{ load_more('tops', limit_tops, has_more_tops, shown=summary.tops|length) }}
+
+    {% else %}<div class="empty">No catalog activity.</div>{% endif %}
+
+  </div>
+
+  <div class="panel">
+
+    {{ panel_h2('Top catalogs', 'smf_61,smf_65,smf_66') }}
+
+    {% if summary.catalogs %}
+
+    <div class="table-wrap"><table class="data">
+
+      <thead><tr>{{ ts_th() }}{{ th('Catalog', 'catalog_name') }}{{ th('Rows', 'rows') }}<th></th></tr></thead>
+
+      <tbody>
+
+      {% for r in summary.catalogs %}
+
+        <tr>
+
+          {{ ts_td(r) }}
+
+          <td class="mono">{{ display_cell(r.catalog_name) }}</td>
+
+          <td>{{ fmt_int(r.rows) }}</td>
+
+          <td>{{ details_button('smf_61,smf_65,smf_66', {'catalog_name': r.catalog_name}) }}</td>
+
+        </tr>
+
+      {% endfor %}
+
+      </tbody>
+
+    </table></div>
+
+    {{ load_more('catalogs', limit_catalogs, has_more_catalogs, shown=summary.catalogs|length) }}
+
+    {% else %}<div class="empty">No catalog names.</div>{% endif %}
+
+  </div>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const hourly = {{ summary.hourly|tojson_chart }};
+
+  const packed = SMFCharts.groupSeries(hourly, "hour", "action", "rows");
+
+  SMFCharts.stackedBar("lifeHourly", packed.labels, packed.datasets, { hourBrush: true });
+
+});
+
+</script>
+
+{% endblock %}
+

@@ -33,15 +33,18 @@ data-days="{{ days }}"
 </h2>
 {%- endmacro %}
 
-{% macro load_more(name, limit, has_more, step=50) -%}
-{% if has_more %}
+{% macro load_more(name, limit, has_more, step=50, shown=None) -%}
+{# Always show a footer so multi-table pages look consistent; Load more only when more rows exist. #}
+{% set n = shown if shown is not none else limit %}
+{% if n > 0 or has_more %}
 {% set sizes = [50, 100, 250, 500, 1000, 2500, 100000] %}
 <div class="load-more">
+  {% if has_more %}
   <label class="load-more-size">Add
     <select class="load-more-step" aria-label="Rows to add">
-      {% for n in sizes %}
-      <option value="{{ n }}"{% if n == step %} selected{% endif %}>
-        {%- if n >= 1000 -%}{{ '{:,}'.format(n) }}{%- else -%}{{ n }}{%- endif -%}
+      {% for s in sizes %}
+      <option value="{{ s }}"{% if s == step %} selected{% endif %}>
+        {%- if s >= 1000 -%}{{ '{:,}'.format(s) }}{%- else -%}{{ s }}{%- endif -%}
       </option>
       {% endfor %}
     </select>
@@ -51,7 +54,10 @@ data-days="{{ days }}"
      data-name="{{ name }}"
      data-limit="{{ limit }}"
      onclick="return SMFPageLoading.follow(this, 'Loading more rows…')">Load more</a>
-  <span class="muted">Showing {{ limit }} · more available</span>
+  <span class="muted">Showing {{ n }} · more available</span>
+  {% else %}
+  <span class="muted">Showing all {{ n }}</span>
+  {% endif %}
 </div>
 {% endif %}
 {%- endmacro %}
