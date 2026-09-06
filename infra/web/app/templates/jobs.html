@@ -33,7 +33,7 @@
     {% endfor %}
     </tbody>
   </table></div>
-  {{ load_more('jobs', limit_jobs, has_more_jobs) }}
+  {{ load_more('jobs', limit_jobs, has_more_jobs, shown=top|length) }}
   {% else %}<div class="empty">No SMF 30 rows in this window.</div>{% endif %}
 </section>
 {% endblock %}
