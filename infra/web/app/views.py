@@ -408,7 +408,7 @@ def cross():
     )
 
 
-def _api_table_payload(*, default_limit: int) -> Response:
+def _api_table_payload(*, default_limit: int, max_limit: int = 200) -> Response:
     """Shared JSON handler for Details / Full table modals."""
     days = _days()
     raw_tables = request.args.get("tables") or request.args.get("table") or ""
@@ -438,7 +438,9 @@ def _api_table_payload(*, default_limit: int) -> Response:
         }
     }
     try:
-        payload = details.fetch_full_details(tables, filters, days, limit=limit, offset=offset)
+        payload = details.fetch_full_details(
+            tables, filters, days, limit=limit, offset=offset, max_limit=max_limit
+        )
     except ValueError as exc:
         return Response(
             json.dumps({"error": str(exc)}),
@@ -460,13 +462,13 @@ def _api_table_payload(*, default_limit: int) -> Response:
 @bp.route("/api/details")
 def api_details():
     """JSON: full SMF column dump for modal Details buttons."""
-    return _api_table_payload(default_limit=100)
+    return _api_table_payload(default_limit=100, max_limit=200)
 
 
 @bp.route("/api/full-table")
 def api_full_table():
     """JSON: paginated SELECT * for Full table panel modal (all columns)."""
-    return _api_table_payload(default_limit=50)
+    return _api_table_payload(default_limit=50, max_limit=100_000)
 
 
 @bp.route("/export/<kind>.csv")

@@ -299,11 +299,49 @@ window.SMFTips = {
   },
 };
 
-window.SMFModalChrome = {
+.window.SMFModalChrome = {
   sync() {
     const open = !!document.querySelector("dialog[open]");
     document.body.classList.toggle("smf-modal-open", open);
     if (!open && window.SMFTips) SMFTips.hide();
+  },
+};
+
+window.SMFPageLoading = {
+  _busy: false,
+
+  show(title, msg) {
+    const el = document.getElementById("smf-page-loading");
+    const t = document.getElementById("smf-page-loading-title");
+    const m = document.getElementById("smf-page-loading-msg");
+    if (t) t.textContent = title || "Loading";
+    if (m) m.textContent = msg || "Please wait…";
+    if (el) el.hidden = false;
+    document.body.classList.add("smf-page-loading-open");
+    this._busy = true;
+  },
+
+  hide() {
+    const el = document.getElementById("smf-page-loading");
+    if (el) el.hidden = true;
+    document.body.classList.remove("smf-page-loading-open");
+    this._busy = false;
+  },
+
+  /** Intercept Load more (full page navigation) and show overlay first. */
+  follow(anchor, msg) {
+    if (!anchor || !anchor.href) return true;
+    if (this._busy) return false;
+    this.show("Loading more", msg || "Fetching additional table rows…");
+    // Soft-disable the control to prevent double clicks.
+    anchor.classList.add("is-loading");
+    anchor.setAttribute("aria-disabled", "true");
+    // Navigate after paint so the overlay is visible.
+    const href = anchor.href;
+    setTimeout(() => {
+      window.location.href = href;
+    }, 30);
+    return false;
   },
 };
 
@@ -696,6 +734,7 @@ window.SMFDetails = {
 
 window.SMFFullTable = {
   PAGE: 50,
+  PAGE_SIZES: [50, 100, 250, 500, 1000, 2500, 100000],
   _reqId: 0,
   _state: {
     sources: [],
@@ -708,6 +747,7 @@ window.SMFFullTable = {
     tables: "",
     filters: {},
     limit: 50,
+    pageSize: 50,
     loading: false,
   },
 
@@ -762,6 +802,40 @@ window.SMFFullTable = {
     return filters;
   },
 
+  _normalizePageSize(raw) {
+    const n = parseInt(raw, 10);
+    return this.PAGE_SIZES.includes(n) ? n : this.PAGE;
+  },
+
+  setPageSize(raw) {
+    this._state.pageSize = this._normalizePageSize(raw);
+    this._state.limit = this._state.pageSize;
+  },
+
+  _pageSizeSelectHtml() {
+    const cur = this._normalizePageSize(this._state.pageSize || this.PAGE);
+    this._state.pageSize = cur;
+    const opts = this.PAGE_SIZES.map((n) => {
+      const label = n >= 1000 ? n.toLocaleString("en-US") : String(n);
+      return (
+        '<option value="' +
+        n +
+        '"' +
+        (n === cur ? " selected" : "") +
+        ">" +
+        label +
+        "</option>"
+      );
+    }).join("");
+    return (
+      '<label class="load-more-size">Add' +
+      '<select id="smf-full-table-page-size" aria-label="Rows to add"' +
+      ' onchange="SMFFullTable.setPageSize(this.value)">' +
+      opts +
+      "</select></label>"
+    );
+  },
+
   _showLoading(title, msg) {
     const el = document.getElementById("smf-full-table-loading");
     const t = document.getElementById("smf-full-table-loading-title");
@@ -797,7 +871,8 @@ window.SMFFullTable = {
     this._state.hour_to =
       btn.getAttribute("data-hour-to") || page.searchParams.get("hour_to") || "";
     this._state.filters = this._parseFilters(btn);
-    this._state.limit = this.PAGE;
+    this._state.pageSize = this._normalizePageSize(this._state.pageSize || this.PAGE);
+    this._state.limit = this._state.pageSize;
     this._state.si = 0;
     this._state.sources = [];
     this._state.loading = false;
@@ -833,6 +908,9 @@ window.SMFFullTable = {
     const matched = Number(src.matched) || 0;
     const have = (src.rows || []).length;
     if (have >= matched) return;
+    const sel = document.getElementById("smf-full-table-page-size");
+    if (sel) this.setPageSize(sel.value);
+    this._state.limit = this._state.pageSize;
     this._fetch({ append: true, tables: src.table, offset: have });
   },
 
@@ -842,17 +920,19 @@ window.SMFFullTable = {
     const dlg = document.getElementById("smf-full-table-modal");
     const reqId = ++this._reqId;
     this._state.loading = true;
+    const batch = this._normalizePageSize(this._state.limit || this._state.pageSize || this.PAGE);
+    this._state.limit = batch;
     this._showLoading(
       append ? "Loading more" : "Loading full table",
       append
-        ? "Fetching the next page of SMF rows…"
+        ? "Fetching " + batch.toLocaleString("en-US") + " more SMF rows…"
         : "Fetching SMF rows for the selected time window…"
     );
 
     const params = new URLSearchParams({
       tables: tables,
       days: this._state.days,
-      limit: String(this._state.limit),
+      limit: String(batch),
       offset: String(offset),
     });
     ["date_from", "date_to", "hour_from", "hour_to"].forEach((k) => {
@@ -879,7 +959,6 @@ window.SMFFullTable = {
         this._state.date_to = data.date_to || this._state.date_to;
         this._state.hour_from = data.hour_from || this._state.hour_from;
         this._state.hour_to = data.hour_to || this._state.hour_to;
-        this._state.limit = data.limit || this._state.limit;
         this._state.appliedFilters = data.filters || {};
 
         const incoming = data.sources || [];
@@ -1003,7 +1082,8 @@ window.SMFFullTable = {
 
     const more =
       shown < matched
-        ? '<button type="button" class="btn btn-load-more" onclick="SMFFullTable.loadMore()"' +
+        ? this._pageSizeSelectHtml() +
+          '<button type="button" class="btn btn-load-more" onclick="SMFFullTable.loadMore()"' +
           (this._state.loading ? " disabled" : "") +
           ">Load more</button>" +
           '<span class="muted">Showing ' +

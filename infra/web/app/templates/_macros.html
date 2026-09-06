@@ -36,7 +36,9 @@ data-days="{{ days }}"
 {% macro load_more(name, limit, has_more, step=40) -%}
 {% if has_more %}
 <div class="load-more">
-  <a class="btn btn-load-more" href="{{ more_url(name, limit, step) }}">Load more</a>
+  <a class="btn btn-load-more"
+     href="{{ more_url(name, limit, step) }}"
+     onclick="return SMFPageLoading.follow(this, 'Loading more rows…')">Load more</a>
   <span class="muted">Showing {{ limit }} · more available</span>
 </div>
 {% endif %}

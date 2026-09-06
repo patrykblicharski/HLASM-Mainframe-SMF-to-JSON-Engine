@@ -364,6 +364,13 @@ table.data a { font-weight: 600; }
   display: flex; align-items: center; gap: .75rem;
   flex-wrap: wrap;
 }
+.load-more-size {
+  display: inline-flex; align-items: center; gap: .4rem;
+  color: var(--muted); font-size: .82rem;
+}
+.load-more-size select {
+  min-width: 6.5rem;
+}
 
 /* Custom column-header tips (must live inside open <dialog> to appear in top layer) */
 .smf-tip {
@@ -416,6 +423,26 @@ table.data th.sortable[data-tip] { cursor: pointer; }
 .modal-loading-card span {
   color: var(--muted);
   font-size: .88rem;
+}
+
+.page-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 10, 20, .72);
+  backdrop-filter: blur(2px);
+}
+.page-loading[hidden] { display: none !important; }
+.btn-load-more.is-loading,
+.btn-load-more[aria-disabled="true"] {
+  opacity: .55;
+  pointer-events: none;
+}
+body.smf-page-loading-open {
+  cursor: wait;
 }
 .details-modal::backdrop { background: rgba(4, 8, 16, .72); }
 .details-shell { display: flex; flex-direction: column; max-height: 90vh; }

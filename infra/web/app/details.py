@@ -115,6 +115,7 @@ def fetch_full_details(
     *,
     limit: int = 100,
     offset: int = 0,
+    max_limit: int = 200,
 ) -> dict[str, Any]:
     """Return full SELECT * rows matching filters (paginated, not a random sample)."""
     clean_tables: list[str] = []
@@ -125,8 +126,8 @@ def fetch_full_details(
     if not clean_tables:
         raise ValueError("no allowed tables")
 
-    lim = max(1, min(int(limit), 200))
-    off = max(0, min(int(offset), 50_000))
+    lim = max(1, min(int(limit), int(max_limit)))
+    off = max(0, min(int(offset), 1_000_000))
     win = active_window(days)
     day_sql = event_window(days)
     sources: list[dict[str, Any]] = []
