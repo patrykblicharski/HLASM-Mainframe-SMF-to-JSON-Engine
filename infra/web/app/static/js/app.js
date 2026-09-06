@@ -287,7 +287,13 @@ window.SMFDetails = {
   _fieldTip(name) {
     const meta = window.SMFFieldMeta || {};
     const key = String(name || "").trim().toLowerCase();
-    return meta[key] || meta[key.replace(/ /g, "_")] || "";
+    if (!key) return "";
+    return (
+      meta[key] ||
+      meta[key.replace(/ /g, "_")] ||
+      meta[key.replace(/_/g, " ")] ||
+      ""
+    );
   },
 
   _windowLabel() {
@@ -594,7 +600,13 @@ window.SMFFullTable = {
   _fieldTip(name) {
     const meta = window.SMFFieldMeta || {};
     const key = String(name || "").trim().toLowerCase();
-    return meta[key] || meta[key.replace(/ /g, "_")] || "";
+    if (!key) return "";
+    return (
+      meta[key] ||
+      meta[key.replace(/ /g, "_")] ||
+      meta[key.replace(/_/g, " ")] ||
+      ""
+    );
   },
 
   _windowLabel() {
@@ -808,7 +820,9 @@ window.SMFFullTable = {
         return (
           "<th" +
           (tip ? ' title="' + this._esc(tip) + '"' : "") +
-          ">" +
+          ' data-sort-key="' +
+          this._esc(String(c).toLowerCase()) +
+          '">' +
           this._esc(c) +
           "</th>"
         );
@@ -847,7 +861,7 @@ window.SMFFullTable = {
         : '<span class="muted">Showing all ' + shown + " matching rows</span>";
 
     body.innerHTML =
-      '<div class="details-tabs">' +
+      '<div class="full-table-panel"><div class="details-tabs">' +
       tabs +
       '</div><div class="full-table-scroll"><table class="data" id="smf-full-table-grid"><thead><tr>' +
       head +
@@ -855,7 +869,7 @@ window.SMFFullTable = {
       rowsHtml +
       '</tbody></table></div><div class="full-table-footer">' +
       more +
-      "</div>";
+      "</div></div>";
 
     const table = document.getElementById("smf-full-table-grid");
     if (table && window.SMFTables) SMFTables.makeSortable(table);
