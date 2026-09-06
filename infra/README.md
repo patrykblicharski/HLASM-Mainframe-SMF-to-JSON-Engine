@@ -177,6 +177,12 @@ cd infra
 ./scripts/load_all.sh ./data/csv
 ```
 
+Uses `docker exec` + `clickhouse-client` when the container is up (avoids HTTP 30s socket timeouts on big files like `smf_92_*`). Override timeout:
+
+```bash
+CH_TIMEOUT=1200 ./scripts/load_all.sh ./data/csv
+```
+
 Or one table manually:
 
 ```bash
