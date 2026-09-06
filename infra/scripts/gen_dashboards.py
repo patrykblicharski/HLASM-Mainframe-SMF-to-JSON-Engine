@@ -452,26 +452,28 @@ FROM smf.smf_30_4 WHERE {TF} GROUP BY job_class ORDER BY steps DESC LIMIT 15""",
                 desc="Class comes from SMF 30-4 — subtype 5 often leaves job_class/program blank in dumps.",
             ),
             table(
-                "Top jobs (30-5 ends + 30-4 programs)",
+                "Top jobs (30-5 ends + 30-4 programs/steps)",
                 0,
                 8,
                 12,
                 10,
-                f"""SELECT e.job_name, e.ends, coalesce(p.with_program, 0) AS with_program,
-  coalesce(p.with_step, 0) AS with_step, coalesce(p.cpu_timer_sum, 0) AS cpu_timer_sum
+                f"""SELECT e.job_name, e.ends,
+  coalesce(p.programs, '') AS programs,
+  coalesce(p.steps, '') AS steps,
+  coalesce(p.cpu_timer_sum, 0) AS cpu_timer_sum
 FROM (
   SELECT job_name, count() AS ends FROM smf.smf_30_5 WHERE {TF} AND job_name!='' GROUP BY job_name
 ) e
 LEFT JOIN (
   SELECT job_name,
-         countIf(program_name!='') AS with_program,
-         countIf(step_name!='') AS with_step,
+         arrayStringConcat(arrayFilter(x -> x != '', topK(3)(program_name)), ', ') AS programs,
+         arrayStringConcat(arrayFilter(x -> x != '', topK(3)(step_name)), ', ') AS steps,
          sum(toUInt64OrZero(cpu_step_time)) AS cpu_timer_sum
   FROM smf.smf_30_4 WHERE {TF} AND job_name!='' GROUP BY job_name
 ) p USING (job_name)
 ORDER BY e.ends DESC LIMIT 40""",
                 links=JOB_LINK,
-                desc="cpu_timer_sum = sum(SMF cpu_step_time) from 30-4, raw timer units from the record.",
+                desc="programs/steps = top-3 names from SMF 30-4. cpu_timer_sum = raw SMF cpu_step_time units.",
             ),
             table(
                 "Programs / steps (from 30-4)",

@@ -283,7 +283,7 @@ def export_csv(kind: str):
         fields = ["direction", "job_name", "dsname", "volser", "rows", "excp", "dsname_display"]
     elif kind == "jobs":
         rows = queries.jobs_top(days, 500, q)
-        fields = ["job_name", "smf_system_id", "ends", "with_program", "with_step", "cpu_sum"]
+        fields = ["job_name", "smf_system_id", "ends", "programs", "steps", "cpu_sum"]
     elif kind == "racf":
         rows = queries.racf_events(days, q, 1000)
         fields = [

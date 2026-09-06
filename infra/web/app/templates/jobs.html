@@ -27,15 +27,15 @@
   <h2>Top jobs <span>ends=30-5 · program/step/CPU=30-4</span></h2>
   {% if top %}
   <div class="table-wrap"><table class="data">
-    <thead><tr><th>Job</th><th>SID</th><th>Ends</th><th>With program</th><th>With step</th><th>CPU (timer units)</th></tr></thead>
+    <thead><tr><th>Job</th><th>SID</th><th>Ends</th><th>Programs (top)</th><th>Steps (top)</th><th>CPU (timer units)</th></tr></thead>
     <tbody>
     {% for r in top %}
       <tr>
         <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
         <td class="mono">{{ display_cell(r.smf_system_id) }}</td>
         <td>{{ fmt_int(r.ends) }}</td>
-        <td>{{ fmt_int(r.with_program) }}</td>
-        <td>{{ fmt_int(r.with_step) }}</td>
+        <td class="mono">{{ display_cell(r.programs) }}</td>
+        <td class="mono">{{ display_cell(r.steps) }}</td>
         <td>{{ fmt_cpu_timer(r.cpu_sum) }}</td>
       </tr>
     {% endfor %}

@@ -207,8 +207,8 @@ def jobs_top(days: int, limit: int = 50, q: str = "", hour_from: str = "", hour_
     return db.query(
         f"""
         SELECT e.job_name, e.smf_system_id, e.ends,
-               coalesce(p.with_program, 0) AS with_program,
-               coalesce(p.with_step, 0) AS with_step,
+               coalesce(p.programs, '') AS programs,
+               coalesce(p.steps, '') AS steps,
                coalesce(p.cpu_sum, 0) AS cpu_sum
         FROM (
           SELECT job_name, smf_system_id, count() AS ends
@@ -218,8 +218,8 @@ def jobs_top(days: int, limit: int = 50, q: str = "", hour_from: str = "", hour_
         ) e
         LEFT JOIN (
           SELECT job_name, smf_system_id,
-                 countIf(program_name != '') AS with_program,
-                 countIf(step_name != '') AS with_step,
+                 arrayStringConcat(arrayFilter(x -> x != '', topK(3)(program_name)), ', ') AS programs,
+                 arrayStringConcat(arrayFilter(x -> x != '', topK(3)(step_name)), ', ') AS steps,
                  sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum
           FROM smf.smf_30_4
           WHERE {_days(days)} AND job_name != '' {filt} {hf}
