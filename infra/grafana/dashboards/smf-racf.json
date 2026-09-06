@@ -8,62 +8,84 @@
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "fieldConfig": {
+        "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } },
+        "overrides": []
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date AS time, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date\nORDER BY time"
+          "rawSql": "SELECT toDateTime(event_date) AS time, sum(row_count) AS events\nFROM smf.stats_racf_daily\nGROUP BY time\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "RACF events by hour (raw 80)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "fieldConfig": {
+        "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', if(time = '', '00:00:00', time)))) AS time,\n  count() AS events\nFROM smf.smf_80\nGROUP BY time\nORDER BY time"
         }
       ]
     },
     {
       "title": "Top event codes",
-      "type": "bargauge",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "type": "table",
+      "gridPos": { "h": 10, "w": 8, "x": 0, "y": 8 },
       "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_code, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE event_date >= today() - 10\nGROUP BY event_code\nORDER BY events DESC\nLIMIT 20"
+          "rawSql": "SELECT event_code, sum(row_count) AS events\nFROM smf.stats_racf_daily\nGROUP BY event_code\nORDER BY events DESC\nLIMIT 30"
         }
       ]
     },
     {
       "title": "Top users",
       "type": "table",
-      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 8 },
+      "gridPos": { "h": 10, "w": 8, "x": 8, "y": 8 },
       "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT user_id, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE event_date >= today() - 10\nGROUP BY user_id\nORDER BY events DESC\nLIMIT 40"
+          "rawSql": "SELECT user_id, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE user_id != ''\nGROUP BY user_id\nORDER BY events DESC\nLIMIT 40"
         }
       ]
     },
     {
       "title": "Top jobs",
       "type": "table",
-      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 8 },
+      "gridPos": { "h": 10, "w": 8, "x": 16, "y": 8 },
       "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT job_name, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE event_date >= today() - 10\nGROUP BY job_name\nORDER BY events DESC\nLIMIT 40"
+          "rawSql": "SELECT job_name, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE job_name != ''\nGROUP BY job_name\nORDER BY events DESC\nLIMIT 40"
         }
       ]
     }
   ],
   "schemaVersion": 39,
   "tags": ["smf", "racf"],
-  "time": { "from": "now-10d", "to": "now" },
+  "time": { "from": "now-30d", "to": "now" },
   "title": "SMF RACF (80)",
   "uid": "smf-racf",
-  "version": 1
+  "version": 2
 }

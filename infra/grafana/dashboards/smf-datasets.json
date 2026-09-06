@@ -5,15 +5,20 @@
   "panels": [
     {
       "title": "Dataset activity rows / day",
+      "description": "INPUT (14) vs OUTPUT (15). One dump day → one bar.",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "fieldConfig": {
+        "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 50, "stacking": { "mode": "normal" } } },
+        "overrides": []
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date AS time, direction, sum(row_count) AS rows\nFROM smf.stats_dataset_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date, direction\nORDER BY time"
+          "rawSql": "SELECT\n  toDateTime(event_date) AS time,\n  direction,\n  sum(row_count) AS rows\nFROM smf.stats_dataset_daily\nGROUP BY time, direction\nORDER BY time"
         }
       ]
     },
@@ -22,48 +27,71 @@
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
       "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "fieldConfig": {
+        "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 }, "unit": "short" },
+        "overrides": []
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date AS time, direction, sum(excp_sum) AS excp\nFROM smf.stats_dataset_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date, direction\nORDER BY time"
+          "rawSql": "SELECT\n  toDateTime(event_date) AS time,\n  direction,\n  sum(excp_sum) AS excp\nFROM smf.stats_dataset_daily\nGROUP BY time, direction\nORDER BY time"
         }
       ]
     },
     {
-      "title": "Top datasets (10d)",
+      "title": "Activity by hour (raw 14+15, uses SMF time)",
+      "description": "Uses date+time from the record so you see intra-day shape.",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "fieldConfig": {
+        "defaults": { "custom": { "drawStyle": "bars", "stacking": { "mode": "normal" }, "fillOpacity": 40 } },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT hour AS time, direction, sum(cnt) AS rows FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', if(time = '', '00:00:00', time)))) AS hour,\n         'INPUT' AS direction, count() AS cnt\n  FROM smf.smf_14 GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', if(time = '', '00:00:00', time)))) AS hour,\n         'OUTPUT' AS direction, count() AS cnt\n  FROM smf.smf_15 GROUP BY hour\n)\nGROUP BY time, direction\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "Top datasets",
       "type": "table",
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 8 },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 16 },
       "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT direction, job_name, dsname, sum(row_count) AS rows, sum(excp_sum) AS excp\nFROM smf.stats_dataset_daily\nWHERE event_date >= today() - 10\nGROUP BY direction, job_name, dsname\nORDER BY rows DESC\nLIMIT 50"
+          "rawSql": "SELECT\n  direction,\n  job_name,\n  replaceRegexpAll(dsname, '[^\\\\x20-\\\\x7E]', '?') AS dsname,\n  sum(row_count) AS rows,\n  sum(excp_sum) AS excp\nFROM smf.stats_dataset_daily\nGROUP BY direction, job_name, dsname\nORDER BY rows DESC\nLIMIT 50"
         }
       ]
     },
     {
-      "title": "Scratches (SMF 17) raw",
+      "title": "Top scratched datasets (SMF 17)",
       "type": "table",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 18 },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 26 },
       "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date, smf_system_id, job_name, dsname, volume_serial, count() AS rows\nFROM smf.smf_17\nWHERE event_date >= today() - 10\nGROUP BY event_date, smf_system_id, job_name, dsname, volume_serial\nORDER BY rows DESC\nLIMIT 100"
+          "rawSql": "SELECT\n  event_date,\n  smf_system_id,\n  job_name,\n  replaceRegexpAll(dsname, '[^\\\\x20-\\\\x7E]', '?') AS dsname,\n  volume_serial,\n  count() AS rows\nFROM smf.smf_17\nGROUP BY event_date, smf_system_id, job_name, dsname, volume_serial\nORDER BY rows DESC\nLIMIT 100"
         }
       ]
     }
   ],
   "schemaVersion": 39,
   "tags": ["smf", "dataset"],
-  "time": { "from": "now-10d", "to": "now" },
+  "time": { "from": "now-30d", "to": "now" },
   "title": "SMF Datasets (14/15/17)",
   "uid": "smf-datasets",
-  "version": 1
+  "version": 2
 }
