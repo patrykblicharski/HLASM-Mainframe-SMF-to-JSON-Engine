@@ -9,9 +9,10 @@
       try {
         var t = localStorage.getItem("smf-theme");
         var ok = {
-          phosphor:1, carbon:1, harbor:1, obsidian:1, ledger:1, frost:1,
+          classic:1, phosphor:1, carbon:1, harbor:1, obsidian:1, ledger:1, frost:1,
           "purity-dark":1, dabang:1, electric:1, "violet-finance":1, "glass-neon":1,
-          tiesen:1, "logistic-one":1, business:1, corporate:1, cupcake:1, halloween:1
+          tiesen:1, "logistic-one":1, business:1, corporate:1, cupcake:1, halloween:1,
+          "claude-blu-2":1, "blue-smlb":1, "albl-v2":1
         };
         if (t && ok[t]) document.documentElement.setAttribute("data-theme", t);
       } catch (e) {}
@@ -19,11 +20,11 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}?v=themes21">
   <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
   <script>window.SMFFieldMeta = {{ field_meta|default({})|tojson }};</script>
-  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}?v=themes21"></script>
 </head>
 <body>
 <div class="app">
@@ -42,70 +43,68 @@
     </nav>
     <div class="theme-picker" id="smf-theme-picker">
       <div class="theme-picker-label">Theme</div>
-      <div class="theme-swatches-scroll">
+      <label class="theme-select-wrap">
+        <span class="visually-hidden">Select theme</span>
+        <select id="smf-theme-select" class="theme-select" aria-label="Color theme">
+          <optgroup label="Dark">
+            <option value="classic">Classic (original)</option>
+            <option value="phosphor">Phosphor</option>
+            <option value="carbon">Carbon</option>
+            <option value="harbor">Harbor</option>
+            <option value="obsidian">Obsidian</option>
+            <option value="purity-dark">Purity</option>
+            <option value="violet-finance">Violet Finance</option>
+            <option value="glass-neon">Glass Neon</option>
+            <option value="business">Business</option>
+            <option value="halloween">Halloween</option>
+            <option value="blue-smlb">Blue Smlb</option>
+          </optgroup>
+          <optgroup label="Light">
+            <option value="ledger">Ledger</option>
+            <option value="frost">Frost</option>
+            <option value="dabang">Dabang</option>
+            <option value="electric">Electric</option>
+            <option value="corporate">Corporate</option>
+            <option value="cupcake">Cupcake</option>
+            <option value="claude-blu-2">Claude Blu 2</option>
+            <option value="albl-v2">Albl V2</option>
+          </optgroup>
+          <optgroup label="Community">
+            <option value="tiesen">Tiesen</option>
+            <option value="logistic-one">Logistic One</option>
+          </optgroup>
+        </select>
+      </label>
+      <div class="theme-swatches-scroll" aria-hidden="true">
         <div class="theme-group">
-          <div class="theme-group-label">Dark</div>
-          <div class="theme-swatches" role="listbox" aria-label="Dark themes">
-            <button type="button" class="theme-swatch" role="option" data-theme-id="phosphor" title="Phosphor — CRT ops console" aria-checked="false">
+          <div class="theme-group-label">Quick picks</div>
+          <div class="theme-swatches" role="listbox" aria-label="Theme swatches">
+            <button type="button" class="theme-swatch" role="option" data-theme-id="classic" title="Classic — original teal + blue corporate" aria-checked="false" tabindex="-1">
+              <span class="theme-swatch-preview" aria-hidden="true"></span>Classic
+            </button>
+            <button type="button" class="theme-swatch" role="option" data-theme-id="phosphor" title="Phosphor — CRT ops console" aria-checked="false" tabindex="-1">
               <span class="theme-swatch-preview" aria-hidden="true"></span>Phosphor
             </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="carbon" title="Carbon — industrial copper" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Carbon
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="harbor" title="Harbor — navy + signal coral" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Harbor
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="obsidian" title="Obsidian — black + gold" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Obsidian
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="purity-dark" title="Purity Dark — navy + seafoam teal" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Purity
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="violet-finance" title="Violet Finance — charcoal + neon violet" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Violet
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="glass-neon" title="Glass Neon — purple/cyan glass" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Glass
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="business" title="Business — daisyUI slate + blue" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Business
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="halloween" title="Halloween — daisyUI pumpkin + purple" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Halloween
-            </button>
-          </div>
-        </div>
-        <div class="theme-group">
-          <div class="theme-group-label">Light</div>
-          <div class="theme-swatches" role="listbox" aria-label="Light themes">
-            <button type="button" class="theme-swatch" role="option" data-theme-id="ledger" title="Ledger — warm paper (light)" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Ledger
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="frost" title="Frost — slate + terracotta (light)" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Frost
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="dabang" title="Dabang — soft pastel mint SaaS" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Dabang
-            </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="electric" title="Electric — light SaaS + electric blue" aria-checked="false">
+            <button type="button" class="theme-swatch" role="option" data-theme-id="electric" title="Electric — light SaaS + electric blue" aria-checked="false" tabindex="-1">
               <span class="theme-swatch-preview" aria-hidden="true"></span>Electric
             </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="corporate" title="Corporate — daisyUI crisp blue" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Corporate
+            <button type="button" class="theme-swatch" role="option" data-theme-id="violet-finance" title="Violet Finance — charcoal + neon violet" aria-checked="false" tabindex="-1">
+              <span class="theme-swatch-preview" aria-hidden="true"></span>Violet
             </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="cupcake" title="Cupcake — daisyUI soft pastel" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Cupcake
+            <button type="button" class="theme-swatch" role="option" data-theme-id="claude-blu-2" title="Claude Blu 2 — soft steel blue" aria-checked="false" tabindex="-1">
+              <span class="theme-swatch-preview" aria-hidden="true"></span>Claude
             </button>
-          </div>
-        </div>
-        <div class="theme-group">
-          <div class="theme-group-label">Community</div>
-          <div class="theme-swatches" role="listbox" aria-label="Community themes">
-            <button type="button" class="theme-swatch" role="option" data-theme-id="tiesen" title="Tiesen — tweakcn indigo minimal" aria-checked="false">
+            <button type="button" class="theme-swatch" role="option" data-theme-id="blue-smlb" title="Blue-smlb — vivid indigo blue" aria-checked="false" tabindex="-1">
+              <span class="theme-swatch-preview" aria-hidden="true"></span>Blue Smlb
+            </button>
+            <button type="button" class="theme-swatch" role="option" data-theme-id="albl-v2" title="Albl V2 — deep blue + mint" aria-checked="false" tabindex="-1">
+              <span class="theme-swatch-preview" aria-hidden="true"></span>Albl V2
+            </button>
+            <button type="button" class="theme-swatch" role="option" data-theme-id="tiesen" title="Tiesen — tweakcn indigo minimal" aria-checked="false" tabindex="-1">
               <span class="theme-swatch-preview" aria-hidden="true"></span>Tiesen
             </button>
-            <button type="button" class="theme-swatch" role="option" data-theme-id="logistic-one" title="Logistic One — navy + amber logistics" aria-checked="false">
-              <span class="theme-swatch-preview" aria-hidden="true"></span>Logistic
+            <button type="button" class="theme-swatch" role="option" data-theme-id="halloween" title="Halloween — daisyUI pumpkin + purple" aria-checked="false" tabindex="-1">
+              <span class="theme-swatch-preview" aria-hidden="true"></span>Halloween
             </button>
           </div>
         </div>

@@ -2,9 +2,10 @@
 window.SMFTheme = {
   key: "smf-theme",
   ids: [
-    "phosphor", "carbon", "harbor", "obsidian", "ledger", "frost",
+    "classic", "phosphor", "carbon", "harbor", "obsidian", "ledger", "frost",
     "purity-dark", "dabang", "electric", "violet-finance", "glass-neon",
     "tiesen", "logistic-one", "business", "corporate", "cupcake", "halloween",
+    "claude-blu-2", "blue-smlb", "albl-v2",
   ],
   current() {
     const t = document.documentElement.getAttribute("data-theme");
@@ -18,6 +19,8 @@ window.SMFTheme = {
     if (window.SMFCharts) SMFCharts.applyTheme();
   },
   _syncPicker(id) {
+    const sel = document.getElementById("smf-theme-select");
+    if (sel && sel.value !== id) sel.value = id;
     document.querySelectorAll(".theme-swatch").forEach((btn) => {
       const on = btn.getAttribute("data-theme-id") === id;
       btn.setAttribute("aria-checked", on ? "true" : "false");
@@ -27,6 +30,10 @@ window.SMFTheme = {
     this._syncPicker(this.current());
     const picker = document.getElementById("smf-theme-picker");
     if (!picker) return;
+    const sel = document.getElementById("smf-theme-select");
+    if (sel) {
+      sel.addEventListener("change", () => this.apply(sel.value));
+    }
     picker.addEventListener("click", (ev) => {
       const btn = ev.target.closest(".theme-swatch");
       if (!btn) return;
