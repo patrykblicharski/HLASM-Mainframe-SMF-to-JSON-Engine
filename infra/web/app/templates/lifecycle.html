@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import details_button %}
 {% block subtitle %}<p>Catalog DEFINE/DELETE/ALTER + scratch churn (ANALYTICS fact_catalog / lifecycle).</p>{% endblock %}
 {% block content %}
 <section class="panel">
@@ -10,7 +11,7 @@
     <h2>Top catalog entries</h2>
     {% if summary.tops %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Action</th><th>Entry</th><th>Job</th><th>Rows</th></tr></thead>
+      <thead><tr><th>Action</th><th>Entry</th><th>Job</th><th>Rows</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.tops %}
         <tr>
@@ -18,6 +19,10 @@
           <td><a href="{{ url_for('smf.dataset_detail', dsname=r.entry_name, days=days) }}">{{ display_cell(r.entry_name) }}</a></td>
           <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
           <td>{{ fmt_int(r.rows) }}</td>
+          <td>{{ details_button(
+                'smf_61' if r.action=='DEFINE' else ('smf_65' if r.action=='DELETE' else 'smf_66'),
+                {'entry_name': r.entry_name, 'job_name': r.job_name}
+              ) }}</td>
         </tr>
       {% endfor %}
       </tbody>
@@ -28,10 +33,14 @@
     <h2>Top catalogs</h2>
     {% if summary.catalogs %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Catalog</th><th>Rows</th></tr></thead>
+      <thead><tr><th>Catalog</th><th>Rows</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.catalogs %}
-        <tr><td class="mono">{{ display_cell(r.catalog_name) }}</td><td>{{ fmt_int(r.rows) }}</td></tr>
+        <tr>
+          <td class="mono">{{ display_cell(r.catalog_name) }}</td>
+          <td>{{ fmt_int(r.rows) }}</td>
+          <td>{{ details_button('smf_61,smf_65,smf_66', {'catalog_name': r.catalog_name}) }}</td>
+        </tr>
       {% endfor %}
       </tbody>
     </table></div>

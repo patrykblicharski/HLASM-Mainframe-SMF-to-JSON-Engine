@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import details_button %}
 {% block subtitle %}<p>Highest-value crosses from ANALYTICS.md — job×RACF and TCP×workload.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
@@ -6,7 +7,7 @@
     <h2>30 × 80 — jobs with security events</h2>
     {% if summary.job_security %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Job</th><th>Ends</th><th>CPU</th><th>RACF events</th></tr></thead>
+      <thead><tr><th>Job</th><th>Ends</th><th>CPU</th><th>RACF events</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.job_security %}
         <tr>
@@ -14,6 +15,7 @@
           <td>{{ fmt_int(r.ends) }}</td>
           <td>{{ fmt_int(r.cpu_sum) }}</td>
           <td>{{ fmt_int(r.racf_events) }}</td>
+          <td>{{ details_button('smf_30_4,smf_30_5,smf_80', {'job_name': r.job_name}) }}</td>
         </tr>
       {% endfor %}
       </tbody>
@@ -24,7 +26,7 @@
     <h2>119 × workload — network bytes by resource/AS</h2>
     {% if summary.net_work %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Workload</th><th>Conns</th><th>In</th><th>Out</th></tr></thead>
+      <thead><tr><th>Workload</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.net_work %}
         <tr>
@@ -32,6 +34,7 @@
           <td>{{ fmt_int(r.conns) }}</td>
           <td>{{ fmt_bytes(r.in_bytes) }}</td>
           <td>{{ fmt_bytes(r.out_bytes) }}</td>
+          <td>{{ details_button('smf_119_2', {'resource_name': r.workload}) }}</td>
         </tr>
       {% endfor %}
       </tbody>

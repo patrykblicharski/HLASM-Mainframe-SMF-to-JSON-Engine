@@ -1,0 +1,8 @@
+{% macro details_button(tables, filters) -%}
+<button type="button"
+        class="btn btn-details"
+        data-tables="{{ tables }}"
+        data-days="{{ days }}"
+        data-filters="{{ filters|tojson }}"
+        onclick="SMFDetails.open(this)">Full details</button>
+{%- endmacro %}

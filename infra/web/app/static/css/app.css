@@ -169,3 +169,64 @@ table.data a { font-weight: 600; }
 
 .stack { display: flex; flex-direction: column; gap: 1rem; }
 .section-title { margin: .25rem 0 0; font-size: 1.15rem; }
+
+.btn-details {
+  font-size: .75rem;
+  padding: .35rem .55rem;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #1e2d48, #172438);
+  border-color: #2f4266;
+}
+.btn-details:hover { border-color: var(--accent); color: var(--accent); }
+
+.details-modal {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0;
+  background: #0e1626;
+  color: var(--text);
+  width: min(960px, 94vw);
+  max-height: 90vh;
+  box-shadow: var(--shadow);
+}
+.details-modal::backdrop { background: rgba(4, 8, 16, .72); }
+.details-shell { display: flex; flex-direction: column; max-height: 90vh; }
+.details-head {
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
+  padding: 1rem 1.1rem; border-bottom: 1px solid var(--line);
+}
+.details-head h2 { margin: 0; font-size: 1.15rem; }
+.details-head p { margin: .35rem 0 0; font-size: .8rem; }
+.details-body { padding: 1rem 1.1rem 1.25rem; overflow: auto; }
+.details-tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .85rem; }
+.details-tab {
+  background: var(--bg-soft); color: var(--muted); border: 1px solid var(--line);
+  border-radius: 999px; padding: .35rem .7rem; cursor: pointer; font: inherit; font-size: .78rem;
+}
+.details-tab.active {
+  color: var(--text); border-color: var(--accent);
+  background: rgba(61,184,168,.14);
+}
+.details-nav {
+  display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  margin-bottom: .85rem;
+}
+.details-section h3 {
+  margin: .4rem 0 .65rem; font-size: .85rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.details-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem .75rem; margin: 0;
+}
+@media (max-width: 800px) {
+  .details-grid { grid-template-columns: 1fr; }
+}
+.details-field {
+  display: grid; grid-template-columns: minmax(110px, 38%) 1fr; gap: .5rem;
+  padding: .45rem .55rem; border: 1px solid var(--line); border-radius: 8px;
+  background: rgba(255,255,255,.02);
+}
+.details-field dt { margin: 0; color: var(--muted); font-size: .75rem; word-break: break-all; }
+.details-field dd { margin: 0; font-size: .85rem; word-break: break-word; white-space: pre-wrap; }
+.details-field.is-empty { opacity: .55; }
+.muted-grid { margin-bottom: .5rem; }

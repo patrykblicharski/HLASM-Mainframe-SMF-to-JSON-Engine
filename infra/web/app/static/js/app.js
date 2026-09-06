@@ -125,3 +125,191 @@ window.SMFCharts = {
 document.addEventListener("DOMContentLoaded", () => {
   SMFCharts.darkDefaults();
 });
+
+window.SMFDetails = {
+  _state: { sources: [], si: 0, ri: 0 },
+
+  open(btn) {
+    const dlg = document.getElementById("smf-details-modal");
+    const body = document.getElementById("smf-details-body");
+    const title = document.getElementById("smf-details-title");
+    const sub = document.getElementById("smf-details-sub");
+    if (!dlg || !body) return;
+
+    let filters = {};
+    try {
+      filters = JSON.parse(btn.getAttribute("data-filters") || "{}") || {};
+    } catch (_e) {
+      filters = {};
+    }
+    const tables = btn.getAttribute("data-tables") || "";
+    const days = btn.getAttribute("data-days") || "4";
+    const params = new URLSearchParams({ tables, days, limit: "8" });
+    Object.entries(filters).forEach(([k, v]) => {
+      if (v !== null && v !== undefined && String(v) !== "") params.set(k, String(v));
+    });
+
+    title.textContent = "Full details";
+    sub.textContent = tables + " · loading…";
+    body.innerHTML = '<div class="empty">Loading full SMF fields…</div>';
+    dlg.showModal();
+
+    fetch("/api/details?" + params.toString())
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.error) {
+          body.innerHTML = '<div class="error">' + this._esc(data.error) + "</div>";
+          return;
+        }
+        this._state = { sources: data.sources || [], si: 0, ri: 0, filters: data.filters || {} };
+        const filt = Object.entries(this._state.filters)
+          .map(([k, v]) => k + "=" + v)
+          .join(", ");
+        sub.textContent = (filt || "no filters") + " · last " + days + "d";
+        this._render();
+      })
+      .catch((err) => {
+        body.innerHTML = '<div class="error">' + this._esc(String(err)) + "</div>";
+      });
+  },
+
+  close() {
+    const dlg = document.getElementById("smf-details-modal");
+    if (dlg && dlg.open) dlg.close();
+  },
+
+  _esc(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  },
+
+  setSource(i) {
+    this._state.si = i;
+    this._state.ri = 0;
+    this._render();
+  },
+
+  setRow(delta) {
+    const src = this._state.sources[this._state.si];
+    if (!src || !src.rows || !src.rows.length) return;
+    const n = src.rows.length;
+    this._state.ri = (this._state.ri + delta + n) % n;
+    this._render();
+  },
+
+  _render() {
+    const body = document.getElementById("smf-details-body");
+    const title = document.getElementById("smf-details-title");
+    if (!body) return;
+    const sources = this._state.sources || [];
+    if (!sources.length) {
+      body.innerHTML = '<div class="empty">No matching rows.</div>';
+      return;
+    }
+
+    const tabs = sources
+      .map((s, i) => {
+        const active = i === this._state.si ? " active" : "";
+        const label = s.table + " (" + (s.matched || 0) + ")";
+        return (
+          '<button type="button" class="details-tab' +
+          active +
+          '" onclick="SMFDetails.setSource(' +
+          i +
+          ')">' +
+          this._esc(label) +
+          "</button>"
+        );
+      })
+      .join("");
+
+    const src = sources[this._state.si] || sources[0];
+    if (src.error) {
+      body.innerHTML =
+        '<div class="details-tabs">' +
+        tabs +
+        '</div><div class="error">' +
+        this._esc(src.error) +
+        "</div>";
+      return;
+    }
+    if (!src.rows || !src.rows.length) {
+      body.innerHTML =
+        '<div class="details-tabs">' +
+        tabs +
+        '</div><div class="empty">No rows in ' +
+        this._esc(src.table) +
+        " for these filters.</div>";
+      return;
+    }
+
+    const row = src.rows[this._state.ri] || src.rows[0];
+    title.textContent = src.table + " · record " + (this._state.ri + 1) + "/" + src.rows.length;
+
+    const filled = [];
+    const empty = [];
+    Object.keys(row).forEach((k) => {
+      const v = row[k];
+      const blank = v === null || v === undefined || String(v).trim() === "";
+      (blank ? empty : filled).push(k);
+    });
+
+    const grid = (keys, cls) =>
+      keys
+        .map((k) => {
+          const v = row[k];
+          const shown = v === null || v === undefined || String(v).trim() === "" ? "—" : String(v);
+          return (
+            '<div class="details-field ' +
+            cls +
+            '"><dt>' +
+            this._esc(k) +
+            "</dt><dd class=\"mono\">" +
+            this._esc(shown) +
+            "</dd></div>"
+          );
+        })
+        .join("");
+
+    const nav =
+      src.rows.length > 1
+        ? '<div class="details-nav">' +
+          '<button type="button" class="btn" onclick="SMFDetails.setRow(-1)">← Prev</button>' +
+          "<span>Sample " +
+          (this._state.ri + 1) +
+          " of " +
+          src.rows.length +
+          " (matched " +
+          src.matched +
+          ")</span>" +
+          '<button type="button" class="btn" onclick="SMFDetails.setRow(1)">Next →</button>' +
+          "</div>"
+        : '<p class="muted" style="margin:.5rem 0">Matched ' +
+          src.matched +
+          " row(s); showing up to " +
+          src.rows.length +
+          " sample(s).</p>";
+
+    body.innerHTML =
+      '<div class="details-tabs">' +
+      tabs +
+      "</div>" +
+      nav +
+      '<div class="details-section"><h3>Filled fields (' +
+      filled.length +
+      ")</h3><dl class=\"details-grid\">" +
+      grid(filled, "") +
+      '</dl></div><div class="details-section"><h3>Empty fields (' +
+      empty.length +
+      ")</h3><dl class=\"details-grid muted-grid\">" +
+      grid(empty, "is-empty") +
+      "</dl></div>";
+  },
+};
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") SMFDetails.close();
+});

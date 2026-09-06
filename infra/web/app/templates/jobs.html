@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import details_button %}
 {% block subtitle %}<p>SMF 30 job ends (30-5) with program/step/CPU from step-end records (30-4). Click a bar to filter tables to that hour.</p>{% endblock %}
 {% block export %}
 <a class="btn" href="{{ url_for('smf.export_csv', kind='jobs', days=days, q=q) }}">Export CSV</a>
@@ -27,7 +28,7 @@
   <h2>Top jobs <span>ends=30-5 · program/step/CPU=30-4</span></h2>
   {% if top %}
   <div class="table-wrap"><table class="data">
-    <thead><tr><th>Job</th><th>SID</th><th>Ends</th><th>Programs (top)</th><th>Steps (top)</th><th>CPU (timer units)</th></tr></thead>
+    <thead><tr><th>Job</th><th>SID</th><th>Ends</th><th>Programs (top)</th><th>Steps (top)</th><th>CPU (timer units)</th><th></th></tr></thead>
     <tbody>
     {% for r in top %}
       <tr>
@@ -37,6 +38,7 @@
         <td class="mono">{{ display_cell(r.programs) }}</td>
         <td class="mono">{{ display_cell(r.steps) }}</td>
         <td>{{ fmt_cpu_timer(r.cpu_sum) }}</td>
+        <td>{{ details_button('smf_30_4,smf_30_5', {'job_name': r.job_name, 'smf_system_id': r.smf_system_id}) }}</td>
       </tr>
     {% endfor %}
     </tbody>

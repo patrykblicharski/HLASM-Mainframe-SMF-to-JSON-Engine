@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import details_button %}
 {% block subtitle %}<p>Security events, failed logons (EVT 1), users and classes.</p>{% endblock %}
 {% block export %}
 <a class="btn" href="{{ url_for('smf.export_csv', kind='racf', days=days, q=q) }}">Export CSV</a>
@@ -19,10 +20,14 @@
   <div class="panel">
     <h2>Top users</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>User</th><th>Events</th></tr></thead>
+      <thead><tr><th>User</th><th>Events</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.users %}
-        <tr><td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td><td>{{ fmt_int(r.rows) }}</td></tr>
+        <tr>
+          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td>
+          <td>{{ fmt_int(r.rows) }}</td>
+          <td>{{ details_button('smf_80', {'user_id': r.user_id}) }}</td>
+        </tr>
       {% endfor %}
       </tbody>
     </table></div>
@@ -30,10 +35,14 @@
   <div class="panel">
     <h2>Top classes</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Class</th><th>Events</th></tr></thead>
+      <thead><tr><th>Class</th><th>Events</th><th></th></tr></thead>
       <tbody>
       {% for r in summary.classes %}
-        <tr><td class="mono">{{ display_cell(r.class_name) }}</td><td>{{ fmt_int(r.rows) }}</td></tr>
+        <tr>
+          <td class="mono">{{ display_cell(r.class_name) }}</td>
+          <td>{{ fmt_int(r.rows) }}</td>
+          <td>{{ details_button('smf_80', {'class_name': r.class_name}) }}</td>
+        </tr>
       {% endfor %}
       </tbody>
     </table></div>
@@ -44,7 +53,7 @@
   <h2>Recent events</h2>
   {% if events %}
   <div class="table-wrap"><table class="data">
-    <thead><tr><th>Date</th><th>Time</th><th>User</th><th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req</th><th>Allow</th></tr></thead>
+    <thead><tr><th>Date</th><th>Time</th><th>User</th><th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req</th><th>Allow</th><th></th></tr></thead>
     <tbody>
     {% for r in events %}
       <tr>
@@ -56,6 +65,7 @@
         <td class="mono">{{ display_cell(r.old_resource) }}</td>
         <td>{{ display_cell(r.access_requested) }}</td>
         <td>{{ display_cell(r.access_allowed) }}</td>
+        <td>{{ details_button('smf_80', {'user_id': r.user_id, 'job_name': r.job_name, 'event_code': r.event_code, 'event_date': r.event_date|string, 'time': r.time}) }}</td>
       </tr>
     {% endfor %}
     </tbody>

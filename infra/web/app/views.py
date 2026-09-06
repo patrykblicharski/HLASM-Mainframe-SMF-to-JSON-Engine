@@ -17,7 +17,7 @@ from flask import (
 )
 from markupsafe import Markup
 
-from . import db, queries
+from . import db, details, queries
 from .helpers import NAV, display_cell, display_dsname, fmt_bytes, fmt_cpu_timer, fmt_int, scrub_text
 
 bp = Blueprint("smf", __name__)
@@ -269,6 +269,37 @@ def cross():
             summary=summary or {"job_security": [], "net_work": []},
             error=err,
         ),
+    )
+
+
+@bp.route("/api/details")
+def api_details():
+    """JSON: full SMF column dump for modal Details buttons."""
+    days = _days()
+    raw_tables = request.args.get("tables") or request.args.get("table") or ""
+    tables = [t.strip() for t in raw_tables.split(",") if t.strip()]
+    try:
+        limit = int(request.args.get("limit") or 8)
+    except ValueError:
+        limit = 8
+    filters = {k: v for k, v in request.args.items() if k not in {"tables", "table", "days", "limit"}}
+    try:
+        payload = details.fetch_full_details(tables, filters, days, limit=limit)
+    except ValueError as exc:
+        return Response(
+            json.dumps({"error": str(exc)}),
+            status=400,
+            mimetype="application/json",
+        )
+    except db.ClickHouseError as exc:
+        return Response(
+            json.dumps({"error": str(exc)}),
+            status=502,
+            mimetype="application/json",
+        )
+    return Response(
+        json.dumps(payload, default=str, ensure_ascii=False),
+        mimetype="application/json",
     )
 
 

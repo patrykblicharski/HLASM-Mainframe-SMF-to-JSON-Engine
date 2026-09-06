@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import details_button %}
 {% block subtitle %}<p>RACF user <strong class="mono">{{ data.user }}</strong> — events and related job CPU.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
@@ -6,7 +7,7 @@
     <h2>Security events</h2>
     {% if data.events %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Date</th><th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req/Allow</th></tr></thead>
+      <thead><tr><th>Date</th><th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req/Allow</th><th></th></tr></thead>
       <tbody>
       {% for r in data.events %}
         <tr>
@@ -16,6 +17,7 @@
           <td>{{ display_cell(r.class_name) }}</td>
           <td class="mono">{{ display_cell(r.old_resource) }}</td>
           <td>{{ display_cell(r.access_requested) }} / {{ display_cell(r.access_allowed) }}</td>
+          <td>{{ details_button('smf_80', {'user_id': data.user, 'job_name': r.job_name, 'event_code': r.event_code, 'event_date': r.event_date|string, 'time': r.time}) }}</td>
         </tr>
       {% endfor %}
       </tbody>
@@ -26,13 +28,14 @@
     <h2>Jobs (30 × 80 cross)</h2>
     {% if data.jobs %}
     <div class="table-wrap"><table class="data">
-      <thead><tr><th>Job</th><th>Ends</th><th>CPU sum</th></tr></thead>
+      <thead><tr><th>Job</th><th>Ends</th><th>CPU sum</th><th></th></tr></thead>
       <tbody>
       {% for r in data.jobs %}
         <tr>
           <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
           <td>{{ fmt_int(r.ends) }}</td>
           <td>{{ fmt_int(r.cpu_sum) }}</td>
+          <td>{{ details_button('smf_30_4,smf_30_5', {'job_name': r.job_name}) }}</td>
         </tr>
       {% endfor %}
       </tbody>

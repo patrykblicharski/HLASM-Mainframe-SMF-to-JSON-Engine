@@ -60,6 +60,22 @@
     </p>
   </main>
 </div>
+
+<dialog id="smf-details-modal" class="details-modal">
+  <div class="details-shell">
+    <header class="details-head">
+      <div>
+        <h2 id="smf-details-title">Record details</h2>
+        <p id="smf-details-sub" class="muted"></p>
+      </div>
+      <button type="button" class="btn" onclick="SMFDetails.close()">Close</button>
+    </header>
+    <div id="smf-details-body" class="details-body">
+      <div class="empty">Loading…</div>
+    </div>
+  </div>
+</dialog>
+
 {% block scripts %}{% endblock %}
 </body>
 </html>
