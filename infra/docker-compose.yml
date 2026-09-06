@@ -1,0 +1,65 @@
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: smf-clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ch_data:/var/lib/clickhouse
+      - ./clickhouse/init.sql:/init/init.sql:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    environment:
+      CLICKHOUSE_DB: smf
+      CLICKHOUSE_USER: smf
+      CLICKHOUSE_PASSWORD: smf_change_me
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  clickhouse-init:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: smf-clickhouse-init
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    volumes:
+      - ./clickhouse/init.sql:/init/init.sql:ro
+    environment:
+      CLICKHOUSE_USER: smf
+      CLICKHOUSE_PASSWORD: smf_change_me
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - |
+        clickhouse-client --host clickhouse --user "$$CLICKHOUSE_USER" --password "$$CLICKHOUSE_PASSWORD" --multiquery < /init/init.sql
+        echo "init.sql applied"
+    restart: "no"
+
+  grafana:
+    image: grafana/grafana:11.2.0
+    container_name: smf-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin_change_me
+      GF_INSTALL_PLUGINS: grafana-clickhouse-datasource
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+
+volumes:
+  ch_data:
+  grafana_data:

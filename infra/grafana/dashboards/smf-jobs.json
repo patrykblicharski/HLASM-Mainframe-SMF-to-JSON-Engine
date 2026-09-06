@@ -1,0 +1,55 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "id": null,
+  "panels": [
+    {
+      "title": "Job end records / day (SMF 30-5)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date AS time, sum(row_count) AS jobs\nFROM smf.stats_jobs_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "Top jobs (30-5)",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT job_name, sum(row_count) AS ends\nFROM smf.stats_jobs_daily\nWHERE event_date >= today() - 10\nGROUP BY job_name\nORDER BY ends DESC\nLIMIT 40"
+        }
+      ]
+    },
+    {
+      "title": "Step ends by system (raw 30-5)",
+      "type": "table",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 8 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date, smf_system_id, job_name, step_name, program_name, count() AS rows\nFROM smf.smf_30_5\nWHERE event_date >= today() - 10\nGROUP BY event_date, smf_system_id, job_name, step_name, program_name\nORDER BY rows DESC\nLIMIT 100"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["smf", "jobs", "30"],
+  "time": { "from": "now-10d", "to": "now" },
+  "title": "SMF Jobs (30)",
+  "uid": "smf-jobs",
+  "version": 1
+}

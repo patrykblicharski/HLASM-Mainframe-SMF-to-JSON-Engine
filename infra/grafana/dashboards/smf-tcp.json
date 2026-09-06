@@ -1,0 +1,69 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "id": null,
+  "panels": [
+    {
+      "title": "TCP terminations / hour (119-2)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT hour AS time, sum(conn_count) AS connections\nFROM smf.stats_tcp_hourly\nWHERE hour >= now() - INTERVAL 10 DAY\nGROUP BY hour\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "Bytes in/out / hour",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT hour AS time,\n  sum(in_bytes) AS in_bytes,\n  sum(out_bytes) AS out_bytes\nFROM smf.stats_tcp_hourly\nWHERE hour >= now() - INTERVAL 10 DAY\nGROUP BY hour\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "Top remote IPs (raw 119-2, 10d)",
+      "type": "table",
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT remote_ip, count() AS conns,\n  sum(toUInt64OrZero(in_bytes)) AS in_bytes,\n  sum(toUInt64OrZero(out_bytes)) AS out_bytes\nFROM smf.smf_119_2\nWHERE event_date >= today() - 10\nGROUP BY remote_ip\nORDER BY conns DESC\nLIMIT 40"
+        }
+      ]
+    },
+    {
+      "title": "TCP initiations by local port (119-1)",
+      "type": "table",
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 8 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT local_port, count() AS conns\nFROM smf.smf_119_1\nWHERE event_date >= today() - 10\nGROUP BY local_port\nORDER BY conns DESC\nLIMIT 40"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["smf", "tcp", "119"],
+  "time": { "from": "now-10d", "to": "now" },
+  "title": "SMF TCP (119-1/2)",
+  "uid": "smf-tcp",
+  "version": 1
+}

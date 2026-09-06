@@ -1,0 +1,69 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "id": null,
+  "panels": [
+    {
+      "title": "Dataset activity rows / day",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date AS time, direction, sum(row_count) AS rows\nFROM smf.stats_dataset_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date, direction\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "EXCP sum / day",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date AS time, direction, sum(excp_sum) AS excp\nFROM smf.stats_dataset_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date, direction\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "Top datasets (10d)",
+      "type": "table",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 8 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT direction, job_name, dsname, sum(row_count) AS rows, sum(excp_sum) AS excp\nFROM smf.stats_dataset_daily\nWHERE event_date >= today() - 10\nGROUP BY direction, job_name, dsname\nORDER BY rows DESC\nLIMIT 50"
+        }
+      ]
+    },
+    {
+      "title": "Scratches (SMF 17) raw",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 18 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date, smf_system_id, job_name, dsname, volume_serial, count() AS rows\nFROM smf.smf_17\nWHERE event_date >= today() - 10\nGROUP BY event_date, smf_system_id, job_name, dsname, volume_serial\nORDER BY rows DESC\nLIMIT 100"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["smf", "dataset"],
+  "time": { "from": "now-10d", "to": "now" },
+  "title": "SMF Datasets (14/15/17)",
+  "uid": "smf-datasets",
+  "version": 1
+}

@@ -1,0 +1,74 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "title": "Records per day (rollup)",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 16, "x": 0, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  event_date AS time,\n  table_name,\n  sum(row_count) AS rows\nFROM smf.stats_records_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date, table_name\nORDER BY time"
+        }
+      ],
+      "fieldConfig": { "defaults": {}, "overrides": [] }
+    },
+    {
+      "title": "Total rows (10d)",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(row_count) AS total FROM smf.stats_records_daily WHERE event_date >= today() - 10"
+        }
+      ]
+    },
+    {
+      "title": "Rows by table",
+      "type": "bargauge",
+      "gridPos": { "h": 5, "w": 8, "x": 16, "y": 4 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT table_name, sum(row_count) AS rows\nFROM smf.stats_records_daily\nWHERE event_date >= today() - 10\nGROUP BY table_name\nORDER BY rows DESC"
+        }
+      ]
+    },
+    {
+      "title": "Raw counts by system (sample tables)",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 9 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date, table_name, smf_system_id, sum(row_count) AS rows\nFROM smf.stats_records_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date, table_name, smf_system_id\nORDER BY event_date DESC, rows DESC\nLIMIT 200"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["smf", "overview"],
+  "templating": { "list": [] },
+  "time": { "from": "now-10d", "to": "now" },
+  "title": "SMF Overview",
+  "uid": "smf-overview",
+  "version": 1
+}

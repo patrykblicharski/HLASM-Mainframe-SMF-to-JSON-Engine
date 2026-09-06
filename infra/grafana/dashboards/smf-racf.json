@@ -1,0 +1,69 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "id": null,
+  "panels": [
+    {
+      "title": "RACF events / day",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date AS time, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "Top event codes",
+      "type": "bargauge",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_code, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE event_date >= today() - 10\nGROUP BY event_code\nORDER BY events DESC\nLIMIT 20"
+        }
+      ]
+    },
+    {
+      "title": "Top users",
+      "type": "table",
+      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT user_id, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE event_date >= today() - 10\nGROUP BY user_id\nORDER BY events DESC\nLIMIT 40"
+        }
+      ]
+    },
+    {
+      "title": "Top jobs",
+      "type": "table",
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 8 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT job_name, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE event_date >= today() - 10\nGROUP BY job_name\nORDER BY events DESC\nLIMIT 40"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["smf", "racf"],
+  "time": { "from": "now-10d", "to": "now" },
+  "title": "SMF RACF (80)",
+  "uid": "smf-racf",
+  "version": 1
+}

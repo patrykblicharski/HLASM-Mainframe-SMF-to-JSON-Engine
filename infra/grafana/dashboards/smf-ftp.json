@@ -1,0 +1,55 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "id": null,
+  "panels": [
+    {
+      "title": "FTP bytes / day",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date AS time, direction, sum(bytes_sum) AS bytes\nFROM smf.stats_ftp_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date, direction\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "FTP transfers / day",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date AS time, direction, sum(xfer_count) AS transfers\nFROM smf.stats_ftp_daily\nWHERE event_date >= today() - 10\nGROUP BY event_date, direction\nORDER BY time"
+        }
+      ]
+    },
+    {
+      "title": "Top FTP users",
+      "type": "table",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 8 },
+      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT direction, local_user, sum(bytes_sum) AS bytes, sum(xfer_count) AS transfers\nFROM smf.stats_ftp_daily\nWHERE event_date >= today() - 10\nGROUP BY direction, local_user\nORDER BY bytes DESC\nLIMIT 50"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["smf", "ftp"],
+  "time": { "from": "now-10d", "to": "now" },
+  "title": "SMF FTP (119-3/70)",
+  "uid": "smf-ftp",
+  "version": 1
+}
