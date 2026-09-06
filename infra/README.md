@@ -85,10 +85,19 @@ curl -s 'http://127.0.0.1:8123/?user=smf&password=blacha123' \
 
 Grafana: open http://SERVER:3000 → login `admin` / `blacha123`.
 
-If init container failed (race on first boot):
+If init container failed (race on first boot) **or you pulled a fixed `init.sql`**:
 
 ```bash
 chmod +x scripts/*.sh
+./scripts/init_db.sh
+```
+
+If tables were half-created with the old broken `event_date` expression, wipe and recreate:
+
+```bash
+docker compose down -v
+docker compose up -d
+sleep 15
 ./scripts/init_db.sh
 ```
 

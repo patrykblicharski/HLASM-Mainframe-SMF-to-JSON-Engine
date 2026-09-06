@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_14
     `excp_count` String,
     `tracks_allocated` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_15
     `excp_count` String,
     `tracks_allocated` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_17
     `volume_count` String,
     `volume_serial` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_61
     `entry_type` String,
     `entry_name` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_65
     `entry_type` String,
     `entry_name` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_66
     `entry_name` String,
     `new_entry_name` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -283,7 +283,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_80
     `mfa_factor_name` String,
     `mfa_policy_name` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -299,7 +299,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_89
     `time` String,
     `date` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -349,7 +349,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_30_1
     `substep_num` String,
     `omvs_pgm_name` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -501,7 +501,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_30_2
     `perf_flag2` String,
     `subsys_coll` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -653,7 +653,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_30_3
     `perf_flag2` String,
     `subsys_coll` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -812,7 +812,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_30_4
     `nonspec_tape` String,
     `spec_tape_mnt` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -971,7 +971,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_30_5
     `nonspec_tape` String,
     `spec_tape_mnt` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1123,7 +1123,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_30_6
     `perf_flag2` String,
     `subsys_coll` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1151,7 +1151,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_42_20
     `volser` String,
     `user_token` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1183,7 +1183,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_42_21
     `alias_count` String,
     `user_token` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1212,7 +1212,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_42_22
     `audit_flags` String,
     `journal_record_number` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1248,7 +1248,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_42_23
     `dataset_seq` String,
     `volume_seq` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1280,7 +1280,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_42_24
     `alias_count` String,
     `user_token` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1312,7 +1312,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_42_25
     `old_member_name` String,
     `user_token` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1362,7 +1362,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_1
     `mount_flags` String,
     `mount_flags_2` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1407,7 +1407,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_2
     `fs_name` String,
     `quiesce_flags` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1453,7 +1453,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_4
     `fs_name` String,
     `resume_flags` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1510,7 +1510,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_5
     `unmount_flags` String,
     `unmount_flags_2` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1567,7 +1567,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_6
     `unmount_flags` String,
     `unmount_flags_2` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1625,7 +1625,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_7
     `old_status_flags` String,
     `new_status_flags` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1668,7 +1668,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_10
     `file_inode` String,
     `fs_device` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1720,7 +1720,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_11
     `bytes_written` String,
     `pathname` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1762,7 +1762,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_12
     `file_inode` String,
     `fs_device` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1807,7 +1807,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_13
     `io_blocks_read` String,
     `io_blocks_written` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1855,7 +1855,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_14
     `new_name_len` String,
     `new_file_name` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1909,7 +1909,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_15
     `getcwd_rsn` String,
     `path_name_len` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1947,7 +1947,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_16
     `omvs_anchor_sid` String,
     `reserved` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -1990,7 +1990,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_92_17
     `access_count` String,
     `pathname` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2028,7 +2028,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_1
     `conn_date` String,
     `conn_stck` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2098,7 +2098,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_2
     `ttttlsuid` String,
     `ttappldata` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2168,7 +2168,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_3
     `fc_cipher` String,
     `fc_user_id` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2310,7 +2310,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_4
     `gbcfsmceid_count` String,
     `gbcfsystemeidstr` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2488,7 +2488,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_5
     `tsc6_out_grp_mem_rsp` String,
     `tsc6_out_grp_mem_red` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2546,7 +2546,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_6
     `if_add_intf_name` String,
     `if_add_intf_home` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2592,7 +2592,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_7
     `udi_bytes` String,
     `udo_bytes` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2624,7 +2624,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_8
     `st_time` String,
     `st_date` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2669,7 +2669,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_10
     `in_bytes` String,
     `out_bytes` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2844,7 +2844,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_11
     `dn_type` String,
     `dn` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -2969,7 +2969,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_12
     `dn_type` String,
     `dn` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3006,7 +3006,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_20
     `ni_time` String,
     `ni_date` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3076,7 +3076,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_21
     `nt_bucket4_rts` String,
     `nt_bucket5_rts` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3110,7 +3110,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_22
     `ci_time` String,
     `ci_date` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3152,7 +3152,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_23
     `ctc_opt` String,
     `ct_devt` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3214,7 +3214,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_24
     `lu_client_ip` String,
     `lu_user` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3249,7 +3249,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_32
     `sc_intf` String,
     `sc_saf` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3284,7 +3284,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_33
     `rm_intf` String,
     `rm_saf` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3319,7 +3319,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_34
     `ta_prot` String,
     `ta_job` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3354,7 +3354,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_35
     `tr_prot` String,
     `tr_job` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3390,7 +3390,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_36
     `tss_job` String,
     `tss_conn_id` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3426,7 +3426,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_37
     `tse_job` String,
     `tse_conn_id` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3468,7 +3468,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_38
     `ls_rmt_host_name` String,
     `ls_rmt_os_type` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3506,7 +3506,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_39
     `li_rmt_os_type` String,
     `li_ism_dev` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3546,7 +3546,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_40
     `lt_rmt_host_name` String,
     `lt_rmt_os_type` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3595,7 +3595,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_41
     `ls_out_pkts` String,
     `lsqp` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3636,7 +3636,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_42
     `lis_time` String,
     `lisstck` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3676,7 +3676,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_43
     `lte_time` String,
     `ltestck` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3716,7 +3716,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_44
     `rsqp_cnt` String,
     `rs_link_cnt` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3755,7 +3755,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_45
     `is_dmb_cnt` String,
     `is_link_cnt` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3798,7 +3798,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_48
     `cf_max_conn` String,
     `cf_charset` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3846,7 +3846,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_49
     `cs_reply` String,
     `cs_reason` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3891,7 +3891,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_50
     `mh_key` String,
     `mh_data` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3945,7 +3945,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_51
     `sj_dest` String,
     `sj_writer` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -3990,7 +3990,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_52
     `st_spool_read` String,
     `st_retry` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4059,7 +4059,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_70
     `fs_proto_buf_size` String,
     `fs_cipher` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4100,7 +4100,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_71
     `cf_ds_name` String,
     `ci_text` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4144,7 +4144,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_72
     `ff_prot_buff_size` String,
     `ff_cipher` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4186,7 +4186,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_73
     `tns_date` String,
     `id_str` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4236,7 +4236,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_74
     `tse_date` String,
     `id_str` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4287,7 +4287,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_75
     `dt_spi` String,
     `id_str` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4338,7 +4338,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_76
     `dt_spi` String,
     `id_str` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4389,7 +4389,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_77
     `dt_spi` String,
     `id_str` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4440,7 +4440,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_78
     `dt_spi` String,
     `id_str` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4492,7 +4492,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_79
     `mts_date` String,
     `id_str` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4544,7 +4544,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_80
     `mts_date` String,
     `id_str` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date
@@ -4593,7 +4593,7 @@ CREATE TABLE IF NOT EXISTS smf.smf_119_81
     `ist119_ds_doru` String,
     `ist119_ds_diru` String,
     ingested_at DateTime DEFAULT now(),
-    event_date Date MATERIALIZED toDateOrZero(parseDateTimeBestEffortOrZero(`date`))
+    event_date Date MATERIALIZED toDateOrZero(`date`)
 )
 ENGINE = MergeTree
 PARTITION BY event_date

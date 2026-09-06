@@ -148,10 +148,8 @@ def table_sql(name: str, cols: list[tuple[str, str]]) -> str:
         body.append(f"    `{key}` {ch_type(ftype, key)}")
     body.append("    ingested_at DateTime DEFAULT now()")
     if any(k == "date" for k, _ in cols):
-        body.append(
-            "    event_date Date MATERIALIZED "
-            "toDateOrZero(parseDateTimeBestEffortOrZero(`date`))"
-        )
+        # `date` is already YYYY-MM-DD String from smf2json; toDateOrZero needs String.
+        body.append("    event_date Date MATERIALIZED toDateOrZero(`date`)")
     else:
         body.append("    event_date Date MATERIALIZED toDate(ingested_at)")
 
