@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block subtitle %}<p>SMF 14/15 I/O and 17 scratches — blank/control JFCB names shown safely.</p>{% endblock %}
+{% block export %}
+<a class="btn" href="{{ url_for('smf.export_csv', kind='datasets', days=days, q=q) }}">Export CSV</a>
+{% endblock %}
+{% block content %}
+<section class="panel">
+  <h2>Activity by hour <span>INPUT / OUTPUT / SCRATCH</span></h2>
+  <div class="chart-wrap"><canvas id="dsHourly"></canvas></div>
+</section>
+
+<section class="grid grid-2" style="margin-top:1rem">
+  <div class="panel">
+    <h2>Top datasets <span>click DSN or job for drill-down</span></h2>
+    {% if top %}
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Dir</th><th>Job</th><th>Dataset</th><th>Volser</th><th>Rows</th><th>EXCP</th></tr></thead>
+        <tbody>
+        {% for r in top %}
+          <tr>
+            <td><span class="badge {{ 'in' if r.direction=='INPUT' else 'out' }}">{{ r.direction }}</span></td>
+            <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+            <td>
+              {% if r.dsname %}
+              <a href="{{ url_for('smf.dataset_detail', dsname=r.dsname, days=days) }}">{{ r.dsname_display }}</a>
+              {% else %}
+              <span class="badge blank">{{ r.dsname_display }}</span>
+              {% endif %}
+            </td>
+            <td class="mono">{{ display_cell(r.volser) }}</td>
+            <td>{{ fmt_int(r.rows) }}</td>
+            <td>{{ fmt_int(r.excp) }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">No dataset rows in this window.</div>
+    {% endif %}
+  </div>
+  <div class="panel">
+    <h2>Top scratches (SMF 17)</h2>
+    {% if scratch %}
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Job</th><th>Dataset</th><th>Vol</th><th>Rows</th></tr></thead>
+        <tbody>
+        {% for r in scratch %}
+          <tr>
+            <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+            <td>
+              {% if r.dsname %}
+              <a href="{{ url_for('smf.dataset_detail', dsname=r.dsname, days=days) }}">{{ r.dsname_display }}</a>
+              {% else %}
+              <span class="badge blank">{{ r.dsname_display }}</span>
+              {% endif %}
+            </td>
+            <td class="mono">{{ display_cell(r.volser) }}</td>
+            <td>{{ fmt_int(r.rows) }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty">No scratch activity.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+const hourly = {{ hourly|tojson_chart }};
+const packed = SMFCharts.groupSeries(hourly, "hour", "direction", "rows");
+SMFCharts.stackedBar("dsHourly", packed.labels, packed.datasets);
+</script>
+{% endblock %}

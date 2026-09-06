@@ -1,91 +1,321 @@
 {
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
   "id": null,
+  "links": [
+    {
+      "title": "Overview",
+      "type": "link",
+      "url": "/d/smf-overview"
+    },
+    {
+      "title": "Datasets",
+      "type": "link",
+      "url": "/d/smf-datasets"
+    },
+    {
+      "title": "Jobs",
+      "type": "link",
+      "url": "/d/smf-jobs"
+    },
+    {
+      "title": "RACF",
+      "type": "link",
+      "url": "/d/smf-racf"
+    },
+    {
+      "title": "TCP",
+      "type": "link",
+      "url": "/d/smf-tcp"
+    },
+    {
+      "title": "Lifecycle",
+      "type": "link",
+      "url": "/d/smf-lifecycle"
+    },
+    {
+      "title": "Cross",
+      "type": "link",
+      "url": "/d/smf-cross"
+    },
+    {
+      "title": "Web App :8080",
+      "type": "link",
+      "url": "http://${__hostname}:8080"
+    }
+  ],
   "panels": [
     {
-      "title": "RACF events / day",
+      "title": "RACF events & failed logons (EVT 1)",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } },
-        "overrides": []
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
       },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toDateTime(event_date) AS time, sum(row_count) AS events\nFROM smf.stats_racf_daily\nGROUP BY time\nORDER BY time"
+          "rawSql": "SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS time,\n  count() AS events, countIf(event_code='1') AS failed_logon\nFROM smf.smf_80 WHERE event_date>=today()-4 GROUP BY time ORDER BY time"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 18,
+            "spanNulls": true,
+            "lineWidth": 2
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": ""
     },
     {
-      "title": "RACF events by hour (raw 80)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } },
-        "overrides": []
+      "title": "Event codes",
+      "type": "piechart",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
       },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT\n  toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', if(time = '', '00:00:00', time)))) AS time,\n  count() AS events\nFROM smf.smf_80\nGROUP BY time\nORDER BY time"
+          "rawSql": "SELECT event_code, count() AS events FROM smf.smf_80 WHERE event_date>=today()-4 GROUP BY event_code ORDER BY events DESC LIMIT 12"
         }
-      ]
-    },
-    {
-      "title": "Top event codes",
-      "type": "table",
-      "gridPos": { "h": 10, "w": 8, "x": 0, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "targets": [
-        {
-          "refId": "A",
-          "format": 1,
-          "queryType": "sql",
-          "rawSql": "SELECT event_code, sum(row_count) AS events\nFROM smf.stats_racf_daily\nGROUP BY event_code\nORDER BY events DESC\nLIMIT 30"
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
         }
-      ]
+      }
     },
     {
       "title": "Top users",
       "type": "table",
-      "gridPos": { "h": 10, "w": 8, "x": 8, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT user_id, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE user_id != ''\nGROUP BY user_id\nORDER BY events DESC\nLIMIT 40"
+          "rawSql": "SELECT user_id, count() AS events FROM smf.smf_80 WHERE event_date>=today()-4 AND user_id!='' GROUP BY user_id ORDER BY events DESC LIMIT 40"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "User detail",
+              "url": "/d/smf-user-detail?var-user=${__data.fields.user_id}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
     },
     {
       "title": "Top jobs",
       "type": "table",
-      "gridPos": { "h": 10, "w": 8, "x": 16, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 8
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT job_name, sum(row_count) AS events\nFROM smf.stats_racf_daily\nWHERE job_name != ''\nGROUP BY job_name\nORDER BY events DESC\nLIMIT 40"
+          "rawSql": "SELECT job_name, count() AS events FROM smf.smf_80 WHERE event_date>=today()-4 AND job_name!='' GROUP BY job_name ORDER BY events DESC LIMIT 40"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Job detail",
+              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
+    },
+    {
+      "title": "Class mix",
+      "type": "piechart",
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 8
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT if(class_name='','(blank)',class_name) AS class_name, count() AS events FROM smf.smf_80 WHERE event_date>=today()-4 GROUP BY class_name ORDER BY events DESC LIMIT 12"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "title": "Recent events",
+      "type": "table",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT event_date, time, user_id, job_name, event_code, class_name, old_resource, access_requested, access_allowed\nFROM smf.smf_80 WHERE event_date>=today()-4\nORDER BY event_date DESC, time DESC LIMIT 100"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "User detail",
+              "url": "/d/smf-user-detail?var-user=${__data.fields.user_id}&from=${__from}&to=${__to}"
+            },
+            {
+              "title": "Job detail",
+              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
     }
   ],
   "schemaVersion": 39,
-  "tags": ["smf", "racf"],
-  "time": { "from": "now-30d", "to": "now" },
+  "tags": [
+    "smf",
+    "racf",
+    "security"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-4d",
+    "to": "now"
+  },
+  "timezone": "browser",
   "title": "SMF RACF (80)",
   "uid": "smf-racf",
-  "version": 2
+  "version": 3,
+  "refresh": "5m"
 }

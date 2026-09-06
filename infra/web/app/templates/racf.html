@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block subtitle %}<p>Security events, failed logons (EVT 1), users and classes.</p>{% endblock %}
+{% block export %}
+<a class="btn" href="{{ url_for('smf.export_csv', kind='racf', days=days, q=q) }}">Export CSV</a>
+{% endblock %}
+{% block content %}
+<section class="grid grid-2">
+  <div class="panel">
+    <h2>Events / failed logons by hour</h2>
+    <div class="chart-wrap"><canvas id="racfHourly"></canvas></div>
+  </div>
+  <div class="panel">
+    <h2>Event code mix</h2>
+    <div class="chart-wrap"><canvas id="racfCodes"></canvas></div>
+  </div>
+</section>
+
+<section class="grid grid-2" style="margin-top:1rem">
+  <div class="panel">
+    <h2>Top users</h2>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>User</th><th>Events</th></tr></thead>
+      <tbody>
+      {% for r in summary.users %}
+        <tr><td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td><td>{{ fmt_int(r.rows) }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+  <div class="panel">
+    <h2>Top classes</h2>
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Class</th><th>Events</th></tr></thead>
+      <tbody>
+      {% for r in summary.classes %}
+        <tr><td class="mono">{{ display_cell(r.class_name) }}</td><td>{{ fmt_int(r.rows) }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="panel" style="margin-top:1rem">
+  <h2>Recent events</h2>
+  {% if events %}
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Date</th><th>Time</th><th>User</th><th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req</th><th>Allow</th></tr></thead>
+    <tbody>
+    {% for r in events %}
+      <tr>
+        <td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
+        <td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td>
+        <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+        <td>{{ display_cell(r.event_code) }}</td>
+        <td>{{ display_cell(r.class_name) }}</td>
+        <td class="mono">{{ display_cell(r.old_resource) }}</td>
+        <td>{{ display_cell(r.access_requested) }}</td>
+        <td>{{ display_cell(r.access_allowed) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="empty">No RACF events.</div>{% endif %}
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+const hourly = {{ summary.hourly|tojson_chart }};
+SMFCharts.line("racfHourly",
+  hourly.map(r => String(r.hour).replace("T"," ").slice(0,16)),
+  [
+    { label: "Events", data: hourly.map(r => Number(r.events)), borderColor: "#e35d6a", backgroundColor: "#e35d6a33", fill: true },
+    { label: "Failed logon EVT1", data: hourly.map(r => Number(r.failed_logon)), borderColor: "#e6a23c", backgroundColor: "#e6a23c33", fill: true },
+  ]
+);
+const codes = {{ summary.codes|tojson_chart }};
+SMFCharts.doughnut("racfCodes", codes.map(r => "EVT "+r.event_code), codes.map(r => Number(r.rows)));
+</script>
+{% endblock %}

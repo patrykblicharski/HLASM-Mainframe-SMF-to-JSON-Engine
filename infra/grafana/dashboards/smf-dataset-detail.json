@@ -1,0 +1,165 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "title": "Overview",
+      "type": "link",
+      "url": "/d/smf-overview"
+    },
+    {
+      "title": "Datasets",
+      "type": "link",
+      "url": "/d/smf-datasets"
+    },
+    {
+      "title": "Jobs",
+      "type": "link",
+      "url": "/d/smf-jobs"
+    },
+    {
+      "title": "RACF",
+      "type": "link",
+      "url": "/d/smf-racf"
+    },
+    {
+      "title": "TCP",
+      "type": "link",
+      "url": "/d/smf-tcp"
+    },
+    {
+      "title": "Lifecycle",
+      "type": "link",
+      "url": "/d/smf-lifecycle"
+    },
+    {
+      "title": "Cross",
+      "type": "link",
+      "url": "/d/smf-cross"
+    },
+    {
+      "title": "Web App :8080",
+      "type": "link",
+      "url": "http://${__hostname}:8080"
+    }
+  ],
+  "panels": [
+    {
+      "title": "I/O for $dsname",
+      "type": "table",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT 'INPUT' AS direction, event_date, time, job_name, ddname, volser_1, excp_count\nFROM smf.smf_14 WHERE event_date>=today()-4 AND dsname='$dsname'\nUNION ALL\nSELECT 'OUTPUT', event_date, time, job_name, ddname, volser_1, excp_count\nFROM smf.smf_15 WHERE event_date>=today()-4 AND dsname='$dsname'\nORDER BY event_date DESC, time DESC LIMIT 200"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Job detail",
+              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
+    },
+    {
+      "title": "Scratches / catalog / RACF",
+      "type": "table",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT 'SCRATCH' AS kind, event_date, time, job_name, volume_serial AS detail FROM smf.smf_17 WHERE event_date>=today()-4 AND dsname='$dsname'\nUNION ALL SELECT 'DEFINE', event_date, time, job_name, catalog_name FROM smf.smf_61 WHERE event_date>=today()-4 AND entry_name='$dsname'\nUNION ALL SELECT 'DELETE', event_date, time, job_name, catalog_name FROM smf.smf_65 WHERE event_date>=today()-4 AND entry_name='$dsname'\nUNION ALL SELECT 'RACF', event_date, time, job_name, concat(user_id,' EVT',event_code) FROM smf.smf_80 WHERE event_date>=today()-4 AND old_resource='$dsname'\nORDER BY event_date DESC, time DESC LIMIT 200"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Job detail",
+              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [
+    "smf",
+    "dataset",
+    "detail"
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "dsname",
+        "label": "Dataset name",
+        "type": "textbox",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "options": [],
+        "query": "",
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "clickhouse_smf"
+        },
+        "refresh": 1,
+        "hide": 0
+      }
+    ]
+  },
+  "time": {
+    "from": "now-4d",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "SMF Dataset Detail",
+  "uid": "smf-dataset-detail",
+  "version": 3,
+  "refresh": "5m"
+}

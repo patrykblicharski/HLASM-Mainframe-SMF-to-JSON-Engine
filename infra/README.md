@@ -226,18 +226,60 @@ cd infra
 
 ## 6. Grafana dashboards
 
-After login (`admin` / `blacha123`), open folder **SMF**:
+After login (`admin` / `blacha123`), open folder **SMF**. Default time range is **last 4 days**.
 
 | Dashboard | UID | Purpose |
 |-----------|-----|---------|
-| SMF Overview | `smf-overview` | daily volumes / table mix |
-| SMF Datasets (14/15/17) | `smf-datasets` | input/output/scratch |
-| SMF RACF (80) | `smf-racf` | event codes, users, jobs |
-| SMF TCP (119-1/2) | `smf-tcp` | connections + bytes |
-| SMF FTP (119-3/70) | `smf-ftp` | transfer volume |
-| SMF Jobs (30) | `smf-jobs` | job/step ends |
+| SMF Overview | `smf-overview` | hourly pulse, KPIs, table mix |
+| SMF Datasets (14/15/17) | `smf-datasets` | I/O + scratch; safe blank DSN display |
+| SMF Jobs (30) | `smf-jobs` | ends, class mix, CPU |
+| SMF RACF (80) | `smf-racf` | EVT mix, failed logons, users |
+| SMF TCP (119-1/2) | `smf-tcp` | connections, bytes, talkers |
+| SMF FTP (119-3/70) | `smf-ftp` | transfers + empty-state when absent |
+| SMF Lifecycle | `smf-lifecycle` | 61/65/66 + 17 catalog churn |
+| SMF Cross Analysis | `smf-cross` | 30×80 and 119×workload |
+| Job / Dataset / User / IP Detail | `smf-*-detail` | drill-down targets |
+
+Regenerate JSON after edits:
+
+```bash
+python infra/scripts/gen_dashboards.py
+```
+
+Reload on server:
+
+```bash
+cd infra
+git pull
+docker compose restart grafana
+# provisioning picks up /var/lib/grafana/dashboards within ~30s
+```
 
 If panels are empty: run `./scripts/load_from_s.sh` (or convert+load+`refresh_stats.sh`).
+
+---
+
+## 6b. SMF Analytics web app (port 8080)
+
+Full peer UI to Grafana: overview, datasets, jobs, RACF, TCP, FTP, lifecycle, cross analysis, plus multi-level drill-downs (job → steps/I/O/RACF/TCP; dataset → I/O/scratch/catalog/RACF; user → events/jobs; IP → sessions), search, CSV export, encoding-safe DSN display.
+
+```bash
+cd infra
+docker compose up -d --build web
+# open http://SERVER:8080
+```
+
+Local (against remote ClickHouse):
+
+```bash
+cd infra/web
+pip install -r requirements.txt
+set CLICKHOUSE_URL=http://192.168.0.141:8123   # Windows
+# export CLICKHOUSE_URL=http://192.168.0.141:8123  # Linux
+python run.py
+```
+
+Health: `GET /health`.
 
 ---
 

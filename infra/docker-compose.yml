@@ -59,6 +59,21 @@ services:
       clickhouse:
         condition: service_healthy
 
+  web:
+    build: ./web
+    container_name: smf-web
+    ports:
+      - "8080:8080"
+    environment:
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_USER: smf
+      CLICKHOUSE_PASSWORD: blacha123
+      CLICKHOUSE_DATABASE: smf
+      SMF_DEFAULT_DAYS: "4"
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+
 volumes:
   ch_data:
   grafana_data:

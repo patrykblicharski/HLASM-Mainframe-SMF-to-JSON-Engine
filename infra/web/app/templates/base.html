@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} · SMF Analytics</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <strong>SMF Analytics</strong>
+      <span>Mainframe SMF → ClickHouse</span>
+    </div>
+    <nav class="nav">
+      {% for item in nav %}
+      <a class="{{ 'active' if active == item.endpoint else '' }}"
+         href="{{ url_for('smf.' + item.endpoint, days=days) }}">
+        <span class="dot"></span>{{ item.label }}
+      </a>
+      {% endfor %}
+    </nav>
+    <p class="muted" style="padding:.75rem;font-size:.75rem;margin-top:1.5rem;line-height:1.45">
+      Default window: last {{ days }} day(s). Sample dumps often concentrate on a single day — hourly charts stay informative.
+    </p>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>{{ title }}</h1>
+        {% block subtitle %}<p>ClickHouse-backed analytics for mapped SMF types.</p>{% endblock %}
+      </div>
+      <div class="controls">
+        <form method="get">
+          {% if q is defined and request.endpoint in ['smf.datasets','smf.jobs','smf.racf'] %}
+          <input type="search" name="q" value="{{ q }}" placeholder="Search…">
+          {% endif %}
+          <select name="days" onchange="this.form.submit()">
+            {% for d in [1,2,4,7,10,14,30] %}
+            <option value="{{ d }}" {% if days == d %}selected{% endif %}>Last {{ d }}d</option>
+            {% endfor %}
+          </select>
+          <button class="btn-primary" type="submit">Apply</button>
+        </form>
+        {% block export %}{% endblock %}
+      </div>
+    </div>
+
+    {% if error %}
+    <div class="error">ClickHouse error: {{ error }}</div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <p class="footer-note">
+      Peer UI to Grafana · encoding-safe dataset names · drill-downs for job / user / DSN / IP
+    </p>
+  </main>
+</div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

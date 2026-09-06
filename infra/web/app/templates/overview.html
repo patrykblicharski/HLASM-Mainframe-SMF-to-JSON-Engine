@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block subtitle %}<p>Workload pulse across storage, security, network, and batch.</p>{% endblock %}
+{% block content %}
+<section class="grid grid-4">
+  <div class="kpi teal"><div class="label">INPUT 14</div><div class="value">{{ fmt_int(kpis.get('in14',0)) }}</div></div>
+  <div class="kpi blue"><div class="label">OUTPUT 15</div><div class="value">{{ fmt_int(kpis.get('out15',0)) }}</div></div>
+  <div class="kpi orange"><div class="label">SCRATCH 17</div><div class="value">{{ fmt_int(kpis.get('scratch17',0)) }}</div></div>
+  <div class="kpi violet"><div class="label">JOB ENDS 30-5</div><div class="value">{{ fmt_int(kpis.get('jobs30',0)) }}</div></div>
+  <div class="kpi red"><div class="label">RACF 80</div><div class="value">{{ fmt_int(kpis.get('racf80',0)) }}</div></div>
+  <div class="kpi cyan"><div class="label">TCP TERM 119-2</div><div class="value">{{ fmt_int(kpis.get('tcp119',0)) }}</div></div>
+  <div class="kpi green"><div class="label">CATALOG 61/65/66</div><div class="value">{{ fmt_int((kpis.get('def61',0)|int) + (kpis.get('del65',0)|int) + (kpis.get('alt66',0)|int)) }}</div></div>
+  <div class="kpi"><div class="label">FTP 3 / 70</div><div class="value">{{ fmt_int(kpis.get('ftp3',0)) }} / {{ fmt_int(kpis.get('ftp70',0)) }}</div></div>
+</section>
+
+<section class="grid grid-2" style="margin-top:1rem">
+  <div class="panel">
+    <h2>Hourly activity <span>bars stay useful on single-day dumps</span></h2>
+    <div class="chart-wrap"><canvas id="hourlyChart"></canvas></div>
+  </div>
+  <div class="panel">
+    <h2>Rows by loaded table <span>top 40 from stats</span></h2>
+    <div class="chart-wrap"><canvas id="tablesChart"></canvas></div>
+  </div>
+</section>
+
+<section class="panel" style="margin-top:1rem">
+  <h2>Table mix</h2>
+  {% if tables %}
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>Table</th><th>Rows</th></tr></thead>
+      <tbody>
+      {% for r in tables %}
+        <tr><td class="mono">{{ r.table_name }}</td><td>{{ fmt_int(r.rows) }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">No stats_records_daily rows yet — run <code>./scripts/refresh_stats.sh</code> after load.</div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const hourly = {{ hourly|tojson_chart }};
+const packed = SMFCharts.groupSeries(hourly, "hour", "source", "rows");
+SMFCharts.stackedBar("hourlyChart", packed.labels, packed.datasets);
+const tables = {{ tables|tojson_chart }};
+SMFCharts.doughnut("tablesChart", tables.slice(0,12).map(r => r.table_name), tables.slice(0,12).map(r => Number(r.rows)));
+</script>
+{% endblock %}

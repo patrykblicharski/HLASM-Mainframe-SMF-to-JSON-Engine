@@ -55,8 +55,21 @@ TYPE_LENGTHS["DTE"] = 4
 
 
 def ebcdic_to_str(data: bytes) -> str:
-    # Null-padded and space-padded EBCDIC fields are common in SMF.
-    return data.decode("cp037", errors="replace").rstrip(" \x00")
+    """Decode EBCDIC (cp037) text, stripping padding and control garbage.
+
+    SMF character fields are usually space- (x'40') or null-padded. Some hosts
+    also fill unused JFCB/DSN areas with control bytes such as x'04', which
+    cp037 maps to U+009C. Leaving those in the string made Grafana show
+    ``???????????????`` after ASCII scrubbing. Drop non-printables so blank
+    / unusable fields become an empty string instead.
+    """
+    if not data:
+        return ""
+    text = data.decode("cp037", errors="replace").rstrip(" \x00")
+    # Keep printable Unicode (letters, digits, punctuation, space). Drop C0/C1
+    # controls and the Unicode replacement character from bad bytes.
+    cleaned = "".join(ch for ch in text if ch.isprintable()).rstrip()
+    return cleaned
 
 
 def parse_smf_date(raw: bytes) -> str:

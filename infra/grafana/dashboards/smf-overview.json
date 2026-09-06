@@ -1,114 +1,504 @@
 {
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "links": [],
+  "links": [
+    {
+      "title": "Overview",
+      "type": "link",
+      "url": "/d/smf-overview"
+    },
+    {
+      "title": "Datasets",
+      "type": "link",
+      "url": "/d/smf-datasets"
+    },
+    {
+      "title": "Jobs",
+      "type": "link",
+      "url": "/d/smf-jobs"
+    },
+    {
+      "title": "RACF",
+      "type": "link",
+      "url": "/d/smf-racf"
+    },
+    {
+      "title": "TCP",
+      "type": "link",
+      "url": "/d/smf-tcp"
+    },
+    {
+      "title": "Lifecycle",
+      "type": "link",
+      "url": "/d/smf-lifecycle"
+    },
+    {
+      "title": "Cross",
+      "type": "link",
+      "url": "/d/smf-cross"
+    },
+    {
+      "title": "Web App :8080",
+      "type": "link",
+      "url": "http://${__hostname}:8080"
+    }
+  ],
   "panels": [
     {
-      "title": "Records per day (all loaded types)",
-      "description": "One point per calendar day present in the dump. With a single dump day you will see one spike — that is expected.",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 16, "x": 0, "y": 0 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "title": "Total rows (stats)",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT sum(row_count) FROM smf.stats_records_daily WHERE event_date >= today()-4"
+        }
+      ],
       "fieldConfig": {
         "defaults": {
-          "custom": { "drawStyle": "bars", "fillOpacity": 40, "spanNulls": true },
-          "unit": "short"
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              },
+              {
+                "color": "teal",
+                "value": 0
+              }
+            ]
+          }
         },
         "overrides": []
       },
-      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
-      "targets": [
-        {
-          "refId": "A",
-          "format": 1,
-          "queryType": "sql",
-          "rawSql": "SELECT\n  toDateTime(event_date) AS time,\n  sum(row_count) AS rows\nFROM smf.stats_records_daily\nWHERE event_date >= today() - 30\nGROUP BY time\nORDER BY time"
-        }
-      ]
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "value_and_name"
+      }
     },
     {
-      "title": "Total rows loaded",
+      "title": "Distinct days",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "options": { "colorMode": "value", "graphMode": "none", "textMode": "value" },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(row_count) AS total FROM smf.stats_records_daily"
+          "rawSql": "SELECT countDistinct(event_date) FROM smf.stats_records_daily"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              },
+              {
+                "color": "purple",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "value_and_name"
+      }
     },
     {
-      "title": "Distinct event days",
+      "title": "INPUT 14",
       "type": "stat",
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 4 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT countDistinct(event_date) AS days FROM smf.stats_records_daily"
+          "rawSql": "SELECT count() FROM smf.smf_14 WHERE event_date >= today()-4"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "value_and_name"
+      }
+    },
+    {
+      "title": "RACF 80",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT count() FROM smf.smf_80 WHERE event_date >= today()-4"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "value_and_name"
+      }
+    },
+    {
+      "title": "TCP 119-2",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT count() FROM smf.smf_119_2 WHERE event_date >= today()-4"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              },
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "value_and_name"
+      }
+    },
+    {
+      "title": "Jobs 30-5",
+      "type": "stat",
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT count() FROM smf.smf_30_5 WHERE event_date >= today()-4"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "textMode": "value_and_name"
+      }
+    },
+    {
+      "title": "Hourly pulse (multi-type)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 9,
+        "w": 16,
+        "x": 0,
+        "y": 4
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT hour AS time, source, sum(cnt) AS rows FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,'INPUT-14' AS source,count() AS cnt FROM smf.smf_14 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))), 'OUTPUT-15', count() FROM smf.smf_15 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))), 'RACF-80', count() FROM smf.smf_80 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))), 'TCP-119-2', count() FROM smf.smf_119_2 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))), 'JOB-30-5', count() FROM smf.smf_30_5 WHERE event_date>=today()-4 GROUP BY hour\n) GROUP BY time, source ORDER BY time"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 45,
+            "spanNulls": true,
+            "lineWidth": 2,
+            "stacking": {
+              "mode": "normal"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": "Works well when the dump is concentrated on one calendar day."
     },
     {
       "title": "Rows by table",
-      "type": "bargauge",
-      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "options": { "orientation": "horizontal", "displayMode": "gradient", "showUnfilled": true },
+      "type": "piechart",
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 4
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT table_name, sum(row_count) AS rows\nFROM smf.stats_records_daily\nGROUP BY table_name\nORDER BY rows DESC"
+          "rawSql": "SELECT table_name, sum(row_count) AS rows FROM smf.stats_records_daily WHERE event_date>=today()-4 GROUP BY table_name ORDER BY rows DESC LIMIT 12"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
     },
     {
-      "title": "Rows by system",
+      "title": "Top systems",
       "type": "bargauge",
-      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "options": { "orientation": "horizontal", "displayMode": "gradient" },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 13
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT smf_system_id, sum(row_count) AS rows\nFROM smf.stats_records_daily\nGROUP BY smf_system_id\nORDER BY rows DESC"
+          "rawSql": "SELECT smf_system_id, sum(row_count) AS rows FROM smf.stats_records_daily WHERE event_date>=today()-4 GROUP BY smf_system_id ORDER BY rows DESC"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true
+      }
     },
     {
-      "title": "Counts by day / table / system",
+      "title": "Daily / table / system",
       "type": "table",
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 18 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 13
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT\n  event_date,\n  table_name,\n  smf_system_id,\n  sum(row_count) AS rows\nFROM smf.stats_records_daily\nGROUP BY event_date, table_name, smf_system_id\nORDER BY rows DESC\nLIMIT 200"
+          "rawSql": "SELECT event_date, table_name, smf_system_id, sum(row_count) AS rows FROM smf.stats_records_daily WHERE event_date>=today()-4 GROUP BY event_date, table_name, smf_system_id ORDER BY rows DESC LIMIT 200"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
     }
   ],
   "schemaVersion": 39,
-  "tags": ["smf", "overview"],
-  "templating": { "list": [] },
-  "time": { "from": "now-30d", "to": "now" },
+  "tags": [
+    "smf",
+    "overview"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-4d",
+    "to": "now"
+  },
   "timezone": "browser",
   "title": "SMF Overview",
   "uid": "smf-overview",
-  "version": 2
+  "version": 3,
+  "refresh": "5m"
 }

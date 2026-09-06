@@ -1,0 +1,147 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [
+    {
+      "title": "Overview",
+      "type": "link",
+      "url": "/d/smf-overview"
+    },
+    {
+      "title": "Datasets",
+      "type": "link",
+      "url": "/d/smf-datasets"
+    },
+    {
+      "title": "Jobs",
+      "type": "link",
+      "url": "/d/smf-jobs"
+    },
+    {
+      "title": "RACF",
+      "type": "link",
+      "url": "/d/smf-racf"
+    },
+    {
+      "title": "TCP",
+      "type": "link",
+      "url": "/d/smf-tcp"
+    },
+    {
+      "title": "Lifecycle",
+      "type": "link",
+      "url": "/d/smf-lifecycle"
+    },
+    {
+      "title": "Cross",
+      "type": "link",
+      "url": "/d/smf-cross"
+    },
+    {
+      "title": "Web App :8080",
+      "type": "link",
+      "url": "http://${__hostname}:8080"
+    }
+  ],
+  "panels": [
+    {
+      "title": "30 \u00d7 80 \u2014 job ends vs RACF events",
+      "type": "table",
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT j.job_name, j.ends, j.cpu_sum, coalesce(r.events,0) AS racf_events\nFROM (\n  SELECT job_name, count() AS ends, sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum\n  FROM smf.smf_30_5 WHERE event_date>=today()-4 AND job_name!='' GROUP BY job_name\n) j\nLEFT JOIN (\n  SELECT job_name, count() AS events FROM smf.smf_80 WHERE event_date>=today()-4 AND job_name!='' GROUP BY job_name\n) r USING (job_name)\nORDER BY racf_events DESC, ends DESC LIMIT 50"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Job detail",
+              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": "ANALYTICS.md priority cross #1"
+    },
+    {
+      "title": "119 \u00d7 workload \u2014 network bytes",
+      "type": "table",
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT if(resource_name='',as_name,resource_name) AS job_name, count() AS conns,\n  sum(toUInt64OrZero(in_bytes)) AS in_bytes, sum(toUInt64OrZero(out_bytes)) AS out_bytes\nFROM smf.smf_119_2 WHERE event_date>=today()-4\nGROUP BY job_name ORDER BY (in_bytes+out_bytes) DESC LIMIT 50"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Job detail",
+              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": "ANALYTICS.md priority cross #2"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [
+    "smf",
+    "cross",
+    "analytics"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-4d",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "title": "SMF Cross Analysis",
+  "uid": "smf-cross",
+  "version": 3,
+  "refresh": "5m"
+}

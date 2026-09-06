@@ -50,10 +50,10 @@
   ],
   "panels": [
     {
-      "title": "I/O + scratch by hour",
+      "title": "Catalog + scratch by hour",
       "type": "timeseries",
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 16,
         "x": 0,
         "y": 0
@@ -67,7 +67,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT hour AS time, direction, sum(cnt) AS rows FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,'INPUT' AS direction,count() AS cnt FROM smf.smf_14 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'OUTPUT',count() FROM smf.smf_15 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'SCRATCH',count() FROM smf.smf_17 WHERE event_date>=today()-4 GROUP BY hour\n) GROUP BY time, direction ORDER BY time"
+          "rawSql": "SELECT hour AS time, action, sum(cnt) AS rows FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,'DEFINE-61' AS action,count() AS cnt FROM smf.smf_61 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'DELETE-65',count() FROM smf.smf_65 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'ALTER-66',count() FROM smf.smf_66 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'SCRATCH-17',count() FROM smf.smf_17 WHERE event_date>=today()-4 GROUP BY hour\n) GROUP BY time, action ORDER BY time"
         }
       ],
       "fieldConfig": {
@@ -93,10 +93,10 @@
       "description": ""
     },
     {
-      "title": "INPUT vs OUTPUT vs SCRATCH",
+      "title": "Action mix",
       "type": "piechart",
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 8,
         "x": 16,
         "y": 0
@@ -110,7 +110,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT direction, sum(c) AS rows FROM (\n  SELECT 'INPUT' AS direction, count() AS c FROM smf.smf_14 WHERE event_date>=today()-4\n  UNION ALL SELECT 'OUTPUT', count() FROM smf.smf_15 WHERE event_date>=today()-4\n  UNION ALL SELECT 'SCRATCH', count() FROM smf.smf_17 WHERE event_date>=today()-4\n) GROUP BY direction"
+          "rawSql": "SELECT action, sum(c) AS rows FROM (\n  SELECT 'DEFINE' AS action, count() AS c FROM smf.smf_61 WHERE event_date>=today()-4\n  UNION ALL SELECT 'DELETE', count() FROM smf.smf_65 WHERE event_date>=today()-4\n  UNION ALL SELECT 'ALTER', count() FROM smf.smf_66 WHERE event_date>=today()-4\n  UNION ALL SELECT 'SCRATCH', count() FROM smf.smf_17 WHERE event_date>=today()-4\n) GROUP BY action"
         }
       ],
       "fieldConfig": {
@@ -139,13 +139,13 @@
       }
     },
     {
-      "title": "Top datasets (blank JFCB shown as empty \u2014 not ???????)",
+      "title": "Top catalog entries",
       "type": "table",
       "gridPos": {
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "datasource": {
         "type": "grafana-clickhouse-datasource",
@@ -156,49 +156,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT direction, job_name,\n  if(dsname = '' OR match(dsname, '^[\\\\x00-\\\\x1f\\\\x7f-\\\\x9f\\\\x{fffd}?]+$'), concat('(no dsname) ', volser), dsname) AS dsname_display,\n  if(dsname = '' OR match(dsname, '^[\\\\x00-\\\\x1f\\\\x7f-\\\\x9f\\\\x{fffd}?]+$'), '', dsname) AS dsname,\n  volser, sum(rows) AS rows, sum(excp) AS excp\nFROM (\n  SELECT 'INPUT' AS direction, job_name, trim(BOTH ' ' FROM dsname) AS dsname, volser_1 AS volser, count() AS rows, sum(toUInt64OrZero(excp_count)) AS excp\n  FROM smf.smf_14 WHERE event_date>=today()-4 GROUP BY job_name, dsname, volser\n  UNION ALL\n  SELECT 'OUTPUT', job_name, trim(BOTH ' ' FROM dsname), volser_1, count(), sum(toUInt64OrZero(excp_count))\n  FROM smf.smf_15 WHERE event_date>=today()-4 GROUP BY job_name, dsname, volser\n)\nGROUP BY direction, job_name, dsname_display, dsname, volser\nORDER BY rows DESC LIMIT 60"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "links": [
-            {
-              "title": "Dataset detail",
-              "url": "/d/smf-dataset-detail?var-dsname=${__data.fields.dsname}&from=${__from}&to=${__to}"
-            },
-            {
-              "title": "Job detail",
-              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
-            }
-          ]
-        },
-        "overrides": []
-      },
-      "options": {
-        "showHeader": true,
-        "cellHeight": "sm"
-      },
-      "description": "Control-byte JFCB fills (EBCDIC x'04') are blanked at export; Grafana no longer maps them to ???."
-    },
-    {
-      "title": "Top scratches",
-      "type": "table",
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 18
-      },
-      "datasource": {
-        "type": "grafana-clickhouse-datasource",
-        "uid": "clickhouse_smf"
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "format": 1,
-          "queryType": "sql",
-          "rawSql": "SELECT job_name,\n  if(trim(BOTH ' ' FROM dsname)='','(no dsname)', dsname) AS dsname_display,\n  if(trim(BOTH ' ' FROM dsname)='','', dsname) AS dsname,\n  volume_serial AS volser, count() AS rows\nFROM smf.smf_17 WHERE event_date>=today()-4\nGROUP BY job_name, dsname_display, dsname, volser ORDER BY rows DESC LIMIT 50"
+          "rawSql": "SELECT action, entry_name AS dsname, job_name, count() AS rows FROM (\n  SELECT 'DEFINE' AS action, entry_name, job_name FROM smf.smf_61 WHERE event_date>=today()-4\n  UNION ALL SELECT 'DELETE', entry_name, job_name FROM smf.smf_65 WHERE event_date>=today()-4\n  UNION ALL SELECT 'ALTER', entry_name, job_name FROM smf.smf_66 WHERE event_date>=today()-4\n) WHERE entry_name!='' GROUP BY action, dsname, job_name ORDER BY rows DESC LIMIT 60"
         }
       ],
       "fieldConfig": {
@@ -226,7 +184,8 @@
   "schemaVersion": 39,
   "tags": [
     "smf",
-    "dataset"
+    "lifecycle",
+    "catalog"
   ],
   "templating": {
     "list": []
@@ -236,8 +195,8 @@
     "to": "now"
   },
   "timezone": "browser",
-  "title": "SMF Datasets (14/15/17)",
-  "uid": "smf-datasets",
+  "title": "SMF Lifecycle (61/65/66/17)",
+  "uid": "smf-lifecycle",
   "version": 3,
   "refresh": "5m"
 }

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block subtitle %}<p>Sessions for IP <strong class="mono">{{ data.ip }}</strong>.</p>{% endblock %}
+{% block content %}
+<section class="stack">
+  <div class="panel">
+    <h2>Terminations (119-2)</h2>
+    {% if data.sessions %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Date</th><th>Resource</th><th>Remote</th><th>Local</th><th>In</th><th>Out</th><th>Term</th><th>Conn</th></tr></thead>
+      <tbody>
+      {% for r in data.sessions %}
+        <tr>
+          <td>{{ r.event_date }} {{ r.time }}</td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.resource_name or r.as_name, days=days) }}">{{ display_cell(r.resource_name or r.as_name) }}</a></td>
+          <td class="mono">{{ display_cell(r.remote_ip) }}:{{ display_cell(r.remote_port) }}</td>
+          <td class="mono">{{ display_cell(r.local_ip) }}:{{ display_cell(r.local_port) }}</td>
+          <td>{{ fmt_bytes(r.in_bytes) }}</td>
+          <td>{{ fmt_bytes(r.out_bytes) }}</td>
+          <td>{{ display_cell(r.term_code) }}</td>
+          <td class="mono">{{ display_cell(r.connection_id) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No terminations for this IP.</div>{% endif %}
+  </div>
+  <div class="panel">
+    <h2>Initiations (119-1)</h2>
+    {% if data.inits %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Date</th><th>Resource</th><th>Remote</th><th>Local</th><th>Conn</th></tr></thead>
+      <tbody>
+      {% for r in data.inits %}
+        <tr>
+          <td>{{ r.event_date }} {{ r.time }}</td>
+          <td>{{ display_cell(r.resource_name) }}</td>
+          <td class="mono">{{ display_cell(r.remote_ip) }}:{{ display_cell(r.remote_port) }}</td>
+          <td class="mono">{{ display_cell(r.local_ip) }}:{{ display_cell(r.local_port) }}</td>
+          <td class="mono">{{ display_cell(r.connection_id) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No initiations.</div>{% endif %}
+  </div>
+</section>
+{% endblock %}

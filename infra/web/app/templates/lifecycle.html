@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block subtitle %}<p>Catalog DEFINE/DELETE/ALTER + scratch churn (ANALYTICS fact_catalog / lifecycle).</p>{% endblock %}
+{% block content %}
+<section class="panel">
+  <h2>Catalog &amp; scratch by hour</h2>
+  <div class="chart-wrap"><canvas id="lifeHourly"></canvas></div>
+</section>
+<section class="grid grid-2" style="margin-top:1rem">
+  <div class="panel">
+    <h2>Top catalog entries</h2>
+    {% if summary.tops %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Action</th><th>Entry</th><th>Job</th><th>Rows</th></tr></thead>
+      <tbody>
+      {% for r in summary.tops %}
+        <tr>
+          <td>{{ r.action }}</td>
+          <td><a href="{{ url_for('smf.dataset_detail', dsname=r.entry_name, days=days) }}">{{ display_cell(r.entry_name) }}</a></td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td>{{ fmt_int(r.rows) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No catalog activity.</div>{% endif %}
+  </div>
+  <div class="panel">
+    <h2>Top catalogs</h2>
+    {% if summary.catalogs %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Catalog</th><th>Rows</th></tr></thead>
+      <tbody>
+      {% for r in summary.catalogs %}
+        <tr><td class="mono">{{ display_cell(r.catalog_name) }}</td><td>{{ fmt_int(r.rows) }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No catalog names.</div>{% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+const hourly = {{ summary.hourly|tojson_chart }};
+const packed = SMFCharts.groupSeries(hourly, "hour", "action", "rows");
+SMFCharts.stackedBar("lifeHourly", packed.labels, packed.datasets);
+</script>
+{% endblock %}

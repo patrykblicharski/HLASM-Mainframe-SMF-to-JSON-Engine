@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block subtitle %}<p>FTP client/server transfers — empty when 119-3/70 absent from the dump.</p>{% endblock %}
+{% block content %}
+<section class="grid grid-4">
+  <div class="kpi teal"><div class="label">Client 119-3</div><div class="value">{{ fmt_int(summary.client) }}</div></div>
+  <div class="kpi blue"><div class="label">Server 119-70</div><div class="value">{{ fmt_int(summary.server) }}</div></div>
+  <div class="kpi red"><div class="label">Logon fail 119-72</div><div class="value">{{ fmt_int(summary.fail72) }}</div></div>
+  <div class="kpi"><div class="label">Status</div><div class="value" style="font-size:1.1rem">{% if summary.client or summary.server %}Data present{% else %}No FTP rows{% endif %}</div></div>
+</section>
+
+{% if not summary.client and not summary.server %}
+<section class="panel" style="margin-top:1rem">
+  <div class="empty">
+    <strong>No FTP subtype 3/70 data in ClickHouse for this window.</strong><br>
+    Your <code>t119</code> dump may only contain other subtypes (1, 2, 5, 6, 10, …). Available 119 activity below is for context — use the TCP dashboard for connection analytics.
+  </div>
+</section>
+{% endif %}
+
+<section class="grid grid-2" style="margin-top:1rem">
+  <div class="panel">
+    <h2>FTP users (stats)</h2>
+    {% if summary.users %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Direction</th><th>User</th><th>Bytes</th><th>Transfers</th></tr></thead>
+      <tbody>
+      {% for r in summary.users %}
+        <tr>
+          <td>{{ display_cell(r.direction) }}</td>
+          <td>{{ display_cell(r.local_user) }}</td>
+          <td>{{ fmt_bytes(r.bytes) }}</td>
+          <td>{{ fmt_int(r.transfers) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">stats_ftp_daily is empty.</div>{% endif %}
+  </div>
+  <div class="panel">
+    <h2>Other 119 subtypes present</h2>
+    {% if summary.subtypes %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Table</th><th>Subtype</th><th>Rows</th></tr></thead>
+      <tbody>
+      {% for r in summary.subtypes %}
+        <tr><td class="mono">{{ display_cell(r.table) }}</td><td class="mono">{{ display_cell(r.smf_subtype) }}</td><td>{{ fmt_int(r.rows) }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No alternate subtype counts.</div>{% endif %}
+  </div>
+</section>
+{% endblock %}

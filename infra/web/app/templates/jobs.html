@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block subtitle %}<p>SMF 30 job ends — programs/steps shown only when present in the dump.</p>{% endblock %}
+{% block export %}
+<a class="btn" href="{{ url_for('smf.export_csv', kind='jobs', days=days, q=q) }}">Export CSV</a>
+{% endblock %}
+{% block content %}
+<section class="grid grid-2">
+  <div class="panel">
+    <h2>Job ends by hour</h2>
+    <div class="chart-wrap"><canvas id="jobHourly"></canvas></div>
+  </div>
+  <div class="panel">
+    <h2>Job class mix</h2>
+    <div class="chart-wrap"><canvas id="jobClass"></canvas></div>
+  </div>
+</section>
+
+<section class="panel" style="margin-top:1rem">
+  <h2>Top jobs <span>click for steps, datasets, RACF, TCP</span></h2>
+  {% if top %}
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Job</th><th>SID</th><th>Ends</th><th>With program</th><th>With step</th><th>CPU sum</th></tr></thead>
+    <tbody>
+    {% for r in top %}
+      <tr>
+        <td><a href="{{ url_for('smf.job_detail', job=r.job_name, days=days) }}">{{ display_cell(r.job_name) }}</a></td>
+        <td class="mono">{{ display_cell(r.smf_system_id) }}</td>
+        <td>{{ fmt_int(r.ends) }}</td>
+        <td>{{ fmt_int(r.with_program) }}</td>
+        <td>{{ fmt_int(r.with_step) }}</td>
+        <td>{{ fmt_int(r.cpu_sum) }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="empty">No SMF 30-5 rows in this window.</div>{% endif %}
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+const hourly = {{ hourly|tojson_chart }};
+SMFCharts.stackedBar("jobHourly",
+  hourly.map(r => String(r.hour).replace("T"," ").slice(0,16)),
+  [{ label: "Ends", data: hourly.map(r => Number(r.ends)), backgroundColor: "#9b7bffcc", borderColor: "#9b7bff" }]
+);
+const classes = {{ classes|tojson_chart }};
+SMFCharts.doughnut("jobClass", classes.map(r => r.job_class), classes.map(r => Number(r.rows)));
+</script>
+{% endblock %}

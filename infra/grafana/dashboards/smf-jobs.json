@@ -1,92 +1,270 @@
 {
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
   "id": null,
+  "links": [
+    {
+      "title": "Overview",
+      "type": "link",
+      "url": "/d/smf-overview"
+    },
+    {
+      "title": "Datasets",
+      "type": "link",
+      "url": "/d/smf-datasets"
+    },
+    {
+      "title": "Jobs",
+      "type": "link",
+      "url": "/d/smf-jobs"
+    },
+    {
+      "title": "RACF",
+      "type": "link",
+      "url": "/d/smf-racf"
+    },
+    {
+      "title": "TCP",
+      "type": "link",
+      "url": "/d/smf-tcp"
+    },
+    {
+      "title": "Lifecycle",
+      "type": "link",
+      "url": "/d/smf-lifecycle"
+    },
+    {
+      "title": "Cross",
+      "type": "link",
+      "url": "/d/smf-cross"
+    },
+    {
+      "title": "Web App :8080",
+      "type": "link",
+      "url": "http://${__hostname}:8080"
+    }
+  ],
   "panels": [
     {
-      "title": "Job end records / day (SMF 30-5)",
+      "title": "Job ends by hour (30-5)",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } },
-        "overrides": []
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
       },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toDateTime(event_date) AS time, sum(row_count) AS jobs\nFROM smf.stats_jobs_daily\nGROUP BY time\nORDER BY time"
+          "rawSql": "SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS time, count() AS ends\nFROM smf.smf_30_5 WHERE event_date>=today()-4 GROUP BY time ORDER BY time"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 45,
+            "spanNulls": true,
+            "lineWidth": 2
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": ""
     },
     {
-      "title": "Job ends by hour (raw 30-5)",
-      "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } },
-        "overrides": []
+      "title": "Job class mix",
+      "type": "piechart",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
       },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT\n  toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', if(time = '', '00:00:00', time)))) AS time,\n  count() AS ends\nFROM smf.smf_30_5\nGROUP BY time\nORDER BY time"
+          "rawSql": "SELECT if(job_class='','(blank)',job_class) AS job_class, count() AS rows\nFROM smf.smf_30_5 WHERE event_date>=today()-4 GROUP BY job_class ORDER BY rows DESC LIMIT 15"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
     },
     {
-      "title": "Top jobs (30-5)",
+      "title": "Top jobs",
       "type": "table",
-      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT job_name, sum(row_count) AS ends\nFROM smf.stats_jobs_daily\nWHERE job_name != ''\nGROUP BY job_name\nORDER BY ends DESC\nLIMIT 40"
+          "rawSql": "SELECT job_name, count() AS ends, countIf(program_name!='') AS with_program,\n  sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum\nFROM smf.smf_30_5 WHERE event_date>=today()-4 AND job_name!=''\nGROUP BY job_name ORDER BY ends DESC LIMIT 40"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Job detail",
+              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
     },
     {
-      "title": "Top programs / steps (non-empty only)",
-      "description": "Many 30-5 rows have blank step/program in this dump — only non-empty values are listed.",
+      "title": "Programs / steps (non-empty only)",
       "type": "table",
-      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT\n  nullIf(program_name, '') AS program_name,\n  nullIf(step_name, '') AS step_name,\n  count() AS rows\nFROM smf.smf_30_5\nWHERE program_name != '' OR step_name != ''\nGROUP BY program_name, step_name\nORDER BY rows DESC\nLIMIT 40"
+          "rawSql": "SELECT nullIf(program_name,'') AS program_name, nullIf(step_name,'') AS step_name, count() AS rows\nFROM smf.smf_30_5 WHERE event_date>=today()-4 AND (program_name!='' OR step_name!='')\nGROUP BY program_name, step_name ORDER BY rows DESC LIMIT 40"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": "Many dumps leave step/program blank \u2014 do not invent values."
     },
     {
-      "title": "Step ends by system (raw 30-5)",
-      "type": "table",
-      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 18 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "title": "CPU sum by job (top 15)",
+      "type": "bargauge",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT\n  event_date,\n  smf_system_id,\n  job_name,\n  nullIf(step_name, '') AS step_name,\n  nullIf(program_name, '') AS program_name,\n  count() AS rows\nFROM smf.smf_30_5\nGROUP BY event_date, smf_system_id, job_name, step_name, program_name\nORDER BY rows DESC\nLIMIT 100"
+          "rawSql": "SELECT job_name, sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum\nFROM smf.smf_30_5 WHERE event_date>=today()-4 AND job_name!=''\nGROUP BY job_name ORDER BY cpu_sum DESC LIMIT 15"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true
+      }
     }
   ],
   "schemaVersion": 39,
-  "tags": ["smf", "jobs", "30"],
-  "time": { "from": "now-30d", "to": "now" },
+  "tags": [
+    "smf",
+    "jobs",
+    "30"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-4d",
+    "to": "now"
+  },
+  "timezone": "browser",
   "title": "SMF Jobs (30)",
   "uid": "smf-jobs",
-  "version": 2
+  "version": 3,
+  "refresh": "5m"
 }

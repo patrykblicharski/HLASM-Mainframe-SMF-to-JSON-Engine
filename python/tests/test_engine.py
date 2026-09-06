@@ -35,7 +35,16 @@ from smf2json.sample_dump import (
     build_smf119_st10,
     build_smf119_st32,
 )
-from smf2json.types import FieldSpec, convert_value, parse_ip16, parse_ip4, parse_ipunion, parse_smf_date, parse_smf_time
+from smf2json.types import (
+    FieldSpec,
+    convert_value,
+    ebcdic_to_str,
+    parse_ip16,
+    parse_ip4,
+    parse_ipunion,
+    parse_smf_date,
+    parse_smf_time,
+)
 
 
 class TypeTests(unittest.TestCase):
@@ -59,6 +68,15 @@ class TypeTests(unittest.TestCase):
         spec = FieldSpec("sid", "SMF30SID", "CHR4", 14)
         raw = "PROD".encode("cp037")
         self.assertEqual(convert_value(spec, raw), "PROD")
+
+    def test_ebcdic_control_fill_becomes_empty(self) -> None:
+        # JFCBDSNM sometimes filled with EBCDIC x'04' (→ U+009C); treat as blank.
+        self.assertEqual(ebcdic_to_str(bytes([0x04] * 44)), "")
+        self.assertEqual(ebcdic_to_str(b"\x00\x00"), "")
+        self.assertEqual(
+            ebcdic_to_str("SYS1.LINKLIB".encode("cp037").ljust(44, b"\x40")),
+            "SYS1.LINKLIB",
+        )
 
     def test_ip16_mapped(self) -> None:
         raw = bytes(10) + b"\xff\xff" + bytes((10, 1, 2, 3))

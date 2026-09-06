@@ -1,77 +1,305 @@
 {
-  "annotations": { "list": [] },
+  "annotations": {
+    "list": []
+  },
   "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
   "id": null,
+  "links": [
+    {
+      "title": "Overview",
+      "type": "link",
+      "url": "/d/smf-overview"
+    },
+    {
+      "title": "Datasets",
+      "type": "link",
+      "url": "/d/smf-datasets"
+    },
+    {
+      "title": "Jobs",
+      "type": "link",
+      "url": "/d/smf-jobs"
+    },
+    {
+      "title": "RACF",
+      "type": "link",
+      "url": "/d/smf-racf"
+    },
+    {
+      "title": "TCP",
+      "type": "link",
+      "url": "/d/smf-tcp"
+    },
+    {
+      "title": "Lifecycle",
+      "type": "link",
+      "url": "/d/smf-lifecycle"
+    },
+    {
+      "title": "Cross",
+      "type": "link",
+      "url": "/d/smf-cross"
+    },
+    {
+      "title": "Web App :8080",
+      "type": "link",
+      "url": "http://${__hostname}:8080"
+    }
+  ],
   "panels": [
     {
-      "title": "TCP terminations / hour (119-2)",
+      "title": "Terminations / hour",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "fieldConfig": {
-        "defaults": { "custom": { "drawStyle": "line", "fillOpacity": 20, "spanNulls": true } },
-        "overrides": []
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
       },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT hour AS time, sum(conn_count) AS connections\nFROM smf.stats_tcp_hourly\nGROUP BY hour\nORDER BY time"
+          "rawSql": "SELECT hour AS time, sum(conn_count) AS connections FROM smf.stats_tcp_hourly WHERE toDate(hour)>=today()-4 GROUP BY hour ORDER BY time"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 18,
+            "spanNulls": true,
+            "lineWidth": 2
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": ""
     },
     {
-      "title": "Bytes in/out / hour (119-2)",
+      "title": "Bytes in/out / hour",
       "type": "timeseries",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
-      "fieldConfig": {
-        "defaults": { "unit": "decbytes", "custom": { "drawStyle": "line", "fillOpacity": 15, "spanNulls": true } },
-        "overrides": []
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
       },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT\n  hour AS time,\n  sum(in_bytes) AS in_bytes,\n  sum(out_bytes) AS out_bytes\nFROM smf.stats_tcp_hourly\nGROUP BY hour\nORDER BY time"
+          "rawSql": "SELECT hour AS time, sum(in_bytes) AS in_bytes, sum(out_bytes) AS out_bytes FROM smf.stats_tcp_hourly WHERE toDate(hour)>=today()-4 GROUP BY hour ORDER BY time"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 18,
+            "spanNulls": true,
+            "lineWidth": 2
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": ""
     },
     {
-      "title": "Top remote IPs (119-2)",
+      "title": "Top remote IPs",
       "type": "table",
-      "gridPos": { "h": 10, "w": 12, "x": 0, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT\n  remote_ip,\n  count() AS conns,\n  sum(toUInt64OrZero(in_bytes)) AS in_bytes,\n  sum(toUInt64OrZero(out_bytes)) AS out_bytes\nFROM smf.smf_119_2\nWHERE remote_ip != ''\nGROUP BY remote_ip\nORDER BY conns DESC\nLIMIT 40"
+          "rawSql": "SELECT remote_ip, count() AS conns, sum(toUInt64OrZero(in_bytes)) AS in_bytes, sum(toUInt64OrZero(out_bytes)) AS out_bytes\nFROM smf.smf_119_2 WHERE event_date>=today()-4 AND remote_ip!=''\nGROUP BY remote_ip ORDER BY conns DESC LIMIT 40"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "IP detail",
+              "url": "/d/smf-ip-detail?var-ip=${__data.fields.remote_ip}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
     },
     {
-      "title": "TCP initiations by local port (119-1)",
-      "type": "table",
-      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 8 },
-      "datasource": { "type": "grafana-clickhouse-datasource", "uid": "clickhouse_smf" },
+      "title": "Termination codes",
+      "type": "piechart",
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
       "targets": [
         {
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT local_port, count() AS conns\nFROM smf.smf_119_1\nWHERE local_port != ''\nGROUP BY local_port\nORDER BY conns DESC\nLIMIT 40"
+          "rawSql": "SELECT if(term_code='','(blank)',term_code) AS term_code, count() AS conns FROM smf.smf_119_2 WHERE event_date>=today()-4 GROUP BY term_code ORDER BY conns DESC LIMIT 15"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "title": "Local ports (119-1)",
+      "type": "table",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT local_port, count() AS conns FROM smf.smf_119_1 WHERE event_date>=today()-4 AND local_port!='' GROUP BY local_port ORDER BY conns DESC LIMIT 40"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
+    },
+    {
+      "title": "Top workloads (resource/AS)",
+      "type": "table",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT if(resource_name='',as_name,resource_name) AS job_name, count() AS conns,\n  sum(toUInt64OrZero(in_bytes)+toUInt64OrZero(out_bytes)) AS bytes\nFROM smf.smf_119_2 WHERE event_date>=today()-4\nGROUP BY job_name ORDER BY bytes DESC LIMIT 40"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Job detail",
+              "url": "/d/smf-job-detail?var-job=${__data.fields.job_name}&from=${__from}&to=${__to}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": ""
     }
   ],
   "schemaVersion": 39,
-  "tags": ["smf", "tcp", "119"],
-  "time": { "from": "now-30d", "to": "now" },
+  "tags": [
+    "smf",
+    "tcp",
+    "119"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-4d",
+    "to": "now"
+  },
+  "timezone": "browser",
   "title": "SMF TCP (119-1/2)",
   "uid": "smf-tcp",
-  "version": 2
+  "version": 3,
+  "refresh": "5m"
 }

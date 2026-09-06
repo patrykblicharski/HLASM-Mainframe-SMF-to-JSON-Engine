@@ -3,9 +3,26 @@
 Prefer the helper scripts for day-to-day use. This file lists every mapped table.
 
 Default ClickHouse password: **`blacha123`** (user `smf`).  
-Dumps live in **`~/s`** (`t14.raw.dump` â€¦ `t119.raw.dump`).
+Grafana: **`admin` / `blacha123`**. Web analytics UI: port **8080**.  
+Dumps live in **`~/s`** (`t14.raw.dump` … `t119.raw.dump`).
 
-## One-shot â€” all dumps in ~/s (recommended)
+## Reload after git pull (server)
+
+```bash
+cd ~/HLASM-Mainframe-SMF-to-JSON-Engine
+git pull
+cd infra
+docker compose up -d --build
+docker compose restart grafana   # pick up dashboard JSON (~30s provisioning)
+# optional: re-export with fixed EBCDIC scrub, then reload
+# ./scripts/load_from_s.sh
+```
+
+Web app: http://SERVER:8080 — Grafana: http://SERVER:3000
+
+Regenerate Grafana JSON locally: `python infra/scripts/gen_dashboards.py`
+
+## One-shot — all dumps in ~/s (recommended)
 
 ```bash
 cd infra

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block subtitle %}<p>Multi-level detail for job <strong class="mono">{{ data.job }}</strong>.</p>{% endblock %}
+{% block content %}
+<section class="grid grid-4">
+  <div class="kpi violet"><div class="label">Ends (sample)</div><div class="value">{{ fmt_int(data.ends|length) }}</div></div>
+  <div class="kpi teal"><div class="label">Starts</div><div class="value">{{ fmt_int(data.starts|length) }}</div></div>
+  <div class="kpi blue"><div class="label">Dataset I/O</div><div class="value">{{ fmt_int(data.datasets|length) }}</div></div>
+  <div class="kpi red"><div class="label">RACF / TCP</div><div class="value">{{ fmt_int(data.racf|length) }} / {{ fmt_int(data.tcp|length) }}</div></div>
+</section>
+
+<section class="stack" style="margin-top:1rem">
+  <div class="panel">
+    <h2>Step / program ends (30-5)</h2>
+    {% if data.ends %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Date</th><th>Time</th><th>Step</th><th>Program</th><th>Class</th><th>User</th><th>CPU</th><th>CC</th></tr></thead>
+      <tbody>
+      {% for r in data.ends %}
+        <tr>
+          <td>{{ r.event_date }}</td><td class="mono">{{ r.time }}</td>
+          <td>{{ display_cell(r.step_name) }}</td>
+          <td class="mono">{{ display_cell(r.program_name) }}</td>
+          <td>{{ display_cell(r.job_class) }}</td>
+          <td><a href="{{ url_for('smf.user_detail', user=r.racf_user, days=days) }}">{{ display_cell(r.racf_user) }}</a></td>
+          <td>{{ display_cell(r.cpu_step_time) }}</td>
+          <td>{{ display_cell(r.step_comp_code) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No 30-5 rows (or step/program blank in dump — expected for some extracts).</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Dataset activity for this job</h2>
+    {% if data.datasets %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Date</th><th>Dir</th><th>DD</th><th>Dataset</th><th>Vol</th><th>EXCP</th></tr></thead>
+      <tbody>
+      {% for r in data.datasets %}
+        <tr>
+          <td>{{ r.event_date }} {{ r.time }}</td>
+          <td><span class="badge {{ 'in' if r.direction=='INPUT' else 'out' }}">{{ r.direction }}</span></td>
+          <td class="mono">{{ display_cell(r.ddname) }}</td>
+          <td>{% if r.dsname %}<a href="{{ url_for('smf.dataset_detail', dsname=r.dsname, days=days) }}">{{ r.dsname_display }}</a>{% else %}<span class="badge blank">{{ r.dsname_display }}</span>{% endif %}</td>
+          <td class="mono">{{ display_cell(r.volser) }}</td>
+          <td>{{ display_cell(r.excp_count) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No 14/15 rows for this job name.</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>RACF events</h2>
+    {% if data.racf %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Date</th><th>User</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req/Allow</th></tr></thead>
+      <tbody>
+      {% for r in data.racf %}
+        <tr>
+          <td>{{ r.event_date }} {{ r.time }}</td>
+          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, days=days) }}">{{ display_cell(r.user_id) }}</a></td>
+          <td>{{ display_cell(r.event_code) }}</td>
+          <td>{{ display_cell(r.class_name) }}</td>
+          <td class="mono">{{ display_cell(r.old_resource) }}</td>
+          <td>{{ display_cell(r.access_requested) }} / {{ display_cell(r.access_allowed) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No RACF events for this job.</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>TCP terminations (resource / AS match)</h2>
+    {% if data.tcp %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr><th>Date</th><th>Remote</th><th>Local</th><th>In</th><th>Out</th><th>Term</th></tr></thead>
+      <tbody>
+      {% for r in data.tcp %}
+        <tr>
+          <td>{{ r.event_date }} {{ r.time }}</td>
+          <td><a href="{{ url_for('smf.ip_detail', ip=r.remote_ip, days=days) }}">{{ display_cell(r.remote_ip) }}:{{ display_cell(r.remote_port) }}</a></td>
+          <td class="mono">{{ display_cell(r.local_ip) }}:{{ display_cell(r.local_port) }}</td>
+          <td>{{ fmt_bytes(r.in_bytes) }}</td>
+          <td>{{ fmt_bytes(r.out_bytes) }}</td>
+          <td>{{ display_cell(r.term_code) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No TCP rows matched this job/AS name.</div>{% endif %}
+  </div>
+</section>
+{% endblock %}
