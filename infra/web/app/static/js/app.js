@@ -1,11 +1,92 @@
-/* Shared Chart.js helpers for SMF Analytics */
+/* Theme + Chart.js helpers for SMF Analytics */
+window.SMFTheme = {
+  key: "smf-theme",
+  ids: ["phosphor", "carbon", "harbor", "obsidian", "ledger", "frost"],
+  current() {
+    const t = document.documentElement.getAttribute("data-theme");
+    return this.ids.includes(t) ? t : "phosphor";
+  },
+  apply(id) {
+    if (!this.ids.includes(id)) id = "phosphor";
+    document.documentElement.setAttribute("data-theme", id);
+    try { localStorage.setItem(this.key, id); } catch (e) {}
+    this._syncPicker(id);
+    if (window.SMFCharts) SMFCharts.applyTheme();
+  },
+  _syncPicker(id) {
+    document.querySelectorAll(".theme-swatch").forEach((btn) => {
+      const on = btn.getAttribute("data-theme-id") === id;
+      btn.setAttribute("aria-checked", on ? "true" : "false");
+    });
+  },
+  init() {
+    this._syncPicker(this.current());
+    const picker = document.getElementById("smf-theme-picker");
+    if (!picker) return;
+    picker.addEventListener("click", (ev) => {
+      const btn = ev.target.closest(".theme-swatch");
+      if (!btn) return;
+      this.apply(btn.getAttribute("data-theme-id"));
+    });
+  },
+};
+
 window.SMFCharts = {
-  colors: ["#3db8a8", "#5b8def", "#9b7bff", "#f0a05a", "#4fc3f7", "#e35d6a", "#4ec98a", "#e6a23c"],
+  colors: [],
+  _css(name, fallback) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  },
+  _readPalette() {
+    this.colors = [
+      this._css("--chart-1", "#4ecf5c"),
+      this._css("--chart-2", "#b8d44a"),
+      this._css("--chart-3", "#d4a03c"),
+      this._css("--chart-4", "#6ecf9a"),
+      this._css("--chart-5", "#e85d5d"),
+      this._css("--chart-6", "#8fbf6a"),
+      this._css("--chart-7", "#e8c547"),
+      this._css("--chart-8", "#5a9e6a"),
+    ];
+  },
+  applyTheme() {
+    this._readPalette();
+    this.darkDefaults();
+    if (!window.Chart || typeof Chart.getChart !== "function") return;
+    const muted = this._css("--muted", "#7a9a72");
+    const line = this._css("--line", "#2a3a2c");
+    document.querySelectorAll("canvas").forEach((canvas) => {
+      const chart = Chart.getChart(canvas);
+      if (!chart) return;
+      chart.options.color = muted;
+      if (chart.options.scales) {
+        Object.values(chart.options.scales).forEach((scale) => {
+          if (!scale) return;
+          if (scale.ticks) scale.ticks.color = muted;
+          if (scale.grid) scale.grid.color = line;
+          if (scale.border) scale.border.color = line;
+        });
+      }
+      if (chart.data && Array.isArray(chart.data.datasets)) {
+        chart.data.datasets.forEach((ds, i) => {
+          const c = this.colors[i % this.colors.length];
+          if (ds.backgroundColor && !Array.isArray(ds.backgroundColor)) {
+            ds.backgroundColor = c.length === 7 ? c + "cc" : c;
+          } else if (Array.isArray(ds.backgroundColor)) {
+            ds.backgroundColor = this.colors.slice();
+          }
+          if (ds.borderColor && !Array.isArray(ds.borderColor)) ds.borderColor = c;
+        });
+      }
+      chart.update("none");
+    });
+  },
   darkDefaults() {
     if (!window.Chart) return;
-    Chart.defaults.color = "#93a0b8";
-    Chart.defaults.borderColor = "rgba(36,49,73,.9)";
-    Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+    this._readPalette();
+    Chart.defaults.color = this._css("--muted", "#7a9a72");
+    Chart.defaults.borderColor = this._css("--line", "#2a3a2c");
+    Chart.defaults.font.family = this._css("--font", "system-ui, sans-serif");
   },
   _el(canvasId) {
     const el = document.getElementById(canvasId);
@@ -446,6 +527,7 @@ window.SMFTables = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+  if (window.SMFTheme) SMFTheme.init();
   SMFCharts.darkDefaults();
   SMFRange.restoreIfEmpty();
   SMFTables.init();

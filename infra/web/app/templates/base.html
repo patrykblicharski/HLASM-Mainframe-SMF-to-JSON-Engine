@@ -1,9 +1,21 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="phosphor">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title }} · SMF Analytics</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("smf-theme");
+        var ok = { phosphor:1, carbon:1, harbor:1, obsidian:1, ledger:1, frost:1 };
+        if (t && ok[t]) document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
   <script>window.SMFFieldMeta = {{ field_meta|default({})|tojson }};</script>
@@ -24,6 +36,29 @@
       </a>
       {% endfor %}
     </nav>
+    <div class="theme-picker" id="smf-theme-picker">
+      <div class="theme-picker-label">Theme</div>
+      <div class="theme-swatches" role="listbox" aria-label="Color theme">
+        <button type="button" class="theme-swatch" role="option" data-theme-id="phosphor" title="Phosphor — CRT ops console" aria-checked="false">
+          <span class="theme-swatch-preview" aria-hidden="true"></span>Phosphor
+        </button>
+        <button type="button" class="theme-swatch" role="option" data-theme-id="carbon" title="Carbon — industrial copper" aria-checked="false">
+          <span class="theme-swatch-preview" aria-hidden="true"></span>Carbon
+        </button>
+        <button type="button" class="theme-swatch" role="option" data-theme-id="harbor" title="Harbor — navy + signal coral" aria-checked="false">
+          <span class="theme-swatch-preview" aria-hidden="true"></span>Harbor
+        </button>
+        <button type="button" class="theme-swatch" role="option" data-theme-id="obsidian" title="Obsidian — black + gold" aria-checked="false">
+          <span class="theme-swatch-preview" aria-hidden="true"></span>Obsidian
+        </button>
+        <button type="button" class="theme-swatch" role="option" data-theme-id="ledger" title="Ledger — warm paper (light)" aria-checked="false">
+          <span class="theme-swatch-preview" aria-hidden="true"></span>Ledger
+        </button>
+        <button type="button" class="theme-swatch" role="option" data-theme-id="frost" title="Frost — slate + terracotta (light)" aria-checked="false">
+          <span class="theme-swatch-preview" aria-hidden="true"></span>Frost
+        </button>
+      </div>
+    </div>
   </aside>
   <main class="main">
     <div class="topbar">
