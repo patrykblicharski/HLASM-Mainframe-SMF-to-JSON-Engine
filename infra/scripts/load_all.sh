@@ -6,7 +6,7 @@ set -euo pipefail
 CSV_DIR="${1:-$(cd "$(dirname "$0")/.." && pwd)/data/csv}"
 CH_URL="${CH_URL:-http://127.0.0.1:8123}"
 CH_USER="${CH_USER:-smf}"
-CH_PASSWORD="${CH_PASSWORD:-smf_change_me}"
+CH_PASSWORD="${CH_PASSWORD:-blacha123}"
 CH_DB="${CH_DB:-smf}"
 
 if [[ ! -d "${CSV_DIR}" ]]; then

@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CH_URL="${CH_URL:-http://127.0.0.1:8123}"
 CH_USER="${CH_USER:-smf}"
-CH_PASSWORD="${CH_PASSWORD:-smf_change_me}"
+CH_PASSWORD="${CH_PASSWORD:-blacha123}"
 SQL="${ROOT}/clickhouse/init.sql"
 
 echo "Waiting for ClickHouse at ${CH_URL} ..."

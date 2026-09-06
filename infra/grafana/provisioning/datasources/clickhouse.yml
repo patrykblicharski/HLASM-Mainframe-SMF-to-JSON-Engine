@@ -15,4 +15,4 @@ datasources:
       username: smf
       tlsSkipVerify: false
     secureJsonData:
-      password: smf_change_me
+      password: blacha123

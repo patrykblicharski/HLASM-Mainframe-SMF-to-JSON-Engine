@@ -4,7 +4,7 @@ set -euo pipefail
 
 CH_URL="${CH_URL:-http://127.0.0.1:8123}"
 CH_USER="${CH_USER:-smf}"
-CH_PASSWORD="${CH_PASSWORD:-smf_change_me}"
+CH_PASSWORD="${CH_PASSWORD:-blacha123}"
 
 q() {
   curl -fsS "${CH_URL}/?user=${CH_USER}&password=${CH_PASSWORD}&database=smf" \

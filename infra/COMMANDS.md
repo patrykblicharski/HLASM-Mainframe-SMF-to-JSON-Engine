@@ -2,28 +2,50 @@
 
 Prefer the helper scripts for day-to-day use. This file lists every mapped table.
 
-## One-shot (recommended)
+Default ClickHouse password: **`blacha123`** (user `smf`).  
+Dumps live in **`~/s`** (`t14.raw.dump` … `t119.raw.dump`).
+
+## One-shot — all dumps in ~/s (recommended)
 
 ```bash
 cd infra
 chmod +x scripts/*.sh
-./scripts/convert_and_load.sh /path/to/dump.smf ./data/csv
+./scripts/load_from_s.sh
+# same as: ./scripts/load_from_s.sh ~/s ./data/csv
 ```
 
-That runs: export CSV by type → `load_all.sh` → `refresh_stats.sh`.
+## One-shot — single dump
 
-## Export all types from one dump
+```bash
+cd infra
+./scripts/convert_and_load.sh ~/s/t119.raw.dump ./data/csv
+```
+
+## Export from ~/s (per dump)
 
 ```bash
 cd /path/to/HLASM-Mainframe-SMF-to-JSON-Engine
-python infra/scripts/export_csv_by_type.py /path/to/dump.smf -o infra/data/csv
+
+python infra/scripts/export_csv_by_type.py ~/s/t14.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t15.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t17.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t30.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t42.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t61.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t65.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t66.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t80.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t89.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t92.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t119.raw.dump -o infra/data/csv
 ```
 
-Filter:
+Loop:
 
 ```bash
-python infra/scripts/export_csv_by_type.py /path/to/dump.smf -o infra/data/csv \
-  --types 14,15,17,30,42,61,65,66,80,89,92,119
+for f in ~/s/t*.raw.dump; do
+  python infra/scripts/export_csv_by_type.py "$f" -o infra/data/csv
+done
 ```
 
 ## Load all CSVs
@@ -38,7 +60,7 @@ cd infra
 ```bash
 export CH_URL=http://127.0.0.1:8123
 export CH_USER=smf
-export CH_PASSWORD=smf_change_me
+export CH_PASSWORD=blacha123
 CSV=./data/csv
 ```
 
@@ -162,7 +184,7 @@ curl -fsS "${CH_URL}/?user=${CH_USER}&password=${CH_PASSWORD}&database=smf&query
 
 ```bash
 cd python
-python -m smf2json /path/to/dump.smf -f csv -o /tmp/all_mapped.csv
+python -m smf2json ~/s/t30.raw.dump -f csv -o /tmp/all_mapped.csv
 ```
 
-That writes **all** mapped types into **one** CSV (mixed schema). Use it for quick checks only. For ClickHouse always use `export_csv_by_type.py`.
+That writes **all** mapped types from that dump into **one** CSV. For ClickHouse always use `export_csv_by_type.py` or `load_from_s.sh`.

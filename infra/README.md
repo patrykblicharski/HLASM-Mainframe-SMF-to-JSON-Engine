@@ -20,15 +20,25 @@ infra/
     load_all.sh
     refresh_stats.sh
     convert_and_load.sh
-  data/csv/                 ← put CSV outputs here (gitignored)
+    load_from_s.sh          ← load all ~/s/t*.raw.dump
+  data/csv/                 ← CSV outputs (gitignored)
 ```
 
-Default passwords in compose (change them):
+Default passwords (everywhere):
 
-| Service    | User  | Password         |
-|------------|-------|------------------|
-| ClickHouse | `smf` | `smf_change_me`  |
-| Grafana    | `admin` | `admin_change_me` |
+| Service    | User    | Password     |
+|------------|---------|--------------|
+| ClickHouse | `smf`   | `blacha123`  |
+| Grafana    | `admin` | `blacha123`  |
+
+SMF dumps on the server live in **`~/s`**:
+
+```text
+~/s/t14.raw.dump   ~/s/t15.raw.dump   ~/s/t17.raw.dump
+~/s/t30.raw.dump   ~/s/t42.raw.dump   ~/s/t61.raw.dump
+~/s/t65.raw.dump   ~/s/t66.raw.dump   ~/s/t80.raw.dump
+~/s/t89.raw.dump   ~/s/t92.raw.dump   ~/s/t119.raw.dump
+```
 
 ---
 
@@ -37,6 +47,7 @@ Default passwords in compose (change them):
 - Docker Engine + Compose plugin (`docker compose version`)
 - Python **3.10+** (for `smf2json` / export script; stdlib only)
 - This repository cloned on the server
+- Dumps present in `~/s/` as above
 - Open ports **8123** (ClickHouse HTTP) and **3000** (Grafana), or bind to localhost only
 
 ```bash
@@ -50,10 +61,7 @@ sudo usermod -aG docker "$USER"   # then log out/in
 ## 1. Start ClickHouse + Grafana
 
 ```bash
-cd /path/to/HLASM-Mainframe-SMF-to-JSON-Engine/infra
-
-# optional: edit passwords in docker-compose.yml and
-# grafana/provisioning/datasources/clickhouse.yml (must match)
+cd ~/HLASM-Mainframe-SMF-to-JSON-Engine/infra   # or your clone path
 
 docker compose up -d
 docker compose ps
@@ -71,11 +79,11 @@ Checks:
 curl -s http://127.0.0.1:8123/ping
 # → Ok.
 
-curl -s 'http://127.0.0.1:8123/?user=smf&password=smf_change_me' \
+curl -s 'http://127.0.0.1:8123/?user=smf&password=blacha123' \
   --data-binary "SHOW TABLES FROM smf"
 ```
 
-Grafana: open http://SERVER:3000 → login `admin` / `admin_change_me`.
+Grafana: open http://SERVER:3000 → login `admin` / `blacha123`.
 
 If init container failed (race on first boot):
 
@@ -86,38 +94,58 @@ chmod +x scripts/*.sh
 
 ---
 
-## 2. Convert an SMF dump → CSV (one file per type/subtype)
+## 2. Convert dumps from `~/s` → CSV → ClickHouse (recommended)
 
-Do **not** use a single `python -m smf2json -f csv` for ClickHouse: that mixes all types in one file. Use the splitter:
-
-```bash
-cd /path/to/HLASM-Mainframe-SMF-to-JSON-Engine
-
-# optional smoke dump
-cd python
-python -m smf2json --make-sample samples/sample.smf
-cd ..
-
-python infra/scripts/export_csv_by_type.py python/samples/sample.smf -o infra/data/csv
-ls infra/data/csv
-```
-
-Examples of output files:
-
-- `smf_14.csv`, `smf_15.csv`, `smf_17.csv`, `smf_80.csv`, `smf_89.csv`
-- `smf_30_1.csv` … `smf_30_6.csv`
-- `smf_42_20.csv` …
-- `smf_92_11.csv` …
-- `smf_119_1.csv`, `smf_119_2.csv`, …
-
-Filter types:
+One command for all dumps in `~/s`:
 
 ```bash
-python infra/scripts/export_csv_by_type.py /data/dumps/today.smf \
-  -o infra/data/csv --types 14,15,17,30,80,119
+cd ~/HLASM-Mainframe-SMF-to-JSON-Engine/infra
+chmod +x scripts/*.sh
+./scripts/load_from_s.sh
 ```
 
-Full per-table command list: **[COMMANDS.md](COMMANDS.md)**.
+That:
+
+1. exports each `~/s/t*.raw.dump` to `infra/data/csv/smf_*.csv` (one CSV per type/subtype)  
+2. loads every CSV into ClickHouse  
+3. refreshes Grafana `stats_*` tables  
+
+Single dump only:
+
+```bash
+cd ~/HLASM-Mainframe-SMF-to-JSON-Engine
+python infra/scripts/export_csv_by_type.py ~/s/t119.raw.dump -o infra/data/csv
+cd infra && ./scripts/load_all.sh ./data/csv && ./scripts/refresh_stats.sh
+```
+
+Or via helper:
+
+```bash
+cd infra
+./scripts/convert_and_load.sh ~/s/t80.raw.dump ./data/csv
+```
+
+Per-dump convert examples:
+
+```bash
+cd ~/HLASM-Mainframe-SMF-to-JSON-Engine
+python infra/scripts/export_csv_by_type.py ~/s/t14.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t15.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t17.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t30.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t42.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t61.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t65.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t66.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t80.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t89.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t92.raw.dump  -o infra/data/csv
+python infra/scripts/export_csv_by_type.py ~/s/t119.raw.dump -o infra/data/csv
+```
+
+Do **not** use a single `python -m smf2json -f csv` for ClickHouse: that mixes all types in one file.
+
+Full per-table curl list: **[COMMANDS.md](COMMANDS.md)**.
 
 ---
 
@@ -125,7 +153,6 @@ Full per-table command list: **[COMMANDS.md](COMMANDS.md)**.
 
 ```bash
 cd infra
-chmod +x scripts/*.sh
 ./scripts/load_all.sh ./data/csv
 ```
 
@@ -134,19 +161,17 @@ Or one table manually:
 ```bash
 export CH_URL=http://127.0.0.1:8123
 export CH_USER=smf
-export CH_PASSWORD=smf_change_me
+export CH_PASSWORD=blacha123
 
 curl -fsS \
   "${CH_URL}/?user=${CH_USER}&password=${CH_PASSWORD}&database=smf&query=INSERT%20INTO%20smf_14%20FORMAT%20CSVWithNames" \
   --data-binary @./data/csv/smf_14.csv
 ```
 
-Every table has the same pattern — see **COMMANDS.md**.
-
 Verify:
 
 ```bash
-curl -s 'http://127.0.0.1:8123/?user=smf&password=smf_change_me' \
+curl -s 'http://127.0.0.1:8123/?user=smf&password=blacha123' \
   --data-binary "SELECT count() FROM smf.smf_14"
 ```
 
@@ -154,37 +179,26 @@ curl -s 'http://127.0.0.1:8123/?user=smf&password=smf_change_me' \
 
 ## 4. Refresh small Grafana rollups
 
-Dashboards use both raw tables and `stats_*` summaries.
-
 ```bash
 cd infra
 ./scripts/refresh_stats.sh
 ```
 
-Run this after each upload (or from cron).
+(`load_from_s.sh` already runs this.)
 
 ---
 
-## 5. One command for daily ops
-
-```bash
-cd infra
-./scripts/convert_and_load.sh /data/dumps/halfday.smf ./data/csv
-```
-
-That exports CSV → loads ClickHouse → refreshes stats.
-
-Example cron (every day 07:00 and 19:00):
+## 5. Cron example
 
 ```cron
-0 7,19 * * * cd /opt/HLASM-Mainframe-SMF-to-JSON-Engine/infra && ./scripts/convert_and_load.sh /data/smf/latest.smf ./data/csv >>/var/log/smf-load.log 2>&1
+0 7,19 * * * cd $HOME/HLASM-Mainframe-SMF-to-JSON-Engine/infra && ./scripts/load_from_s.sh >>/var/log/smf-load.log 2>&1
 ```
 
 ---
 
-## 6. Grafana dashboards (project)
+## 6. Grafana dashboards
 
-After login, open folder **SMF**:
+After login (`admin` / `blacha123`), open folder **SMF**:
 
 | Dashboard | UID | Purpose |
 |-----------|-----|---------|
@@ -195,32 +209,21 @@ After login, open folder **SMF**:
 | SMF FTP (119-3/70) | `smf-ftp` | transfer volume |
 | SMF Jobs (30) | `smf-jobs` | job/step ends |
 
-Datasource is provisioned as **ClickHouse** (`uid: clickhouse_smf`).
-
-If panels are empty: load data + run `./scripts/refresh_stats.sh`.
+If panels are empty: run `./scripts/load_from_s.sh` (or convert+load+`refresh_stats.sh`).
 
 ---
 
 ## 7. Retention and compression
 
-- Each `smf_*` table: `TTL event_date + INTERVAL 10 DAY` (auto-delete)
-- ClickHouse compresses columns on disk automatically
-- To change retention: edit `TTL` in `scripts/gen_init_sql.py`, regenerate, re-apply carefully (or `ALTER TABLE … MODIFY TTL`)
+- Each `smf_*` table: `TTL event_date + INTERVAL 10 DAY`
+- ClickHouse compresses on disk automatically
 
 Regenerate schema after map changes:
 
 ```bash
-# from live maps
 PYTHONPATH=python python infra/scripts/gen_init_sql.py --from-maps
-
-# or from committed field snapshot
-python infra/scripts/gen_init_sql.py
-```
-
-Then re-apply (new tables only are safe with `CREATE IF NOT EXISTS`; column changes need manual `ALTER` / recreate):
-
-```bash
-./scripts/init_db.sh
+# or: python infra/scripts/gen_init_sql.py
+cd infra && ./scripts/init_db.sh
 ```
 
 ---
@@ -233,10 +236,16 @@ docker compose down          # keep data volumes
 docker compose down -v       # wipe ClickHouse + Grafana data
 ```
 
+If you already started compose with the old password, wipe volumes once so `blacha123` applies:
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
 ---
 
 ## Security notes
 
-- Change default passwords before exposing ports beyond localhost.
-- Prefer firewall / reverse proxy in front of Grafana.
+- Prefer firewall / reverse proxy in front of Grafana on a public host.
 - Do not commit real SMF dumps or production CSVs into git (`infra/data/` is for local loads).
