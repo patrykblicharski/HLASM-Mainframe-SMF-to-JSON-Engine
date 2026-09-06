@@ -191,6 +191,10 @@ table.data th {
   position: sticky; top: 0; background: #152036; color: var(--muted);
   font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; z-index: 1;
 }
+/* Sticky page headers paint above <dialog> top-layer in Chromium — disable while any modal is open. */
+body.smf-modal-open .main table.data th {
+  position: static;
+}
 table.data th.sortable {
   cursor: pointer; user-select: none;
 }
@@ -258,6 +262,7 @@ table.data a { font-weight: 600; }
   width: min(960px, 94vw);
   max-height: 90vh;
   box-shadow: var(--shadow);
+  position: relative;
 }
 .full-table-modal {
   width: 80vw;
@@ -360,26 +365,58 @@ table.data a { font-weight: 600; }
   flex-wrap: wrap;
 }
 
-/* Custom column-header tips (clearer than native title=) */
+/* Custom column-header tips (must live inside open <dialog> to appear in top layer) */
 .smf-tip {
   position: fixed;
-  z-index: 10000;
+  z-index: 2147483646;
   max-width: min(36rem, 90vw);
-  padding: .55rem .75rem;
+  padding: .6rem .85rem;
   border-radius: 10px;
-  border: 1px solid rgba(79, 195, 247, .55);
-  background: #10253a;
-  color: #7ad4ff;
-  font-size: .95rem;
-  line-height: 1.35;
-  font-weight: 550;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, .45);
+  border: 1px solid rgba(79, 195, 247, .65);
+  background: #0c3048;
+  color: #9ae0ff;
+  font-size: 1.02rem;
+  line-height: 1.4;
+  font-weight: 600;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .55);
   pointer-events: none;
   white-space: normal;
 }
 .smf-tip[hidden] { display: none !important; }
 table.data th[data-tip] { cursor: help; }
 table.data th.sortable[data-tip] { cursor: pointer; }
+
+.modal-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(4, 10, 20, .72);
+  backdrop-filter: blur(2px);
+}
+.modal-loading[hidden] { display: none !important; }
+.modal-loading-card {
+  min-width: min(320px, 80%);
+  padding: 1.1rem 1.35rem;
+  border-radius: 12px;
+  border: 1px solid rgba(61, 184, 168, .45);
+  background: #121a2b;
+  color: var(--text);
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.modal-loading-card strong {
+  display: block;
+  font-size: 1.05rem;
+  margin-bottom: .35rem;
+  color: var(--accent);
+}
+.modal-loading-card span {
+  color: var(--muted);
+  font-size: .88rem;
+}
 .details-modal::backdrop { background: rgba(4, 8, 16, .72); }
 .details-shell { display: flex; flex-direction: column; max-height: 90vh; }
 .details-head {

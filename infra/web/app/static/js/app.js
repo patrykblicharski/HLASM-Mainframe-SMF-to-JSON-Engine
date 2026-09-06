@@ -221,15 +221,19 @@ window.SMFTips = {
   _el: null,
   _hideTimer: 0,
 
-  ensure() {
-    if (this._el) return this._el;
-    const el = document.createElement("div");
-    el.className = "smf-tip";
-    el.setAttribute("role", "tooltip");
-    el.hidden = true;
-    document.body.appendChild(el);
-    this._el = el;
-    return el;
+  ensure(host) {
+    const parent = host || document.body;
+    if (this._el && this._el.parentElement === parent) return this._el;
+    if (!this._el) {
+      const el = document.createElement("div");
+      el.className = "smf-tip";
+      el.setAttribute("role", "tooltip");
+      el.hidden = true;
+      this._el = el;
+    }
+    // Native <dialog> uses the top layer — tips on document.body stay behind it.
+    parent.appendChild(this._el);
+    return this._el;
   },
 
   tipText(node) {
@@ -248,10 +252,11 @@ window.SMFTips = {
       clearTimeout(this._hideTimer);
       this._hideTimer = 0;
     }
-    const el = this.ensure();
+    const dlg = anchor.closest && anchor.closest("dialog");
+    const host = dlg && dlg.open ? dlg : document.body;
+    const el = this.ensure(host);
     el.textContent = tip;
     el.hidden = false;
-    // Measure after unhiding so placement uses real size.
     const r = anchor.getBoundingClientRect();
     const pad = 10;
     const tw = el.offsetWidth || 220;
@@ -283,7 +288,6 @@ window.SMFTips = {
     scope.querySelectorAll("[data-tip]").forEach((node) => {
       if (node.dataset.smfTipBound === "1") return;
       node.dataset.smfTipBound = "1";
-      // Prefer custom bubble; drop native title delay/overlap when data-tip is set.
       if (node.hasAttribute("title") && node.getAttribute("data-tip")) {
         node.removeAttribute("title");
       }
@@ -292,6 +296,14 @@ window.SMFTips = {
       node.addEventListener("focus", () => this.show(node, this.tipText(node)));
       node.addEventListener("blur", () => this.hideSoon());
     });
+  },
+};
+
+window.SMFModalChrome = {
+  sync() {
+    const open = !!document.querySelector("dialog[open]");
+    document.body.classList.toggle("smf-modal-open", open);
+    if (!open && window.SMFTips) SMFTips.hide();
   },
 };
 
@@ -355,6 +367,14 @@ document.addEventListener("DOMContentLoaded", () => {
   SMFTables.init();
   const saveBtn = document.getElementById("smf-save-range");
   if (saveBtn) saveBtn.addEventListener("click", () => SMFRange.save());
+  ["smf-details-modal", "smf-full-table-modal"].forEach((id) => {
+    const dlg = document.getElementById(id);
+    if (!dlg) return;
+    dlg.addEventListener("close", () => {
+      if (window.SMFModalChrome) SMFModalChrome.sync();
+      if (window.SMFTips) SMFTips.hide();
+    });
+  });
 });
 
 window.SMFDetails = {
@@ -447,6 +467,7 @@ window.SMFDetails = {
     sub.textContent = tables + " · loading…";
     body.innerHTML = '<div class="empty">Loading all SMF fields for matching rows…</div>';
     dlg.showModal();
+    if (window.SMFModalChrome) SMFModalChrome.sync();
     this._load();
   },
 
@@ -497,6 +518,7 @@ window.SMFDetails = {
   close() {
     const dlg = document.getElementById("smf-details-modal");
     if (dlg && dlg.open) dlg.close();
+    if (window.SMFModalChrome) SMFModalChrome.sync();
   },
 
   _esc(s) {
@@ -674,6 +696,7 @@ window.SMFDetails = {
 
 window.SMFFullTable = {
   PAGE: 50,
+  _reqId: 0,
   _state: {
     sources: [],
     si: 0,
@@ -739,6 +762,20 @@ window.SMFFullTable = {
     return filters;
   },
 
+  _showLoading(title, msg) {
+    const el = document.getElementById("smf-full-table-loading");
+    const t = document.getElementById("smf-full-table-loading-title");
+    const m = document.getElementById("smf-full-table-loading-msg");
+    if (t) t.textContent = title || "Loading";
+    if (m) m.textContent = msg || "Fetching SMF rows…";
+    if (el) el.hidden = false;
+  },
+
+  _hideLoading() {
+    const el = document.getElementById("smf-full-table-loading");
+    if (el) el.hidden = true;
+  },
+
   open(btn) {
     const dlg = document.getElementById("smf-full-table-modal");
     const body = document.getElementById("smf-full-table-body");
@@ -764,17 +801,25 @@ window.SMFFullTable = {
     this._state.si = 0;
     this._state.sources = [];
     this._state.loading = false;
+    this._reqId += 1;
 
     if (title) title.textContent = "Full table";
     if (sub) sub.textContent = tables + " · loading…";
     body.innerHTML = '<div class="empty">Loading full SMF rows for this time window…</div>';
     dlg.showModal();
+    if (window.SMFModalChrome) SMFModalChrome.sync();
     this._fetch({ append: false, tables: tables, offset: 0 });
   },
 
   close() {
+    // Invalidate in-flight fetches so late responses cannot re-render after close.
+    this._reqId += 1;
+    this._state.loading = false;
+    this._hideLoading();
+    if (window.SMFTips) SMFTips.hide();
     const dlg = document.getElementById("smf-full-table-modal");
     if (dlg && dlg.open) dlg.close();
+    if (window.SMFModalChrome) SMFModalChrome.sync();
   },
 
   setSource(i) {
@@ -794,7 +839,16 @@ window.SMFFullTable = {
   _fetch({ append, tables, offset }) {
     const body = document.getElementById("smf-full-table-body");
     const sub = document.getElementById("smf-full-table-sub");
+    const dlg = document.getElementById("smf-full-table-modal");
+    const reqId = ++this._reqId;
     this._state.loading = true;
+    this._showLoading(
+      append ? "Loading more" : "Loading full table",
+      append
+        ? "Fetching the next page of SMF rows…"
+        : "Fetching SMF rows for the selected time window…"
+    );
+
     const params = new URLSearchParams({
       tables: tables,
       days: this._state.days,
@@ -812,7 +866,10 @@ window.SMFFullTable = {
     fetch("/api/full-table?" + params.toString())
       .then((r) => r.json())
       .then((data) => {
+        if (reqId !== this._reqId) return;
         this._state.loading = false;
+        this._hideLoading();
+        if (!dlg || !dlg.open) return;
         if (data.error) {
           if (body) body.innerHTML = '<div class="error">' + this._esc(data.error) + "</div>";
           return;
@@ -854,7 +911,10 @@ window.SMFFullTable = {
         this._render();
       })
       .catch((err) => {
+        if (reqId !== this._reqId) return;
         this._state.loading = false;
+        this._hideLoading();
+        if (!dlg || !dlg.open) return;
         if (body) body.innerHTML = '<div class="error">' + this._esc(String(err)) + "</div>";
       });
   },
@@ -862,7 +922,8 @@ window.SMFFullTable = {
   _render() {
     const body = document.getElementById("smf-full-table-body");
     const title = document.getElementById("smf-full-table-title");
-    if (!body) return;
+    const dlg = document.getElementById("smf-full-table-modal");
+    if (!body || !dlg || !dlg.open) return;
     const sources = this._state.sources || [];
     if (!sources.length) {
       body.innerHTML = '<div class="empty">No matching rows.</div>';
