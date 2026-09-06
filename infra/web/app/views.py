@@ -43,7 +43,8 @@ def _limit(name: str, default: int) -> int:
         n = int(raw) if raw is not None else default
     except ValueError:
         n = default
-    return max(10, min(n, 500))
+    # Match Full table Load-more sizes (50 … 100000).
+    return max(10, min(n, 100_000))
 
 
 def _slice(rows: Optional[list], limit: int) -> tuple[list, bool]:
@@ -93,7 +94,7 @@ def field_tip(name: Any, default: str = "") -> str:
     return field_description(name, default)
 
 @bp.app_template_global()
-def more_url(name: str, limit: int, step: int = 40) -> str:
+def more_url(name: str, limit: int, step: int = 50) -> str:
     """Build current-page URL with a bumped limit_* for Load more."""
     args = request.args.to_dict(flat=True)
     args[f"limit_{name}"] = str(int(limit) + int(step))

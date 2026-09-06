@@ -309,6 +309,8 @@ window.SMFModalChrome = {
 
 window.SMFPageLoading = {
   _busy: false,
+  STEP_KEY: "smf-load-more-step",
+  PAGE_SIZES: [50, 100, 250, 500, 1000, 2500, 100000],
 
   show(title, msg) {
     const el = document.getElementById("smf-page-loading");
@@ -328,16 +330,60 @@ window.SMFPageLoading = {
     this._busy = false;
   },
 
+  _normalizeStep(raw) {
+    const n = parseInt(raw, 10);
+    return this.PAGE_SIZES.includes(n) ? n : 50;
+  },
+
+  /** Restore Add-N combo on Top table Load more footers. */
+  init() {
+    let saved = null;
+    try {
+      saved = this._normalizeStep(sessionStorage.getItem(this.STEP_KEY) || "50");
+    } catch (_e) {
+      saved = 50;
+    }
+    document.querySelectorAll("select.load-more-step").forEach((sel) => {
+      sel.value = String(saved);
+      sel.addEventListener("change", () => {
+        const v = this._normalizeStep(sel.value);
+        try {
+          sessionStorage.setItem(this.STEP_KEY, String(v));
+        } catch (_e) { /* ignore */ }
+        document.querySelectorAll("select.load-more-step").forEach((other) => {
+          other.value = String(v);
+        });
+      });
+    });
+  },
+
   /** Intercept Load more (full page navigation) and show overlay first. */
   follow(anchor, msg) {
     if (!anchor || !anchor.href) return true;
     if (this._busy) return false;
+
+    const wrap = anchor.closest(".load-more");
+    const sel = wrap && wrap.querySelector("select.load-more-step");
+    let href = anchor.href;
+    if (sel) {
+      const step = this._normalizeStep(sel.value);
+      try {
+        sessionStorage.setItem(this.STEP_KEY, String(step));
+      } catch (_e) { /* ignore */ }
+      const name = anchor.getAttribute("data-name") || "";
+      const limit = parseInt(anchor.getAttribute("data-limit") || "0", 10);
+      if (name && !Number.isNaN(limit)) {
+        const u = new URL(anchor.href, window.location.href);
+        u.searchParams.set("limit_" + name, String(limit + step));
+        href = u.toString();
+      }
+    }
+
     this.show("Loading more", msg || "Fetching additional table rows…");
     // Soft-disable the control to prevent double clicks.
     anchor.classList.add("is-loading");
     anchor.setAttribute("aria-disabled", "true");
     // Navigate after paint so the overlay is visible.
-    const href = anchor.href;
     setTimeout(() => {
       window.location.href = href;
     }, 30);
@@ -403,6 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
   SMFCharts.darkDefaults();
   SMFRange.restoreIfEmpty();
   SMFTables.init();
+  if (window.SMFPageLoading) SMFPageLoading.init();
   const saveBtn = document.getElementById("smf-save-range");
   if (saveBtn) saveBtn.addEventListener("click", () => SMFRange.save());
   ["smf-details-modal", "smf-full-table-modal"].forEach((id) => {
