@@ -575,6 +575,295 @@ window.SMFDetails = {
   },
 };
 
+window.SMFFullTable = {
+  PAGE: 50,
+  _state: {
+    sources: [],
+    si: 0,
+    days: "4",
+    date_from: "",
+    date_to: "",
+    hour_from: "",
+    hour_to: "",
+    tables: "",
+    filters: {},
+    limit: 50,
+    loading: false,
+  },
+
+  _fieldTip(name) {
+    const meta = window.SMFFieldMeta || {};
+    const key = String(name || "").trim().toLowerCase();
+    return meta[key] || meta[key.replace(/ /g, "_")] || "";
+  },
+
+  _windowLabel() {
+    const s = this._state;
+    const parts = [];
+    if (s.date_from || s.date_to) {
+      parts.push((s.date_from || "…") + " → " + (s.date_to || "…"));
+    } else {
+      parts.push("last " + (s.days || "4") + "d");
+    }
+    if (s.hour_from || s.hour_to) {
+      parts.push("hour " + (s.hour_from || "…") + (s.hour_to ? " → " + s.hour_to : ""));
+    }
+    return parts.join(" · ");
+  },
+
+  _esc(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  },
+
+  _parseFilters(btn) {
+    let filters = {};
+    try {
+      const raw = btn.getAttribute("data-filters") || btn.dataset.filters || "{}";
+      filters = JSON.parse(raw) || {};
+    } catch (_e) {
+      filters = {};
+    }
+    Object.keys(filters).forEach((k) => {
+      if (filters[k] === null || filters[k] === undefined || String(filters[k]).trim() === "") {
+        delete filters[k];
+      }
+    });
+    return filters;
+  },
+
+  open(btn) {
+    const dlg = document.getElementById("smf-full-table-modal");
+    const body = document.getElementById("smf-full-table-body");
+    const title = document.getElementById("smf-full-table-title");
+    const sub = document.getElementById("smf-full-table-sub");
+    if (!dlg || !body) return;
+
+    const page = new URL(window.location.href);
+    const tables = btn.getAttribute("data-tables") || "";
+    this._state.tables = tables;
+    this._state.days =
+      btn.getAttribute("data-days") || page.searchParams.get("days") || "4";
+    this._state.date_from =
+      btn.getAttribute("data-date-from") || page.searchParams.get("date_from") || "";
+    this._state.date_to =
+      btn.getAttribute("data-date-to") || page.searchParams.get("date_to") || "";
+    this._state.hour_from =
+      btn.getAttribute("data-hour-from") || page.searchParams.get("hour_from") || "";
+    this._state.hour_to =
+      btn.getAttribute("data-hour-to") || page.searchParams.get("hour_to") || "";
+    this._state.filters = this._parseFilters(btn);
+    this._state.limit = this.PAGE;
+    this._state.si = 0;
+    this._state.sources = [];
+    this._state.loading = false;
+
+    if (title) title.textContent = "Full table";
+    if (sub) sub.textContent = tables + " · loading…";
+    body.innerHTML = '<div class="empty">Loading full SMF rows for this time window…</div>';
+    dlg.showModal();
+    this._fetch({ append: false, tables: tables, offset: 0 });
+  },
+
+  close() {
+    const dlg = document.getElementById("smf-full-table-modal");
+    if (dlg && dlg.open) dlg.close();
+  },
+
+  setSource(i) {
+    this._state.si = i;
+    this._render();
+  },
+
+  loadMore() {
+    const src = this._state.sources[this._state.si];
+    if (!src || this._state.loading) return;
+    const matched = Number(src.matched) || 0;
+    const have = (src.rows || []).length;
+    if (have >= matched) return;
+    this._fetch({ append: true, tables: src.table, offset: have });
+  },
+
+  _fetch({ append, tables, offset }) {
+    const body = document.getElementById("smf-full-table-body");
+    const sub = document.getElementById("smf-full-table-sub");
+    this._state.loading = true;
+    const params = new URLSearchParams({
+      tables: tables,
+      days: this._state.days,
+      limit: String(this._state.limit),
+      offset: String(offset),
+    });
+    ["date_from", "date_to", "hour_from", "hour_to"].forEach((k) => {
+      const v = this._state[k];
+      if (v) params.set(k, v);
+    });
+    Object.entries(this._state.filters || {}).forEach(([k, v]) => {
+      if (v !== null && v !== undefined && String(v) !== "") params.set(k, String(v));
+    });
+
+    fetch("/api/full-table?" + params.toString())
+      .then((r) => r.json())
+      .then((data) => {
+        this._state.loading = false;
+        if (data.error) {
+          if (body) body.innerHTML = '<div class="error">' + this._esc(data.error) + "</div>";
+          return;
+        }
+        this._state.days = data.days != null ? String(data.days) : this._state.days;
+        this._state.date_from = data.date_from || this._state.date_from;
+        this._state.date_to = data.date_to || this._state.date_to;
+        this._state.hour_from = data.hour_from || this._state.hour_from;
+        this._state.hour_to = data.hour_to || this._state.hour_to;
+        this._state.limit = data.limit || this._state.limit;
+        this._state.appliedFilters = data.filters || {};
+
+        const incoming = data.sources || [];
+        if (!append) {
+          this._state.sources = incoming.map((s) => ({
+            table: s.table,
+            matched: s.matched,
+            rows: s.rows || [],
+            error: s.error || null,
+          }));
+          this._state.si = 0;
+        } else {
+          const got = incoming[0];
+          const cur = this._state.sources[this._state.si];
+          if (got && cur && got.table === cur.table) {
+            cur.matched = got.matched;
+            cur.error = got.error || null;
+            cur.rows = (cur.rows || []).concat(got.rows || []);
+          }
+        }
+
+        const filt = Object.entries(this._state.appliedFilters || {})
+          .map(([k, v]) => k + "=" + v)
+          .join(", ");
+        if (sub) {
+          sub.textContent =
+            (filt ? filt + " · " : "time window · ") + this._windowLabel();
+        }
+        this._render();
+      })
+      .catch((err) => {
+        this._state.loading = false;
+        if (body) body.innerHTML = '<div class="error">' + this._esc(String(err)) + "</div>";
+      });
+  },
+
+  _render() {
+    const body = document.getElementById("smf-full-table-body");
+    const title = document.getElementById("smf-full-table-title");
+    if (!body) return;
+    const sources = this._state.sources || [];
+    if (!sources.length) {
+      body.innerHTML = '<div class="empty">No matching rows.</div>';
+      return;
+    }
+
+    const tabs = sources
+      .map((s, i) => {
+        const active = i === this._state.si ? " active" : "";
+        const label = s.table + " · " + (s.matched || 0);
+        return (
+          '<button type="button" class="details-tab' +
+          active +
+          '" onclick="SMFFullTable.setSource(' +
+          i +
+          ')">' +
+          this._esc(label) +
+          "</button>"
+        );
+      })
+      .join("");
+
+    const src = sources[this._state.si] || sources[0];
+    if (src.error) {
+      body.innerHTML =
+        '<div class="details-tabs">' + tabs + '</div><div class="error">' + this._esc(src.error) + "</div>";
+      return;
+    }
+    if (!src.rows || !src.rows.length) {
+      body.innerHTML =
+        '<div class="details-tabs">' +
+        tabs +
+        '</div><div class="empty">No rows in ' +
+        this._esc(src.table) +
+        " for this window.</div>";
+      return;
+    }
+
+    const matched = Number(src.matched) || src.rows.length;
+    const shown = src.rows.length;
+    if (title) title.textContent = src.table + " · " + shown + " / " + matched;
+
+    const cols = Object.keys(src.rows[0] || {});
+    const head = cols
+      .map((c) => {
+        const tip = this._fieldTip(c);
+        return (
+          "<th" +
+          (tip ? ' title="' + this._esc(tip) + '"' : "") +
+          ">" +
+          this._esc(c) +
+          "</th>"
+        );
+      })
+      .join("");
+    const rowsHtml = src.rows
+      .map((row) => {
+        const cells = cols
+          .map((c) => {
+            const v = row[c];
+            const blank = v === null || v === undefined || String(v).trim() === "";
+            const shownCell = blank ? "—" : String(v);
+            return (
+              '<td class="mono"' +
+              (blank ? ' data-sort=""' : ' data-sort="' + this._esc(shownCell) + '"') +
+              ">" +
+              this._esc(shownCell) +
+              "</td>"
+            );
+          })
+          .join("");
+        return "<tr>" + cells + "</tr>";
+      })
+      .join("");
+
+    const more =
+      shown < matched
+        ? '<button type="button" class="btn btn-load-more" onclick="SMFFullTable.loadMore()"' +
+          (this._state.loading ? " disabled" : "") +
+          ">Load more</button>" +
+          '<span class="muted">Showing ' +
+          shown +
+          " · " +
+          (matched - shown) +
+          " more available</span>"
+        : '<span class="muted">Showing all ' + shown + " matching rows</span>";
+
+    body.innerHTML =
+      '<div class="details-tabs">' +
+      tabs +
+      '</div><div class="full-table-scroll"><table class="data" id="smf-full-table-grid"><thead><tr>' +
+      head +
+      "</tr></thead><tbody>" +
+      rowsHtml +
+      '</tbody></table></div><div class="full-table-footer">' +
+      more +
+      "</div>";
+
+    const table = document.getElementById("smf-full-table-grid");
+    if (table && window.SMFTables) SMFTables.makeSortable(table);
+  },
+};
+
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") SMFDetails.close();
+  if (e.key !== "Escape") return;
+  SMFDetails.close();
+  SMFFullTable.close();
 });

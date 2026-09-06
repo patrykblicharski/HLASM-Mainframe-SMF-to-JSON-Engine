@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, ts_th, ts_td, th with context %}
+{% from "_macros.html" import details_button, panel_h2, ts_th, ts_td, th with context %}
 {% block subtitle %}<p>Sessions for IP <strong class="mono">{{ data.ip }}</strong>.</p>{% endblock %}
 {% block content %}
 <section class="stack">
   <div class="panel">
-    <h2>Terminations (119-2)</h2>
+    {{ panel_h2('Terminations (119-2)', 'smf_119_2', {'remote_ip': data.ip}) }}
     {% if data.sessions %}
     <div class="table-wrap"><table class="data">
       <thead><tr>{{ ts_th() }}<th>Resource</th><th>Remote</th><th>Local</th><th>In</th><th>Out</th><th>Term</th><th>Conn</th><th></th></tr></thead>
@@ -27,7 +27,7 @@
     {% else %}<div class="empty">No terminations for this IP.</div>{% endif %}
   </div>
   <div class="panel">
-    <h2>Initiations (119-1)</h2>
+    {{ panel_h2('Initiations (119-1)', 'smf_119_1', {'remote_ip': data.ip}) }}
     {% if data.inits %}
     <div class="table-wrap"><table class="data">
       <thead><tr>{{ ts_th() }}<th>Resource</th><th>Remote</th><th>Local</th><th>Conn</th><th></th></tr></thead>

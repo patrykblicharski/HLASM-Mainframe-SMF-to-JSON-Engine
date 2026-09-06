@@ -1,49 +1,49 @@
-{% extends "base.html" %}
-{% from "_macros.html" import details_button, load_more, ts_th, ts_td, th with context %}
-{% block subtitle %}<p>Highest-value crosses from ANALYTICS.md — job×RACF and TCP×workload.</p>{% endblock %}
-{% block content %}
-<section class="grid grid-2">
-  <div class="panel">
-    <h2>30 × 80 — jobs with security events</h2>
-    {% if summary.job_security %}
-    <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}{{ th('Job', 'job_name') }}{{ th('Ends', 'ends') }}{{ th('CPU', 'cpu_sum') }}{{ th('RACF events', 'racf_events') }}<th></th></tr></thead>
-      <tbody>
-      {% for r in summary.job_security %}
-        <tr>
-          {{ ts_td(r) }}
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
-          <td>{{ fmt_int(r.ends) }}</td>
-          <td>{{ fmt_int(r.cpu_sum) }}</td>
-          <td>{{ fmt_int(r.racf_events) }}</td>
-          <td>{{ details_button('smf_30_4,smf_30_5,smf_80', {'job_name': r.job_name}) }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-    {{ load_more('jobsec', limit_jobsec, has_more_jobsec) }}
-    {% else %}<div class="empty">No join rows.</div>{% endif %}
-  </div>
-  <div class="panel">
-    <h2>119 × workload — network bytes by resource/AS</h2>
-    {% if summary.net_work %}
-    <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}{{ th('Workload', 'workload') }}{{ th('Conns', 'conns') }}{{ th('In', 'in_bytes') }}{{ th('Out', 'out_bytes') }}<th></th></tr></thead>
-      <tbody>
-      {% for r in summary.net_work %}
-        <tr>
-          {{ ts_td(r) }}
-          <td><a href="{{ url_for('smf.job_detail', job=r.workload, **window_args) }}">{{ display_cell(r.workload) }}</a></td>
-          <td>{{ fmt_int(r.conns) }}</td>
-          <td>{{ fmt_bytes(r.in_bytes) }}</td>
-          <td>{{ fmt_bytes(r.out_bytes) }}</td>
-          <td>{{ details_button('smf_119_2', {'resource_name': r.workload}) }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-    {{ load_more('network', limit_network, has_more_network) }}
-    {% else %}<div class="empty">No TCP workload rows.</div>{% endif %}
-  </div>
-</section>
-{% endblock %}
+{% extends "base.html" %}
+{% from "_macros.html" import details_button, load_more, panel_h2, ts_th, ts_td, th with context %}
+{% block subtitle %}<p>Highest-value crosses from ANALYTICS.md — job×RACF and TCP×workload.</p>{% endblock %}
+{% block content %}
+<section class="grid grid-2">
+  <div class="panel">
+    {{ panel_h2('30 × 80 — jobs with security events', 'smf_30_4,smf_30_5,smf_80') }}
+    {% if summary.job_security %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>{{ ts_th() }}{{ th('Job', 'job_name') }}{{ th('Ends', 'ends') }}{{ th('CPU', 'cpu_sum') }}{{ th('RACF events', 'racf_events') }}<th></th></tr></thead>
+      <tbody>
+      {% for r in summary.job_security %}
+        <tr>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td>{{ fmt_int(r.ends) }}</td>
+          <td>{{ fmt_int(r.cpu_sum) }}</td>
+          <td>{{ fmt_int(r.racf_events) }}</td>
+          <td>{{ details_button('smf_30_4,smf_30_5,smf_80', {'job_name': r.job_name}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {{ load_more('jobsec', limit_jobsec, has_more_jobsec) }}
+    {% else %}<div class="empty">No join rows.</div>{% endif %}
+  </div>
+  <div class="panel">
+    {{ panel_h2('119 × workload — network bytes by resource/AS', 'smf_119_2') }}
+    {% if summary.net_work %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>{{ ts_th() }}{{ th('Workload', 'workload') }}{{ th('Conns', 'conns') }}{{ th('In', 'in_bytes') }}{{ th('Out', 'out_bytes') }}<th></th></tr></thead>
+      <tbody>
+      {% for r in summary.net_work %}
+        <tr>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.workload, **window_args) }}">{{ display_cell(r.workload) }}</a></td>
+          <td>{{ fmt_int(r.conns) }}</td>
+          <td>{{ fmt_bytes(r.in_bytes) }}</td>
+          <td>{{ fmt_bytes(r.out_bytes) }}</td>
+          <td>{{ details_button('smf_119_2', {'resource_name': r.workload}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {{ load_more('network', limit_network, has_more_network) }}
+    {% else %}<div class="empty">No TCP workload rows.</div>{% endif %}
+  </div>
+</section>
+{% endblock %}

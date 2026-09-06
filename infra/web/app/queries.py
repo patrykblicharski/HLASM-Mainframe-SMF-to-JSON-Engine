@@ -6,7 +6,7 @@ from typing import Any
 
 from . import db
 from .helpers import display_dsname, scrub_text
-from .window import active_window, last_ts_select
+from .window import active_window, last_ts_select, ts_expr
 
 
 def _days(days: int) -> str:
@@ -45,6 +45,28 @@ def overview_kpis(days: int) -> dict[str, Any]:
     """
     rows = db.query(sql)
     return rows[0] if rows else {}
+
+
+def latest_smf_update() -> Any:
+    """Newest event datetime across key loaded SMF tables (absolute, not windowed)."""
+    tables = (
+        "smf_14",
+        "smf_15",
+        "smf_17",
+        "smf_30_4",
+        "smf_30_5",
+        "smf_61",
+        "smf_65",
+        "smf_66",
+        "smf_80",
+        "smf_119_1",
+        "smf_119_2",
+        "smf_119_3",
+        "smf_119_70",
+    )
+    ts = ts_expr()
+    unions = " UNION ALL ".join(f"SELECT max({ts}) AS ts FROM smf.{t}" for t in tables)
+    return db.query_scalar(f"SELECT max(ts) FROM ({unions})")
 
 
 def records_by_table(days: int) -> list[dict[str, Any]]:

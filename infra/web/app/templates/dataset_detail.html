@@ -1,99 +1,99 @@
-{% extends "base.html" %}
-{% from "_macros.html" import details_button, ts_th, ts_td, th with context %}
-{% block subtitle %}<p>Lifecycle for <code class="mono">{{ data.dsname or '(blank)' }}</code> — I/O, scratch, catalog, RACF.</p>{% endblock %}
-{% block content %}
-<section class="grid grid-4">
-  <div class="kpi teal"><div class="label">I/O events</div><div class="value">{{ fmt_int(data.io|length) }}</div></div>
-  <div class="kpi orange"><div class="label">Scratches</div><div class="value">{{ fmt_int(data.scratch|length) }}</div></div>
-  <div class="kpi violet"><div class="label">Catalog</div><div class="value">{{ fmt_int(data.catalog|length) }}</div></div>
-  <div class="kpi red"><div class="label">RACF hits</div><div class="value">{{ fmt_int(data.racf|length) }}</div></div>
-</section>
-
-<section class="stack" style="margin-top:1rem">
-  <div class="panel">
-    <h2>I/O activity (14/15)</h2>
-    {% if data.io %}
-    <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}{{ th('Dir', 'direction') }}{{ th('Job', 'job_name') }}{{ th('DD', 'ddname') }}{{ th('Vol', 'volser') }}{{ th('EXCP', 'excp_count') }}<th></th></tr></thead>
-      <tbody>
-      {% for r in data.io %}
-        <tr>
-          {{ ts_td(r) }}
-          <td><span class="badge {{ 'in' if r.direction=='INPUT' else 'out' }}">{{ r.direction }}</span></td>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
-          <td class="mono">{{ display_cell(r.ddname) }}</td>
-          <td class="mono">{{ display_cell(r.volser) }}</td>
-          <td>{{ display_cell(r.excp_count) }}</td>
-          <td>{{ details_button('smf_14' if r.direction=='INPUT' else 'smf_15', {'dsname': data.dsname, 'job_name': r.job_name, 'ddname': r.ddname or '', 'event_date': r.event_date|string, 'time': r.time}) }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-    {% else %}<div class="empty">No I/O rows for this DSN in the window.</div>{% endif %}
-  </div>
-
-  <div class="panel">
-    <h2>Scratches (17)</h2>
-    {% if data.scratch %}
-    <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Job</th><th>Vol</th><th></th></tr></thead>
-      <tbody>
-      {% for r in data.scratch %}
-        <tr>
-          {{ ts_td(r) }}
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
-          <td class="mono">{{ display_cell(r.volser) }}</td>
-          <td>{{ details_button('smf_17', {'dsname': data.dsname, 'job_name': r.job_name, 'event_date': r.event_date|string, 'time': r.time}) }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-    {% else %}<div class="empty">No scratches.</div>{% endif %}
-  </div>
-
-  <div class="panel">
-    <h2>Catalog (61/65/66)</h2>
-    {% if data.catalog %}
-    <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Action</th><th>Job</th><th>Catalog</th><th></th></tr></thead>
-      <tbody>
-      {% for r in data.catalog %}
-        <tr>
-          {{ ts_td(r) }}
-          <td>{{ r.action }}</td>
-          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
-          <td class="mono">{{ display_cell(r.catalog_name) }}</td>
-          <td>{{ details_button(
-                'smf_61' if r.action=='DEFINE' else ('smf_65' if r.action=='DELETE' else 'smf_66'),
-                {'entry_name': data.dsname, 'job_name': r.job_name, 'event_date': r.event_date|string, 'time': r.time}
-              ) }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-    {% else %}<div class="empty">No catalog events.</div>{% endif %}
-  </div>
-
-  <div class="panel">
-    <h2>RACF on resource</h2>
-    {% if data.racf %}
-    <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>User</th><th>EVT</th><th>Class</th><th>Req</th><th>Allow</th><th></th></tr></thead>
-      <tbody>
-      {% for r in data.racf %}
-        <tr>
-          {{ ts_td(r) }}
-          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, **window_args) }}">{{ display_cell(r.user_id) }}</a></td>
-          <td>{{ display_cell(r.event_code) }}</td>
-          <td>{{ display_cell(r.class_name) }}</td>
-          <td>{{ display_cell(r.access_requested) }}</td>
-          <td>{{ display_cell(r.access_allowed) }}</td>
-          <td>{{ details_button('smf_80', {'old_resource': data.dsname, 'user_id': r.user_id, 'event_code': r.event_code, 'event_date': r.event_date|string, 'time': r.time}) }}</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table></div>
-    {% else %}<div class="empty">No RACF hits for this resource name.</div>{% endif %}
-  </div>
-</section>
-{% endblock %}
+{% extends "base.html" %}
+{% from "_macros.html" import details_button, panel_h2, ts_th, ts_td, th with context %}
+{% block subtitle %}<p>Lifecycle for <code class="mono">{{ data.dsname or '(blank)' }}</code> — I/O, scratch, catalog, RACF.</p>{% endblock %}
+{% block content %}
+<section class="grid grid-4">
+  <div class="kpi teal"><div class="label">I/O events</div><div class="value">{{ fmt_int(data.io|length) }}</div></div>
+  <div class="kpi orange"><div class="label">Scratches</div><div class="value">{{ fmt_int(data.scratch|length) }}</div></div>
+  <div class="kpi violet"><div class="label">Catalog</div><div class="value">{{ fmt_int(data.catalog|length) }}</div></div>
+  <div class="kpi red"><div class="label">RACF hits</div><div class="value">{{ fmt_int(data.racf|length) }}</div></div>
+</section>
+
+<section class="stack" style="margin-top:1rem">
+  <div class="panel">
+    {{ panel_h2('I/O activity (14/15)', 'smf_14,smf_15', {'dsname': data.dsname} if data.dsname else {}) }}
+    {% if data.io %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>{{ ts_th() }}{{ th('Dir', 'direction') }}{{ th('Job', 'job_name') }}{{ th('DD', 'ddname') }}{{ th('Vol', 'volser') }}{{ th('EXCP', 'excp_count') }}<th></th></tr></thead>
+      <tbody>
+      {% for r in data.io %}
+        <tr>
+          {{ ts_td(r) }}
+          <td><span class="badge {{ 'in' if r.direction=='INPUT' else 'out' }}">{{ r.direction }}</span></td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td class="mono">{{ display_cell(r.ddname) }}</td>
+          <td class="mono">{{ display_cell(r.volser) }}</td>
+          <td>{{ display_cell(r.excp_count) }}</td>
+          <td>{{ details_button('smf_14' if r.direction=='INPUT' else 'smf_15', {'dsname': data.dsname, 'job_name': r.job_name, 'ddname': r.ddname or '', 'event_date': r.event_date|string, 'time': r.time}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No I/O rows for this DSN in the window.</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    {{ panel_h2('Scratches (17)', 'smf_17', {'dsname': data.dsname} if data.dsname else {}) }}
+    {% if data.scratch %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>{{ ts_th() }}<th>Job</th><th>Vol</th><th></th></tr></thead>
+      <tbody>
+      {% for r in data.scratch %}
+        <tr>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td class="mono">{{ display_cell(r.volser) }}</td>
+          <td>{{ details_button('smf_17', {'dsname': data.dsname, 'job_name': r.job_name, 'event_date': r.event_date|string, 'time': r.time}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No scratches.</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    {{ panel_h2('Catalog (61/65/66)', 'smf_61,smf_65,smf_66', {'entry_name': data.dsname} if data.dsname else {}) }}
+    {% if data.catalog %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>{{ ts_th() }}<th>Action</th><th>Job</th><th>Catalog</th><th></th></tr></thead>
+      <tbody>
+      {% for r in data.catalog %}
+        <tr>
+          {{ ts_td(r) }}
+          <td>{{ r.action }}</td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td class="mono">{{ display_cell(r.catalog_name) }}</td>
+          <td>{{ details_button(
+                'smf_61' if r.action=='DEFINE' else ('smf_65' if r.action=='DELETE' else 'smf_66'),
+                {'entry_name': data.dsname, 'job_name': r.job_name, 'event_date': r.event_date|string, 'time': r.time}
+              ) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No catalog events.</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    {{ panel_h2('RACF on resource', 'smf_80', {'old_resource': data.dsname} if data.dsname else {}) }}
+    {% if data.racf %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>{{ ts_th() }}<th>User</th><th>EVT</th><th>Class</th><th>Req</th><th>Allow</th><th></th></tr></thead>
+      <tbody>
+      {% for r in data.racf %}
+        <tr>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.user_detail', user=r.user_id, **window_args) }}">{{ display_cell(r.user_id) }}</a></td>
+          <td>{{ display_cell(r.event_code) }}</td>
+          <td>{{ display_cell(r.class_name) }}</td>
+          <td>{{ display_cell(r.access_requested) }}</td>
+          <td>{{ display_cell(r.access_allowed) }}</td>
+          <td>{{ details_button('smf_80', {'old_resource': data.dsname, 'user_id': r.user_id, 'event_code': r.event_code, 'event_date': r.event_date|string, 'time': r.time}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<div class="empty">No RACF hits for this resource name.</div>{% endif %}
+  </div>
+</section>
+{% endblock %}

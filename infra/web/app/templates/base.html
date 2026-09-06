@@ -24,9 +24,6 @@
       </a>
       {% endfor %}
     </nav>
-    <p class="muted" style="padding:.75rem;font-size:.75rem;margin-top:1.5rem;line-height:1.45">
-      Click any hourly chart bar to filter tables to that hour. Custom From/To overrides the relative window.
-    </p>
   </aside>
   <main class="main">
     <div class="topbar">
@@ -82,10 +79,6 @@
     {% endif %}
 
     {% block content %}{% endblock %}
-
-    <p class="footer-note">
-      Peer UI to Grafana · encoding-safe dataset names · drill-downs for job / user / DSN / IP
-    </p>
   </main>
 </div>
 
@@ -99,6 +92,21 @@
       <button type="button" class="btn" onclick="SMFDetails.close()">Close</button>
     </header>
     <div id="smf-details-body" class="details-body">
+      <div class="empty">Loading…</div>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="smf-full-table-modal" class="details-modal full-table-modal">
+  <div class="details-shell">
+    <header class="details-head">
+      <div>
+        <h2 id="smf-full-table-title">Full table</h2>
+        <p id="smf-full-table-sub" class="muted"></p>
+      </div>
+      <button type="button" class="btn" onclick="SMFFullTable.close()">Close</button>
+    </header>
+    <div id="smf-full-table-body" class="details-body">
       <div class="empty">Loading…</div>
     </div>
   </div>

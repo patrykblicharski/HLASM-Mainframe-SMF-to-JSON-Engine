@@ -1,15 +1,36 @@
+{% macro _window_data_attrs() -%}
+data-days="{{ days }}"
+{% if date_from %}data-date-from="{{ date_from }}"{% endif %}
+{% if date_to %}data-date-to="{{ date_to }}"{% endif %}
+{% if hour_from %}data-hour-from="{{ hour_from }}"{% endif %}
+{% if hour_to %}data-hour-to="{{ hour_to }}"{% endif %}
+{%- endmacro %}
+
 {% macro details_button(tables, filters) -%}
 {# filters must be HTML-attr escaped: raw tojson quotes break data-filters="..." #}
 <button type="button"
         class="btn btn-details"
         data-tables="{{ tables }}"
-        data-days="{{ days }}"
-        {% if date_from %}data-date-from="{{ date_from }}"{% endif %}
-        {% if date_to %}data-date-to="{{ date_to }}"{% endif %}
-        {% if hour_from %}data-hour-from="{{ hour_from }}"{% endif %}
-        {% if hour_to %}data-hour-to="{{ hour_to }}"{% endif %}
+        {{ _window_data_attrs() }}
         data-filters="{{ filters|tojson|forceescape }}"
         onclick="SMFDetails.open(this)">Full details</button>
+{%- endmacro %}
+
+{% macro full_table_button(tables, filters=None) -%}
+{# Panel-level dump of underlying SMF table(s) for the active time window. #}
+<button type="button"
+        class="btn btn-full-table"
+        data-tables="{{ tables }}"
+        {{ _window_data_attrs() }}
+        data-filters="{{ (filters if filters is not none else {})|tojson|forceescape }}"
+        onclick="SMFFullTable.open(this)">Full table</button>
+{%- endmacro %}
+
+{% macro panel_h2(title, tables, filters=None, note='') -%}
+<h2>
+  <span class="panel-heading">{{ title }}{% if note %} <span class="panel-note">{{ note }}</span>{% endif %}</span>
+  {{ full_table_button(tables, filters) }}
+</h2>
 {%- endmacro %}
 
 {% macro load_more(name, limit, has_more, step=40) -%}

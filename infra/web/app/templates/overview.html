@@ -1,15 +1,57 @@
 {% extends "base.html" %}
-{% block subtitle %}<p>Workload pulse across storage, security, network, and batch. Click a bar to filter.</p>{% endblock %}
+{% from "_macros.html" import panel_h2 with context %}
+{% block subtitle %}<p>Workload pulse across storage, security, network, and batch.</p>{% endblock %}
 {% block content %}
+<div class="info-box">
+  <strong>Last data update</strong>
+  {% if last_data_update %}
+  <span class="mono">{{ last_data_update|string|replace('T',' ')|truncate(19, True, '') }}</span>
+  {% else %}
+  <span class="muted">No SMF rows loaded yet</span>
+  {% endif %}
+</div>
+
 <section class="grid grid-4">
-  <div class="kpi teal"><div class="label">INPUT 14</div><div class="value">{{ fmt_int(kpis.get('in14',0)) }}</div></div>
-  <div class="kpi blue"><div class="label">OUTPUT 15</div><div class="value">{{ fmt_int(kpis.get('out15',0)) }}</div></div>
-  <div class="kpi orange"><div class="label">SCRATCH 17</div><div class="value">{{ fmt_int(kpis.get('scratch17',0)) }}</div></div>
-  <div class="kpi violet"><div class="label">JOB ENDS 30-5</div><div class="value">{{ fmt_int(kpis.get('jobs30',0)) }}</div></div>
-  <div class="kpi red"><div class="label">RACF 80</div><div class="value">{{ fmt_int(kpis.get('racf80',0)) }}</div></div>
-  <div class="kpi cyan"><div class="label">TCP TERM 119-2</div><div class="value">{{ fmt_int(kpis.get('tcp119',0)) }}</div></div>
-  <div class="kpi green"><div class="label">CATALOG 61/65/66</div><div class="value">{{ fmt_int((kpis.get('def61',0)|int) + (kpis.get('del65',0)|int) + (kpis.get('alt66',0)|int)) }}</div></div>
-  <div class="kpi"><div class="label">FTP 3 / 70</div><div class="value">{{ fmt_int(kpis.get('ftp3',0)) }} / {{ fmt_int(kpis.get('ftp70',0)) }}</div></div>
+  <div class="kpi teal">
+    <div class="label">INPUT 14</div>
+    <div class="kpi-desc">Dataset open for input (read) activity</div>
+    <div class="value">{{ fmt_int(kpis.get('in14',0)) }}</div>
+  </div>
+  <div class="kpi blue">
+    <div class="label">OUTPUT 15</div>
+    <div class="kpi-desc">Dataset open for output (write) activity</div>
+    <div class="value">{{ fmt_int(kpis.get('out15',0)) }}</div>
+  </div>
+  <div class="kpi orange">
+    <div class="label">SCRATCH 17</div>
+    <div class="kpi-desc">Dataset scratch / delete events</div>
+    <div class="value">{{ fmt_int(kpis.get('scratch17',0)) }}</div>
+  </div>
+  <div class="kpi violet">
+    <div class="label">JOB ENDS 30-5</div>
+    <div class="kpi-desc">Batch / address-space job end summaries</div>
+    <div class="value">{{ fmt_int(kpis.get('jobs30',0)) }}</div>
+  </div>
+  <div class="kpi red">
+    <div class="label">RACF 80</div>
+    <div class="kpi-desc">Security audit and access-control events</div>
+    <div class="value">{{ fmt_int(kpis.get('racf80',0)) }}</div>
+  </div>
+  <div class="kpi cyan">
+    <div class="label">TCP TERM 119-2</div>
+    <div class="kpi-desc">TCP/IP connection termination records</div>
+    <div class="value">{{ fmt_int(kpis.get('tcp119',0)) }}</div>
+  </div>
+  <div class="kpi green">
+    <div class="label">CATALOG 61/65/66</div>
+    <div class="kpi-desc">Catalog define, delete, and alter events</div>
+    <div class="value">{{ fmt_int((kpis.get('def61',0)|int) + (kpis.get('del65',0)|int) + (kpis.get('alt66',0)|int)) }}</div>
+  </div>
+  <div class="kpi">
+    <div class="label">FTP 3 / 70</div>
+    <div class="kpi-desc">FTP client (3) and server (70) transfers</div>
+    <div class="value">{{ fmt_int(kpis.get('ftp3',0)) }} / {{ fmt_int(kpis.get('ftp70',0)) }}</div>
+  </div>
 </section>
 
 <section class="grid grid-2" style="margin-top:1rem">
@@ -24,7 +66,7 @@
 </section>
 
 <section class="panel" style="margin-top:1rem">
-  <h2>Table mix</h2>
+  {{ panel_h2('Table mix', 'smf_14,smf_15,smf_17,smf_30_5,smf_80,smf_119_2') }}
   {% if tables %}
   <div class="table-wrap">
     <table class="data">

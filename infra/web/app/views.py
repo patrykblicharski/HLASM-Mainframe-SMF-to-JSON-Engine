@@ -114,6 +114,7 @@ def overview():
     kpis, err = _safe(queries.overview_kpis, days)
     tables, _ = _safe(queries.records_by_table, days)
     hourly, _ = _safe(queries.hourly_activity, days)
+    last_update, _ = _safe(queries.latest_smf_update)
     return render_template(
         "overview.html",
         **_ctx(
@@ -122,6 +123,7 @@ def overview():
             kpis=kpis or {},
             tables=tables or [],
             hourly=hourly or [],
+            last_data_update=last_update,
             error=err,
         ),
     )
@@ -406,16 +408,15 @@ def cross():
     )
 
 
-@bp.route("/api/details")
-def api_details():
-    """JSON: full SMF column dump for modal Details buttons."""
+def _api_table_payload(*, default_limit: int) -> Response:
+    """Shared JSON handler for Details / Full table modals."""
     days = _days()
     raw_tables = request.args.get("tables") or request.args.get("table") or ""
     tables = [t.strip() for t in raw_tables.split(",") if t.strip()]
     try:
-        limit = int(request.args.get("limit") or 100)
+        limit = int(request.args.get("limit") or default_limit)
     except ValueError:
-        limit = 100
+        limit = default_limit
     try:
         offset = int(request.args.get("offset") or 0)
     except ValueError:
@@ -423,7 +424,18 @@ def api_details():
     filters = {
         k: v
         for k, v in request.args.items()
-        if k not in {"tables", "table", "days", "limit", "offset", "date_from", "date_to", "hour_from", "hour_to"}
+        if k
+        not in {
+            "tables",
+            "table",
+            "days",
+            "limit",
+            "offset",
+            "date_from",
+            "date_to",
+            "hour_from",
+            "hour_to",
+        }
     }
     try:
         payload = details.fetch_full_details(tables, filters, days, limit=limit, offset=offset)
@@ -443,6 +455,18 @@ def api_details():
         json.dumps(payload, default=str, ensure_ascii=False),
         mimetype="application/json",
     )
+
+
+@bp.route("/api/details")
+def api_details():
+    """JSON: full SMF column dump for modal Details buttons."""
+    return _api_table_payload(default_limit=100)
+
+
+@bp.route("/api/full-table")
+def api_full_table():
+    """JSON: paginated SELECT * for Full table panel modal (all columns)."""
+    return _api_table_payload(default_limit=50)
 
 
 @bp.route("/export/<kind>.csv")

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, ts_th, ts_td, th with context %}
+{% from "_macros.html" import details_button, panel_h2, ts_th, ts_td, th with context %}
 {% block subtitle %}<p>RACF user <strong class="mono">{{ data.user }}</strong> — events and related job CPU.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
   <div class="panel">
-    <h2>Security events</h2>
+    {{ panel_h2('Security events', 'smf_80', {'user_id': data.user}) }}
     {% if data.events %}
     <div class="table-wrap"><table class="data">
       <thead><tr>{{ ts_th() }}<th>Job</th><th>EVT</th><th>Class</th><th>Resource</th><th>Req/Allow</th><th></th></tr></thead>
@@ -25,7 +25,7 @@
     {% else %}<div class="empty">No events for this user.</div>{% endif %}
   </div>
   <div class="panel">
-    <h2>Jobs (30 × 80 cross)</h2>
+    {{ panel_h2('Jobs (30 × 80 cross)', 'smf_30_4,smf_30_5', {'racf_user': data.user}) }}
     {% if data.jobs %}
     <div class="table-wrap"><table class="data">
       <thead><tr><th>Job</th><th>Ends</th><th>CPU sum</th><th></th></tr></thead>

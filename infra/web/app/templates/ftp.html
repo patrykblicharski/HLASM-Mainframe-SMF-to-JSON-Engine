@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_macros.html" import panel_h2 with context %}
 {% block subtitle %}<p>FTP client/server transfers — empty when 119-3/70 absent from the dump.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-4">
@@ -19,7 +20,7 @@
 
 <section class="grid grid-2" style="margin-top:1rem">
   <div class="panel">
-    <h2>FTP users (stats)</h2>
+    {{ panel_h2('FTP users (stats)', 'smf_119_3,smf_119_70') }}
     {% if summary.users %}
     <div class="table-wrap"><table class="data">
       <thead><tr><th>Direction</th><th>User</th><th>Bytes</th><th>Transfers</th></tr></thead>
@@ -37,7 +38,7 @@
     {% else %}<div class="empty">stats_ftp_daily is empty.</div>{% endif %}
   </div>
   <div class="panel">
-    <h2>Other 119 subtypes present</h2>
+    {{ panel_h2('Other 119 subtypes present', 'smf_119_1,smf_119_2,smf_119_5,smf_119_6,smf_119_10') }}
     {% if summary.subtypes %}
     <div class="table-wrap"><table class="data">
       <thead><tr><th>Table</th><th>Subtype</th><th>Rows</th></tr></thead>
