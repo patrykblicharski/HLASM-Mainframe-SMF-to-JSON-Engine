@@ -12,7 +12,9 @@ import argparse
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import BinaryIO, List, Optional
+from typing import BinaryIO, Callable, List, Optional
+
+from .progress import PROGRESS_EVERY_BYTES, CliProgress, fmt_bytes
 
 TREESIZE = 0x1000
 RECORDMARK = 257
@@ -20,6 +22,27 @@ BASE = 0
 CODESIZE = 257
 NONE = -1
 STACKSIZE = 0x07FF
+
+ProgressFn = Callable[[int, int, int], None]  # input_pos, input_total, bytes_written
+
+
+def _progressive_tick(
+    progress: Optional[ProgressFn],
+    reader: "_BitReader",
+    writer: "_Writer",
+    total: int,
+    last_pos: list[int],
+    *,
+    force: bool = False,
+) -> None:
+    if not progress:
+        return
+    pos = reader.pos
+    if not force and pos - last_pos[0] < PROGRESS_EVERY_BYTES:
+        return
+    last_pos[0] = pos
+    progress(pos, total, writer.bytes_written)
+
 
 # IBM TerseDecompress host text mapping (not cp037).
 EBC_TO_ASC = (
@@ -188,7 +211,13 @@ class _Writer:
         self.out.flush()
 
 
-def _decode_pack(reader: _BitReader, writer: _Writer) -> None:
+def _decode_pack(
+    reader: _BitReader,
+    writer: _Writer,
+    *,
+    progress: Optional[ProgressFn] = None,
+    total: int = 0,
+) -> None:
     father = [0] * TREESIZE
     char_ext = [0] * TREESIZE
     backward = [0] * TREESIZE
@@ -206,6 +235,7 @@ def _decode_pack(reader: _BitReader, writer: _Writer) -> None:
     backward[258] = 0
     forward[TREESIZE - 1] = 0
     x = 0
+    last = [-PROGRESS_EVERY_BYTES]
     d = reader.get_block()
     while d != 0:
         y = backward[0]
@@ -242,7 +272,9 @@ def _decode_pack(reader: _BitReader, writer: _Writer) -> None:
             p = e
         father[y] = d
         d = reader.get_block()
+        _progressive_tick(progress, reader, writer, total, last)
     writer.close()
+    _progressive_tick(progress, reader, writer, total, last, force=True)
 
 
 class _TreeRec:
@@ -255,7 +287,13 @@ class _TreeRec:
         self.next_count = 0
 
 
-def _decode_spack(reader: _BitReader, writer: _Writer) -> None:
+def _decode_spack(
+    reader: _BitReader,
+    writer: _Writer,
+    *,
+    progress: Optional[ProgressFn] = None,
+    total: int = 0,
+) -> None:
     tree: List[_TreeRec] = [_TreeRec() for _ in range(TREESIZE + 1)]
     stack = [0] * (STACKSIZE + 1)
 
@@ -336,9 +374,11 @@ def _decode_spack(reader: _BitReader, writer: _Writer) -> None:
 
     tree_avail = tree_init()
     tree[TREESIZE - 1].next_count = NONE
+    last = [-PROGRESS_EVERY_BYTES]
     h = reader.get_block()
     if h == 0:
         writer.close()
+        _progressive_tick(progress, reader, writer, total, last, force=True)
         return
     put_chars(h)
     g = reader.get_block()
@@ -355,7 +395,9 @@ def _decode_spack(reader: _BitReader, writer: _Writer) -> None:
         lru_add(n)
         h = g
         g = reader.get_block()
+        _progressive_tick(progress, reader, writer, total, last)
     writer.close()
+    _progressive_tick(progress, reader, writer, total, last, force=True)
 
 
 def decompress_stream(
@@ -363,14 +405,18 @@ def decompress_stream(
     out: BinaryIO,
     *,
     text: bool = False,
+    progress: Optional[ProgressFn] = None,
 ) -> TerseHeader:
     header, pos = parse_header(data)
     reader = _BitReader(data, pos)
     writer = _Writer(out, header, text)
+    total = len(data)
+    if progress:
+        progress(pos, total, 0)
     if header.spack:
-        _decode_spack(reader, writer)
+        _decode_spack(reader, writer, progress=progress, total=total)
     else:
-        _decode_pack(reader, writer)
+        _decode_pack(reader, writer, progress=progress, total=total)
     return header
 
 
@@ -387,13 +433,14 @@ def decompress_file(
     dest: Path | str,
     *,
     text: bool = False,
+    progress: Optional[ProgressFn] = None,
 ) -> TerseHeader:
     source = Path(src)
     target = Path(dest)
     payload = source.read_bytes()
     target.parent.mkdir(parents=True, exist_ok=True)
     with target.open("wb") as fh:
-        return decompress_stream(payload, fh, text=text)
+        return decompress_stream(payload, fh, text=text, progress=progress)
 
 
 def pack_12bit_codes(codes: List[int]) -> bytes:
@@ -435,19 +482,59 @@ def main(argv: Optional[list[str]] = None) -> int:
         action="store_true",
         help="Host text mode (EBCDIC→ASCII + newlines). Default is binary with RDW for VB.",
     )
+    p.add_argument(
+        "--no-progress",
+        action="store_true",
+        help="Do not draw the stderr progress bar",
+    )
     args = p.parse_args(argv)
     src = Path(args.input)
     if not src.is_file():
         print(f"ERROR: file not found: {src}", file=sys.stderr)
         return 2
     dest = Path(args.output) if args.output else default_output_path(src)
+    src_size = src.stat().st_size
+    show_bar = not args.no_progress
+    bar = CliProgress(enabled=show_bar, label=src.name)
+
+    print(f"INFO: reading {src.name} ({fmt_bytes(src_size)})...", file=sys.stderr)
     try:
-        header = decompress_file(src, dest, text=args.text)
+        payload = src.read_bytes()
+    except OSError as exc:
+        print(f"ERROR: read failed: {exc}", file=sys.stderr)
+        return 1
+
+    try:
+        header, _pos = parse_header(payload)
     except TerseError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
-    size = dest.stat().st_size
+
     recfm = "VB" if header.recfm_v else "FB"
+    print(
+        f"INFO: decompressing {header.method} recfm={recfm} lrecl={header.record_length}...",
+        file=sys.stderr,
+    )
+    bar.stage = header.method
+
+    def on_progress(pos: int, total: int, written: int) -> None:
+        bar.update_bytes(pos, total, written=written, stage=header.method)
+
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with dest.open("wb") as fh:
+            decompress_stream(payload, fh, text=args.text, progress=on_progress)
+    except TerseError as exc:
+        bar.close()
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    except OSError as exc:
+        bar.close()
+        print(f"ERROR: write failed: {exc}", file=sys.stderr)
+        return 1
+
+    bar.close()
+    size = dest.stat().st_size
     print(
         f"Wrote {dest} ({size:,} bytes)  method={header.method} recfm={recfm} "
         f"lrecl={header.record_length}"

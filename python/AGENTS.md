@@ -89,6 +89,7 @@ python -m smf2json samples/sample.smf -f csv -o samples/sample.csv
 python -m smf2json --gui samples/sample.smf
 python unterse.py dump.trs
 python -m smf2json.terse dump.trs
+python -m smf2json.terse dump.trs --no-progress
 python -m unittest discover -s tests -v
 ```
 

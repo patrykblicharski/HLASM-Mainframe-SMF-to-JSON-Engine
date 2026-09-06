@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import io
 import tempfile
 import unittest
+from contextlib import redirect_stderr
 from pathlib import Path
 
 from smf2json.terse import (
@@ -12,6 +14,8 @@ from smf2json.terse import (
     default_output_path,
     decompress,
     decompress_file,
+    decompress_stream,
+    main,
     pack_12bit_codes,
     parse_header,
 )
@@ -60,6 +64,34 @@ class TerseTests(unittest.TestCase):
             self.assertEqual(header.method, "PACK")
             self.assertEqual(dest.read_bytes(), b"\x00\x06\x00\x00XY")
             self.assertTrue(str(dest).endswith(".raw.dump"))
+
+    def test_decompress_stream_reports_progress(self) -> None:
+        blob = _vb_pack(b"ABCDEFGH" * 32)
+        ticks: list[tuple[int, int, int]] = []
+
+        def on_progress(pos: int, total: int, written: int) -> None:
+            ticks.append((pos, total, written))
+
+        out = io.BytesIO()
+        decompress_stream(blob, out, progress=on_progress)
+        self.assertGreaterEqual(len(ticks), 2)
+        self.assertEqual(ticks[0][1], len(blob))
+        self.assertEqual(ticks[-1][0], ticks[-1][1])
+        self.assertGreater(ticks[-1][2], 0)
+
+    def test_cli_progress_stages(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            src = Path(tmp) / "sample.trs"
+            dest = Path(tmp) / "out.dump"
+            src.write_bytes(_vb_pack(b"ZZ"))
+            err = io.StringIO()
+            with redirect_stderr(err):
+                rc = main([str(src), "-o", str(dest)])
+            self.assertEqual(rc, 0)
+            text = err.getvalue()
+            self.assertIn("INFO: reading", text)
+            self.assertIn("INFO: decompressing PACK", text)
+            self.assertTrue(dest.is_file())
 
 
 if __name__ == "__main__":

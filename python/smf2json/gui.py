@@ -24,9 +24,9 @@ from .column_config import (
     visible_for_group,
 )
 from .engine import convert_record, field_meta, ordered_columns
-from .progress import CONVERT_BATCH, PROGRESS_EVERY_BYTES, fmt_bytes, format_timing
+from .progress import CONVERT_BATCH, PROGRESS_EVERY_BYTES, fmt_bytes, format_byte_bar, format_timing
 from .reader import iter_dump
-from .terse import TerseHeader, default_output_path, decompress_file
+from .terse import TerseHeader, default_output_path, decompress_stream, parse_header
 
 # Convert / paint this many rows before yielding back to Tk.
 LOAD_BATCH = CONVERT_BATCH
@@ -328,6 +328,7 @@ class SmfApp(tk.Tk):
         self._load_token = 0
         self._cancel = threading.Event()
         self._queue: Optional[SimpleQueue[Tuple[Any, ...]]] = None
+        self._progress_log_index: Optional[str] = None
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
         self.status_var = tk.StringVar(value="Ready")
@@ -435,7 +436,19 @@ class SmfApp(tk.Tk):
 
     def clear_log(self) -> None:
         self.debug.delete("1.0", tk.END)
+        self._progress_log_index = None
         self.log("INFO: debug log cleared")
+
+    def _update_progress_log(self, line: str) -> None:
+        """Replace the last progress line in the debug pane (CLI-style bar)."""
+        if self._progress_log_index is None:
+            self.debug.insert(tk.END, line + "\n")
+            self._progress_log_index = self.debug.index("end-2l linestart")
+        else:
+            end = self.debug.index(f"{self._progress_log_index} lineend + 1 chars")
+            self.debug.delete(self._progress_log_index, end)
+            self.debug.insert(self._progress_log_index, line + "\n")
+        self.debug.see(tk.END)
 
     def current_pane(self) -> Optional[RecordPane]:
         sel = self.notebook.select()
@@ -487,19 +500,68 @@ class SmfApp(tk.Tk):
             parent=self,
         ):
             return
-        self.status_var.set(f"Decompressing {src.name}…")
+        self._progress_log_index = None
+        src_size = src.stat().st_size
+        self.status_var.set(f"Reading {src.name}…")
         self.log(f"INFO: unterse {src} → {dest}")
-        self._set_busy(True, progress=False)
+        self.log(f"INFO: reading {src.name} ({fmt_bytes(src_size)})...")
+        self._set_busy(True, progress=True, cancel=False)
 
         def work() -> None:
             try:
-                header = decompress_file(src, dest)
+                payload = src.read_bytes()
+                header, _pos = parse_header(payload)
+                method = header.method
+                recfm = "VB" if header.recfm_v else "FB"
+
+                def ui_start() -> None:
+                    self.log(
+                        f"INFO: decompressing {method} recfm={recfm} "
+                        f"lrecl={header.record_length}..."
+                    )
+                    self.status_var.set(f"Decompressing {src.name} ({method})…")
+                    self.progress["value"] = 0
+
+                self.after(0, ui_start)
+
+                def on_progress(pos: int, total: int, written: int) -> None:
+                    self.after(
+                        0,
+                        lambda p=pos, t=total, w=written, m=method: self._apply_terse_progress(
+                            p, t, w, m, src.name
+                        ),
+                    )
+
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                with dest.open("wb") as fh:
+                    decompress_stream(payload, fh, progress=on_progress)
                 size = dest.stat().st_size
                 self.after(0, lambda: self._terse_done(dest, header, size, None))
             except Exception as exc:  # noqa: BLE001
                 self.after(0, lambda e=exc: self._terse_done(dest, None, 0, e))
 
         threading.Thread(target=work, name="smf2json-unterse", daemon=True).start()
+
+    def _apply_terse_progress(
+        self,
+        pos: int,
+        total: int,
+        written: int,
+        method: str,
+        name: str,
+    ) -> None:
+        if total > 0:
+            self.progress["value"] = min(PROGRESS_MAX, int(pos * PROGRESS_MAX / total))
+            pct = min(100.0, pos * 100.0 / total)
+            self.status_var.set(
+                f"{name} {method}  {pct:.0f}%  {fmt_bytes(pos)} / {fmt_bytes(total)}"
+                + (f"  → {fmt_bytes(written)}" if written else "")
+            )
+        else:
+            self.progress["value"] = 0
+        self._update_progress_log(
+            format_byte_bar(pos, total, name, written=written, stage=method)
+        )
 
     def _terse_done(
         self,
@@ -508,7 +570,8 @@ class SmfApp(tk.Tk):
         size: int,
         error: Optional[BaseException],
     ) -> None:
-        self._set_busy(False, progress=False)
+        self._set_busy(False, progress=True, cancel=False)
+        self._progress_log_index = None
         if error is not None:
             self.log(f"ERROR: unterse failed: {error}")
             messagebox.showerror("Terse decompress", str(error), parent=self)
@@ -537,14 +600,14 @@ class SmfApp(tk.Tk):
         self._cancel.set()
         self.destroy()
 
-    def _set_busy(self, busy: bool, *, progress: bool = True) -> None:
+    def _set_busy(self, busy: bool, *, progress: bool = True, cancel: bool = True) -> None:
         self._busy = busy
         state = tk.DISABLED if busy else tk.NORMAL
         for widget in (self._btn_open, self._btn_json, self._btn_csv, self.columns_btn):
             widget.configure(state=state)
         if busy:
             if progress:
-                if not self._btn_cancel.winfo_ismapped():
+                if cancel and not self._btn_cancel.winfo_ismapped():
                     self._btn_cancel.pack(side=tk.LEFT, padx=2, after=self._btn_csv)
                 if not self._load_strip.winfo_ismapped():
                     self._load_strip.pack(side=tk.TOP, fill=tk.X, after=self._desc_bar)

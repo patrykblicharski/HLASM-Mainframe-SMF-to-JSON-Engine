@@ -10,7 +10,7 @@ from contextlib import redirect_stderr
 from pathlib import Path
 
 from smf2json.__main__ import main
-from smf2json.progress import fmt_elapsed, format_bar, format_timing
+from smf2json.progress import fmt_elapsed, format_bar, format_byte_bar, format_timing
 from smf2json.sample_dump import build_smf30, build_smf80
 
 
@@ -31,6 +31,13 @@ class ProgressFormatTests(unittest.TestCase):
         line = format_bar(50, 100, 10, 8, "dump.smf")
         self.assertIn("50.0%", line)
         self.assertIn("8 mapped", line)
+
+    def test_format_byte_bar(self) -> None:
+        line = format_byte_bar(512 * 1024, 1024 * 1024, "file.trs", written=2_000_000, stage="PACK")
+        self.assertIn("50.0%", line)
+        self.assertIn("PACK", line)
+        self.assertIn("file.trs", line)
+        self.assertIn("→", line)
 
 
 class CliTimingTests(unittest.TestCase):
