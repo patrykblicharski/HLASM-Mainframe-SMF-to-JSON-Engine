@@ -94,7 +94,8 @@ sleep 15
 ./scripts/init_db.sh
 ```
 
-`init_db.sh` prefers `docker exec` into `smf-clickhouse` (more reliable than HTTP).
+`init_db.sh` uses HTTP Basic auth first (same as a working
+`curl -u smf:blacha123 … SELECT 1`), then falls back to `docker exec`.
 
 If init container failed (race on first boot) **or you pulled a fixed `init.sql`**:
 

@@ -19,19 +19,32 @@ done
 curl -fsS "${CH_URL}/ping"
 echo
 
+echo "Auth check (${CH_USER}@${CH_URL}) ..."
+auth_tmp="$(mktemp)"
+auth_code="$(
+  curl -sS -o "${auth_tmp}" -w "%{http_code}" \
+    -u "${CH_USER}:${CH_PASSWORD}" \
+    "${CH_URL}/" \
+    --data-binary "SELECT 1"
+)"
+if [[ "${auth_code}" != "200" ]] || [[ "$(tr -d '[:space:]' < "${auth_tmp}")" != "1" ]]; then
+  echo "HTTP auth failed (${auth_code}):" >&2
+  cat "${auth_tmp}" >&2
+  echo >&2
+  echo "Try: curl -s -u '${CH_USER}:${CH_PASSWORD}' '${CH_URL}/' --data-binary 'SELECT 1'" >&2
+  echo "If that fails: docker compose down -v && docker compose up -d" >&2
+  rm -f "${auth_tmp}"
+  exit 1
+fi
+rm -f "${auth_tmp}"
+echo "Auth OK"
+
 echo "Applying ${SQL} ..."
 
-apply_via_docker() {
-  docker exec -i "${CH_CONTAINER}" \
-    clickhouse-client --user "${CH_USER}" --password "${CH_PASSWORD}" --multiquery \
-    < "${SQL}"
-}
-
 apply_via_curl() {
-  # Basic auth + multiquery (query-string password often returns bare 403).
-  local tmp
+  # Basic auth + multiquery (do NOT put password in the URL — bare 403).
+  local tmp code
   tmp="$(mktemp)"
-  local code
   code="$(
     curl -sS -o "${tmp}" -w "%{http_code}" \
       -u "${CH_USER}:${CH_PASSWORD}" \
@@ -49,13 +62,33 @@ apply_via_curl() {
   rm -f "${tmp}"
 }
 
-if command -v docker >/dev/null 2>&1 && docker ps --format '{{.Names}}' | grep -qx "${CH_CONTAINER}"; then
-  echo "(via docker exec ${CH_CONTAINER})"
-  apply_via_docker
-else
-  echo "(via HTTP ${CH_URL})"
-  apply_via_curl
+apply_via_docker() {
+  # Prefer --password=... so the value is never eaten as a separate token.
+  docker exec -i \
+    -e "CLICKHOUSE_USER=${CH_USER}" \
+    -e "CLICKHOUSE_PASSWORD=${CH_PASSWORD}" \
+    "${CH_CONTAINER}" \
+    clickhouse-client \
+      --user "${CH_USER}" \
+      --password="${CH_PASSWORD}" \
+      --multiquery \
+    < "${SQL}"
+}
+
+# HTTP Basic auth is what works from the host; docker exec is fallback.
+if apply_via_curl; then
+  echo
+  echo "OK — schema loaded (HTTP)."
+  exit 0
 fi
 
-echo
-echo "OK — schema loaded."
+echo "HTTP apply failed; trying docker exec ${CH_CONTAINER} ..." >&2
+if command -v docker >/dev/null 2>&1 && docker ps --format '{{.Names}}' | grep -qx "${CH_CONTAINER}"; then
+  apply_via_docker
+  echo
+  echo "OK — schema loaded (docker exec)."
+  exit 0
+fi
+
+echo "Could not apply init.sql via HTTP or docker exec." >&2
+exit 1
