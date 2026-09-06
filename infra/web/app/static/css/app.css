@@ -270,9 +270,13 @@ table.data a { font-weight: 600; }
   max-width: 80vw;
   max-height: 80vh;
   overflow: hidden;
+  box-sizing: border-box;
+}
+/* display:flex must NOT apply when closed — it overrides UA dialog { display:none } and
+   leaves the Full table panel visible at the bottom of every page. */
+.full-table-modal[open] {
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
 }
 .full-table-modal .details-shell {
   display: flex;
@@ -402,6 +406,10 @@ table.data th.sortable[data-tip] { cursor: pointer; }
   justify-content: center;
   background: rgba(4, 10, 20, .72);
   backdrop-filter: blur(2px);
+}
+/* Keep Close in the header clickable while rows load. */
+.full-table-modal .modal-loading {
+  top: 4.75rem;
 }
 .modal-loading[hidden] { display: none !important; }
 .modal-loading-card {

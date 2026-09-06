@@ -299,7 +299,7 @@ window.SMFTips = {
   },
 };
 
-.window.SMFModalChrome = {
+window.SMFModalChrome = {
   sync() {
     const open = !!document.querySelector("dialog[open]");
     document.body.classList.toggle("smf-modal-open", open);
@@ -736,6 +736,7 @@ window.SMFFullTable = {
   PAGE: 50,
   PAGE_SIZES: [50, 100, 250, 500, 1000, 2500, 100000],
   _reqId: 0,
+  _abort: null,
   _state: {
     sources: [],
     si: 0,
@@ -871,8 +872,9 @@ window.SMFFullTable = {
     this._state.hour_to =
       btn.getAttribute("data-hour-to") || page.searchParams.get("hour_to") || "";
     this._state.filters = this._parseFilters(btn);
-    this._state.pageSize = this._normalizePageSize(this._state.pageSize || this.PAGE);
-    this._state.limit = this._state.pageSize;
+    // Always start at PAGE rows — do not reuse a previous Load-more pageSize (can be 100000).
+    this._state.pageSize = this.PAGE;
+    this._state.limit = this.PAGE;
     this._state.si = 0;
     this._state.sources = [];
     this._state.loading = false;
@@ -890,6 +892,12 @@ window.SMFFullTable = {
     // Invalidate in-flight fetches so late responses cannot re-render after close.
     this._reqId += 1;
     this._state.loading = false;
+    if (this._abort) {
+      try {
+        this._abort.abort();
+      } catch (_e) { /* ignore */ }
+      this._abort = null;
+    }
     this._hideLoading();
     if (window.SMFTips) SMFTips.hide();
     const dlg = document.getElementById("smf-full-table-modal");
@@ -943,12 +951,28 @@ window.SMFFullTable = {
       if (v !== null && v !== undefined && String(v) !== "") params.set(k, String(v));
     });
 
-    fetch("/api/full-table?" + params.toString())
-      .then((r) => r.json())
-      .then((data) => {
-        if (reqId !== this._reqId) return;
+    if (this._abort) {
+      try {
+        this._abort.abort();
+      } catch (_e) { /* ignore */ }
+    }
+    this._abort = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const t0 = performance.now();
+    const url = "/api/full-table?" + params.toString();
+
+    fetch(url, this._abort ? { signal: this._abort.signal } : undefined)
+      .then((r) => r.json().then((data) => ({ ok: r.ok, status: r.status, data })))
+      .then((payload) => {
+        const ms = Math.round(performance.now() - t0);
+        if (reqId !== this._reqId) {
+          return;
+        }
         this._state.loading = false;
         this._hideLoading();
+        const data = payload.data || {};
+        const sources = data.sources || [];
+        const rows0 = sources[0] && sources[0].rows ? sources[0].rows.length : 0;
+        const cols0 = sources[0] && sources[0].rows && sources[0].rows[0] ? Object.keys(sources[0].rows[0]).length : 0;
         if (!dlg || !dlg.open) return;
         if (data.error) {
           if (body) body.innerHTML = '<div class="error">' + this._esc(data.error) + "</div>";
@@ -961,7 +985,7 @@ window.SMFFullTable = {
         this._state.hour_to = data.hour_to || this._state.hour_to;
         this._state.appliedFilters = data.filters || {};
 
-        const incoming = data.sources || [];
+        const incoming = sources;
         if (!append) {
           this._state.sources = incoming.map((s) => ({
             table: s.table,
@@ -993,6 +1017,7 @@ window.SMFFullTable = {
         if (reqId !== this._reqId) return;
         this._state.loading = false;
         this._hideLoading();
+        if (err && err.name === "AbortError") return;
         if (!dlg || !dlg.open) return;
         if (body) body.innerHTML = '<div class="error">' + this._esc(String(err)) + "</div>";
       });
@@ -1003,6 +1028,7 @@ window.SMFFullTable = {
     const title = document.getElementById("smf-full-table-title");
     const dlg = document.getElementById("smf-full-table-modal");
     if (!body || !dlg || !dlg.open) return;
+    const t0 = performance.now();
     const sources = this._state.sources || [];
     if (!sources.length) {
       body.innerHTML = '<div class="empty">No matching rows.</div>';
