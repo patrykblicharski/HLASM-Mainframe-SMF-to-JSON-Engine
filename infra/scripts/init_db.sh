@@ -41,29 +41,7 @@ echo "Auth OK"
 
 echo "Applying ${SQL} ..."
 
-apply_via_curl() {
-  # Basic auth + multiquery (do NOT put password in the URL — bare 403).
-  local tmp code
-  tmp="$(mktemp)"
-  code="$(
-    curl -sS -o "${tmp}" -w "%{http_code}" \
-      -u "${CH_USER}:${CH_PASSWORD}" \
-      "${CH_URL}/?database=default&multiquery=1" \
-      --data-binary @"${SQL}"
-  )"
-  if [[ "${code}" != "200" ]]; then
-    echo "ClickHouse HTTP ${code}:" >&2
-    cat "${tmp}" >&2
-    echo >&2
-    rm -f "${tmp}"
-    return 1
-  fi
-  cat "${tmp}"
-  rm -f "${tmp}"
-}
-
 apply_via_docker() {
-  # Prefer --password=... so the value is never eaten as a separate token.
   docker exec -i \
     -e "CLICKHOUSE_USER=${CH_USER}" \
     -e "CLICKHOUSE_PASSWORD=${CH_PASSWORD}" \
@@ -75,20 +53,70 @@ apply_via_docker() {
     < "${SQL}"
 }
 
-# HTTP Basic auth is what works from the host; docker exec is fallback.
+# HTTP has no 'multiquery' URL setting in CH 24.8 — run one statement at a time.
+apply_via_curl() {
+  local tmp code n stmt
+  tmp="$(mktemp)"
+  n=0
+  while IFS= read -r -d '' stmt; do
+    n=$((n + 1))
+    code="$(
+      curl -sS -o "${tmp}" -w "%{http_code}" \
+        -u "${CH_USER}:${CH_PASSWORD}" \
+        "${CH_URL}/?database=default" \
+        --data-binary "${stmt}"
+    )"
+    if [[ "${code}" != "200" ]]; then
+      echo "ClickHouse HTTP ${code} on statement #${n}:" >&2
+      echo "---- statement (head) ----" >&2
+      printf '%s\n' "${stmt}" | head -n 25 >&2
+      echo "---- response ----" >&2
+      cat "${tmp}" >&2
+      echo >&2
+      rm -f "${tmp}"
+      return 1
+    fi
+  done < <(
+    python3 - "${SQL}" <<'PY'
+from pathlib import Path
+import sys
+
+text = Path(sys.argv[1]).read_text(encoding="utf-8")
+buf: list[str] = []
+for line in text.splitlines(keepends=True):
+    stripped = line.lstrip()
+    if stripped.startswith("--") and not buf:
+        continue
+    buf.append(line)
+    if line.rstrip().endswith(";"):
+        stmt = "".join(buf).strip()
+        buf = []
+        if stmt:
+            sys.stdout.buffer.write(stmt.encode("utf-8") + b"\0")
+tail = "".join(buf).strip()
+if tail:
+    sys.stdout.buffer.write(tail.encode("utf-8") + b"\0")
+PY
+  )
+  rm -f "${tmp}"
+  echo "(HTTP applied ${n} statements)"
+}
+
+if command -v docker >/dev/null 2>&1 && docker ps --format '{{.Names}}' | grep -qx "${CH_CONTAINER}"; then
+  echo "(via docker exec ${CH_CONTAINER})"
+  if apply_via_docker; then
+    echo
+    echo "OK — schema loaded (docker exec)."
+    exit 0
+  fi
+  echo "docker exec failed; trying HTTP statement-by-statement ..." >&2
+fi
+
 if apply_via_curl; then
   echo
   echo "OK — schema loaded (HTTP)."
   exit 0
 fi
 
-echo "HTTP apply failed; trying docker exec ${CH_CONTAINER} ..." >&2
-if command -v docker >/dev/null 2>&1 && docker ps --format '{{.Names}}' | grep -qx "${CH_CONTAINER}"; then
-  apply_via_docker
-  echo
-  echo "OK — schema loaded (docker exec)."
-  exit 0
-fi
-
-echo "Could not apply init.sql via HTTP or docker exec." >&2
+echo "Could not apply init.sql." >&2
 exit 1
