@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from typing import Any, Optional
 
+from markupsafe import Markup, escape
+
 
 _CTRL = re.compile(r"[\x00-\x1f\x7f-\x9f\ufffd]")
 _DSN_OK = re.compile(r"^[A-Z0-9.@$#+\-][A-Z0-9.@$#+\- ]{0,43}$", re.I)
@@ -35,9 +37,11 @@ def display_dsname(dsname: Any, *, volser: Any = "", fallback: str = "(no datase
     return fallback
 
 
-def display_cell(value: Any, empty: str = "—") -> str:
+def display_cell(value: Any, empty: str = "—") -> Markup:
     text = scrub_text(value)
-    return text if text else empty
+    if text:
+        return Markup(escape(text))
+    return Markup(f'<span class="cell-empty">{escape(empty)}</span>')
 
 
 def intish(value: Any) -> int:

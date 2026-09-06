@@ -91,4 +91,5 @@ def safe_ident(name: str) -> str:
 
 def date_filter(days: int, column: str = "event_date") -> str:
     days = max(1, min(int(days), 90))
-    return f"{column} >= today() - {days}"
+    # Compare as Date so DateTime midnight dumps and CH Date columns align.
+    return f"toDate({column}) >= today() - {days}"

@@ -15,6 +15,7 @@ from flask import (
     request,
     url_for,
 )
+from markupsafe import Markup
 
 from . import db, queries
 from .helpers import NAV, display_cell, display_dsname, fmt_bytes, fmt_int, scrub_text
@@ -55,8 +56,9 @@ def _safe(fn, *args, **kwargs):
 
 
 @bp.app_template_filter("tojson_chart")
-def tojson_chart(value: Any) -> str:
-    return json.dumps(value, default=str)
+def tojson_chart(value: Any) -> Markup:
+    """Serialize for inline <script> — must be Markup or Jinja escapes quotes to &#34;."""
+    return Markup(json.dumps(value, default=str, ensure_ascii=False))
 
 
 @bp.route("/")

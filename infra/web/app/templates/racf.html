@@ -65,15 +65,22 @@
 {% endblock %}
 {% block scripts %}
 <script>
-const hourly = {{ summary.hourly|tojson_chart }};
-SMFCharts.line("racfHourly",
-  hourly.map(r => String(r.hour).replace("T"," ").slice(0,16)),
-  [
-    { label: "Events", data: hourly.map(r => Number(r.events)), borderColor: "#e35d6a", backgroundColor: "#e35d6a33", fill: true },
-    { label: "Failed logon EVT1", data: hourly.map(r => Number(r.failed_logon)), borderColor: "#e6a23c", backgroundColor: "#e6a23c33", fill: true },
-  ]
-);
-const codes = {{ summary.codes|tojson_chart }};
-SMFCharts.doughnut("racfCodes", codes.map(r => "EVT "+r.event_code), codes.map(r => Number(r.rows)));
+document.addEventListener("DOMContentLoaded", () => {
+  const hourly = {{ summary.hourly|tojson_chart }};
+  SMFCharts.line(
+    "racfHourly",
+    hourly.map(r => String(r.hour).replace("T"," ").slice(0,16)),
+    [
+      { label: "Events", data: hourly.map(r => Number(r.events)), borderColor: "#e35d6a", backgroundColor: "#e35d6a33", fill: true },
+      { label: "Failed logon EVT1", data: hourly.map(r => Number(r.failed_logon)), borderColor: "#e6a23c", backgroundColor: "#e6a23c33", fill: true },
+    ]
+  );
+  const codes = {{ summary.codes|tojson_chart }};
+  SMFCharts.doughnut(
+    "racfCodes",
+    codes.map(r => "EVT " + r.event_code),
+    codes.map(r => Number(r.rows))
+  );
+});
 </script>
 {% endblock %}

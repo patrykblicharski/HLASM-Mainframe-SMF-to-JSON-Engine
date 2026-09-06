@@ -44,10 +44,16 @@
 
 {% block scripts %}
 <script>
-const hourly = {{ hourly|tojson_chart }};
-const packed = SMFCharts.groupSeries(hourly, "hour", "source", "rows");
-SMFCharts.stackedBar("hourlyChart", packed.labels, packed.datasets);
-const tables = {{ tables|tojson_chart }};
-SMFCharts.doughnut("tablesChart", tables.slice(0,12).map(r => r.table_name), tables.slice(0,12).map(r => Number(r.rows)));
+document.addEventListener("DOMContentLoaded", () => {
+  const hourly = {{ hourly|tojson_chart }};
+  const packed = SMFCharts.groupSeries(hourly, "hour", "source", "rows");
+  SMFCharts.stackedBar("hourlyChart", packed.labels, packed.datasets);
+  const tables = {{ tables|tojson_chart }};
+  SMFCharts.doughnut(
+    "tablesChart",
+    tables.slice(0,12).map(r => r.table_name),
+    tables.slice(0,12).map(r => Number(r.rows))
+  );
+});
 </script>
 {% endblock %}

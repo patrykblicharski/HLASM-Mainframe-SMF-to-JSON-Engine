@@ -41,8 +41,10 @@
 {% endblock %}
 {% block scripts %}
 <script>
-const hourly = {{ summary.hourly|tojson_chart }};
-const packed = SMFCharts.groupSeries(hourly, "hour", "action", "rows");
-SMFCharts.stackedBar("lifeHourly", packed.labels, packed.datasets);
+document.addEventListener("DOMContentLoaded", () => {
+  const hourly = {{ summary.hourly|tojson_chart }};
+  const packed = SMFCharts.groupSeries(hourly, "hour", "action", "rows");
+  SMFCharts.stackedBar("lifeHourly", packed.labels, packed.datasets);
+});
 </script>
 {% endblock %}

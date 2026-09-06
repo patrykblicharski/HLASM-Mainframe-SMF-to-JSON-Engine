@@ -164,6 +164,7 @@ table.data a { font-weight: 600; }
   color: #ffb4bb; padding: .85rem 1rem; border-radius: 10px; margin-bottom: 1rem;
 }
 .muted { color: var(--muted); }
+.cell-empty { color: var(--muted); font-style: italic; }
 .footer-note { margin-top: 1.5rem; color: var(--muted); font-size: .8rem; }
 
 .stack { display: flex; flex-direction: column; gap: 1rem; }

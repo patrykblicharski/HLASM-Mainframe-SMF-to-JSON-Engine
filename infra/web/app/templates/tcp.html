@@ -60,15 +60,22 @@
 {% endblock %}
 {% block scripts %}
 <script>
-const hourly = {{ summary.hourly|tojson_chart }};
-SMFCharts.line("tcpHourly",
-  hourly.map(r => String(r.hour).replace("T"," ").slice(0,16)),
-  [
-    { label: "Connections", data: hourly.map(r => Number(r.conns)), borderColor: "#5b8def", backgroundColor: "#5b8def33", fill: true },
-    { label: "In bytes", data: hourly.map(r => Number(r.in_bytes)), borderColor: "#3db8a8", backgroundColor: "#3db8a833", fill: false, yAxisID: undefined },
-  ]
-);
-const terms = {{ summary.terms|tojson_chart }};
-SMFCharts.doughnut("tcpTerms", terms.map(r => r.term_code), terms.map(r => Number(r.conns)));
+document.addEventListener("DOMContentLoaded", () => {
+  const hourly = {{ summary.hourly|tojson_chart }};
+  SMFCharts.line(
+    "tcpHourly",
+    hourly.map(r => String(r.hour).replace("T"," ").slice(0,16)),
+    [
+      { label: "Connections", data: hourly.map(r => Number(r.conns)), borderColor: "#5b8def", backgroundColor: "#5b8def33", fill: true },
+      { label: "In bytes", data: hourly.map(r => Number(r.in_bytes)), borderColor: "#3db8a8", backgroundColor: "#3db8a833", fill: false },
+    ]
+  );
+  const terms = {{ summary.terms|tojson_chart }};
+  SMFCharts.doughnut(
+    "tcpTerms",
+    terms.map(r => r.term_code || "(none)"),
+    terms.map(r => Number(r.conns))
+  );
+});
 </script>
 {% endblock %}

@@ -38,12 +38,19 @@
 {% endblock %}
 {% block scripts %}
 <script>
-const hourly = {{ hourly|tojson_chart }};
-SMFCharts.stackedBar("jobHourly",
-  hourly.map(r => String(r.hour).replace("T"," ").slice(0,16)),
-  [{ label: "Ends", data: hourly.map(r => Number(r.ends)), backgroundColor: "#9b7bffcc", borderColor: "#9b7bff" }]
-);
-const classes = {{ classes|tojson_chart }};
-SMFCharts.doughnut("jobClass", classes.map(r => r.job_class), classes.map(r => Number(r.rows)));
+document.addEventListener("DOMContentLoaded", () => {
+  const hourly = {{ hourly|tojson_chart }};
+  SMFCharts.stackedBar(
+    "jobHourly",
+    hourly.map(r => String(r.hour).replace("T"," ").slice(0,16)),
+    [{ label: "Ends", data: hourly.map(r => Number(r.ends)), backgroundColor: "#9b7bffcc", borderColor: "#9b7bff" }]
+  );
+  const classes = {{ classes|tojson_chart }};
+  SMFCharts.doughnut(
+    "jobClass",
+    classes.map(r => (r.job_class && String(r.job_class).trim()) ? r.job_class : "(none)"),
+    classes.map(r => Number(r.rows))
+  );
+});
 </script>
 {% endblock %}
