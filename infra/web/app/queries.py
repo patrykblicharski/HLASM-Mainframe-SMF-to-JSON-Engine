@@ -198,24 +198,55 @@ def dataset_detail(dsname: str, days: int) -> dict[str, Any]:
     }
 
 
-def jobs_top(days: int, limit: int = 50, q: str = "") -> list[dict[str, Any]]:
+def jobs_top(days: int, limit: int = 50, q: str = "", hour_from: str = "", hour_to: str = "") -> list[dict[str, Any]]:
     filt = ""
     if q:
         qq = scrub_text(q).replace("'", "\\'")
         filt = f"AND positionCaseInsensitive(job_name, '{qq}') > 0"
+    hf = _hour_bounds(hour_from, hour_to)
     return db.query(
         f"""
-        SELECT job_name, smf_system_id, count() AS ends,
-               countIf(program_name != '') AS with_program,
-               countIf(step_name != '') AS with_step,
-               sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum
-        FROM smf.smf_30_5
-        WHERE {_days(days)} AND job_name != '' {filt}
-        GROUP BY job_name, smf_system_id
-        ORDER BY ends DESC
+        SELECT e.job_name, e.smf_system_id, e.ends,
+               coalesce(p.with_program, 0) AS with_program,
+               coalesce(p.with_step, 0) AS with_step,
+               coalesce(p.cpu_sum, 0) AS cpu_sum
+        FROM (
+          SELECT job_name, smf_system_id, count() AS ends
+          FROM smf.smf_30_5
+          WHERE {_days(days)} AND job_name != '' {filt} {hf}
+          GROUP BY job_name, smf_system_id
+        ) e
+        LEFT JOIN (
+          SELECT job_name, smf_system_id,
+                 countIf(program_name != '') AS with_program,
+                 countIf(step_name != '') AS with_step,
+                 sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum
+          FROM smf.smf_30_4
+          WHERE {_days(days)} AND job_name != '' {filt} {hf}
+          GROUP BY job_name, smf_system_id
+        ) p USING (job_name, smf_system_id)
+        ORDER BY e.ends DESC
         LIMIT {int(limit)}
         """
     )
+
+
+def _hour_bounds(hour_from: str, hour_to: str) -> str:
+    """Optional brush filter: restrict to [hour_from, hour_to) wall-clock hours."""
+    a = scrub_text(hour_from).replace("'", "\\'")
+    b = scrub_text(hour_to).replace("'", "\\'")
+    if not a and not b:
+        return ""
+    h = (
+        "toStartOfHour(parseDateTimeBestEffort("
+        "concat(toString(event_date),' ',if(time='','00:00:00',time))))"
+    )
+    parts = []
+    if a:
+        parts.append(f"{h} >= parseDateTimeBestEffort('{a}')")
+    if b:
+        parts.append(f"{h} < parseDateTimeBestEffort('{b}')")
+    return (" AND " + " AND ".join(parts)) if parts else ""
 
 
 def jobs_hourly(days: int) -> list[dict[str, Any]]:
@@ -230,12 +261,13 @@ def jobs_hourly(days: int) -> list[dict[str, Any]]:
     )
 
 
-def job_class_mix(days: int) -> list[dict[str, Any]]:
+def job_class_mix(days: int, hour_from: str = "", hour_to: str = "") -> list[dict[str, Any]]:
+    hf = _hour_bounds(hour_from, hour_to)
     return db.query(
         f"""
         SELECT if(job_class = '', '(blank)', job_class) AS job_class, count() AS rows
-        FROM smf.smf_30_5
-        WHERE {_days(days)}
+        FROM smf.smf_30_4
+        WHERE {_days(days)} {hf}
         GROUP BY job_class ORDER BY rows DESC LIMIT 20
         """
     )
@@ -243,13 +275,23 @@ def job_class_mix(days: int) -> list[dict[str, Any]]:
 
 def job_detail(job: str, days: int) -> dict[str, Any]:
     name = scrub_text(job).replace("'", "\\'")
+    # Step/program live on 30-4 in this dump; 30-5 is job-end summary
+    steps = db.query(
+        f"""
+        SELECT event_date, time, smf_system_id, step_name, program_name, job_class, racf_user,
+               cpu_step_time, srb_time, step_comp_code
+        FROM smf.smf_30_4
+        WHERE {_days(days)} AND job_name = '{name}'
+        ORDER BY event_date DESC, time DESC LIMIT 200
+        """
+    )
     ends = db.query(
         f"""
         SELECT event_date, time, smf_system_id, step_name, program_name, job_class, racf_user,
                cpu_step_time, srb_time, step_comp_code
         FROM smf.smf_30_5
         WHERE {_days(days)} AND job_name = '{name}'
-        ORDER BY event_date DESC, time DESC LIMIT 200
+        ORDER BY event_date DESC, time DESC LIMIT 100
         """
     )
     starts = db.query(
@@ -274,7 +316,10 @@ def job_detail(job: str, days: int) -> dict[str, Any]:
         r["dsname_display"] = display_dsname(r.get("dsname"), volser=r.get("volser"))
     racf = db.query(
         f"""
-        SELECT event_date, time, user_id, event_code, class_name, old_resource, access_requested, access_allowed
+        SELECT event_date, time, user_id, event_code, class_name,
+               nullIf(old_resource,'') AS old_resource,
+               nullIf(access_requested,'') AS access_requested,
+               nullIf(access_allowed,'') AS access_allowed
         FROM smf.smf_80
         WHERE {_days(days)} AND job_name = '{name}'
         ORDER BY event_date DESC, time DESC LIMIT 150
@@ -289,7 +334,15 @@ def job_detail(job: str, days: int) -> dict[str, Any]:
         ORDER BY event_date DESC, time DESC LIMIT 100
         """
     )
-    return {"job": name, "ends": ends, "starts": starts, "datasets": ds, "racf": racf, "tcp": tcp}
+    return {
+        "job": name,
+        "steps": steps,
+        "ends": ends,
+        "starts": starts,
+        "datasets": ds,
+        "racf": racf,
+        "tcp": tcp,
+    }
 
 
 def racf_summary(days: int) -> dict[str, Any]:

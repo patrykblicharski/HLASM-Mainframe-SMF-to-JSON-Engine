@@ -67,7 +67,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT 'INPUT' AS direction, event_date, time, job_name, ddname, volser_1, excp_count\nFROM smf.smf_14 WHERE event_date>=today()-4 AND dsname='$dsname'\nUNION ALL\nSELECT 'OUTPUT', event_date, time, job_name, ddname, volser_1, excp_count\nFROM smf.smf_15 WHERE event_date>=today()-4 AND dsname='$dsname'\nORDER BY event_date DESC, time DESC LIMIT 200"
+          "rawSql": "SELECT 'INPUT' AS direction,\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  job_name, ddname, volser_1, excp_count\nFROM smf.smf_14 WHERE $__timeFilter(event_date) AND dsname='$dsname'\nUNION ALL\nSELECT 'OUTPUT' AS direction,\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  job_name, ddname, volser_1, excp_count\nFROM smf.smf_15 WHERE $__timeFilter(event_date) AND dsname='$dsname'\nORDER BY event_ts DESC LIMIT 200"
         }
       ],
       "fieldConfig": {
@@ -105,7 +105,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT 'SCRATCH' AS kind, event_date, time, job_name, volume_serial AS detail FROM smf.smf_17 WHERE event_date>=today()-4 AND dsname='$dsname'\nUNION ALL SELECT 'DEFINE', event_date, time, job_name, catalog_name FROM smf.smf_61 WHERE event_date>=today()-4 AND entry_name='$dsname'\nUNION ALL SELECT 'DELETE', event_date, time, job_name, catalog_name FROM smf.smf_65 WHERE event_date>=today()-4 AND entry_name='$dsname'\nUNION ALL SELECT 'RACF', event_date, time, job_name, concat(user_id,' EVT',event_code) FROM smf.smf_80 WHERE event_date>=today()-4 AND old_resource='$dsname'\nORDER BY event_date DESC, time DESC LIMIT 200"
+          "rawSql": "SELECT 'SCRATCH' AS kind,\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  job_name, volume_serial AS detail FROM smf.smf_17 WHERE $__timeFilter(event_date) AND dsname='$dsname'\nUNION ALL SELECT 'DEFINE',\n  concat(toString(event_date),' ',if(time='','00:00:00',time)),\n  job_name, catalog_name FROM smf.smf_61 WHERE $__timeFilter(event_date) AND entry_name='$dsname'\nUNION ALL SELECT 'DELETE',\n  concat(toString(event_date),' ',if(time='','00:00:00',time)),\n  job_name, catalog_name FROM smf.smf_65 WHERE $__timeFilter(event_date) AND entry_name='$dsname'\nUNION ALL SELECT 'RACF',\n  concat(toString(event_date),' ',if(time='','00:00:00',time)),\n  job_name, concat(user_id,' EVT',event_code) FROM smf.smf_80 WHERE $__timeFilter(event_date) AND old_resource='$dsname'\nORDER BY event_ts DESC LIMIT 200"
         }
       ],
       "fieldConfig": {
@@ -160,6 +160,6 @@
   "timezone": "browser",
   "title": "SMF Dataset Detail",
   "uid": "smf-dataset-detail",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }

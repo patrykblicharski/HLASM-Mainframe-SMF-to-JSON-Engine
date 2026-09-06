@@ -67,7 +67,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT hour AS time, sum(conn_count) AS connections FROM smf.stats_tcp_hourly WHERE toDate(hour)>=today()-4 GROUP BY hour ORDER BY time"
+          "rawSql": "SELECT hour AS time, sum(conn_count) AS connections FROM smf.stats_tcp_hourly WHERE $__timeFilter(hour) GROUP BY hour ORDER BY time"
         }
       ],
       "fieldConfig": {
@@ -107,7 +107,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT hour AS time, sum(in_bytes) AS in_bytes, sum(out_bytes) AS out_bytes FROM smf.stats_tcp_hourly WHERE toDate(hour)>=today()-4 GROUP BY hour ORDER BY time"
+          "rawSql": "SELECT hour AS time, sum(in_bytes) AS in_bytes, sum(out_bytes) AS out_bytes FROM smf.stats_tcp_hourly WHERE $__timeFilter(hour) GROUP BY hour ORDER BY time"
         }
       ],
       "fieldConfig": {
@@ -148,7 +148,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT remote_ip, count() AS conns, sum(toUInt64OrZero(in_bytes)) AS in_bytes, sum(toUInt64OrZero(out_bytes)) AS out_bytes\nFROM smf.smf_119_2 WHERE event_date>=today()-4 AND remote_ip!=''\nGROUP BY remote_ip ORDER BY conns DESC LIMIT 40"
+          "rawSql": "SELECT remote_ip, count() AS conns, sum(toUInt64OrZero(in_bytes)) AS in_bytes, sum(toUInt64OrZero(out_bytes)) AS out_bytes\nFROM smf.smf_119_2 WHERE $__timeFilter(event_date) AND remote_ip!=''\nGROUP BY remote_ip ORDER BY conns DESC LIMIT 40"
         }
       ],
       "fieldConfig": {
@@ -170,7 +170,7 @@
     },
     {
       "title": "Termination codes",
-      "type": "piechart",
+      "type": "bargauge",
       "gridPos": {
         "h": 10,
         "w": 12,
@@ -186,33 +186,32 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT if(term_code='','(blank)',term_code) AS term_code, count() AS conns FROM smf.smf_119_2 WHERE event_date>=today()-4 GROUP BY term_code ORDER BY conns DESC LIMIT 15"
+          "rawSql": "SELECT if(term_code='','(blank)',term_code) AS term_code, count() AS conns FROM smf.smf_119_2 WHERE $__timeFilter(event_date) GROUP BY term_code ORDER BY conns DESC LIMIT 15"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
           }
         },
         "overrides": []
       },
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        }
-      }
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true
+      },
+      "description": ""
     },
     {
       "title": "Local ports (119-1)",
@@ -232,7 +231,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT local_port, count() AS conns FROM smf.smf_119_1 WHERE event_date>=today()-4 AND local_port!='' GROUP BY local_port ORDER BY conns DESC LIMIT 40"
+          "rawSql": "SELECT local_port, count() AS conns FROM smf.smf_119_1 WHERE $__timeFilter(event_date) AND local_port!='' GROUP BY local_port ORDER BY conns DESC LIMIT 40"
         }
       ],
       "fieldConfig": {
@@ -263,7 +262,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT if(resource_name='',as_name,resource_name) AS job_name, count() AS conns,\n  sum(toUInt64OrZero(in_bytes)+toUInt64OrZero(out_bytes)) AS bytes\nFROM smf.smf_119_2 WHERE event_date>=today()-4\nGROUP BY job_name ORDER BY bytes DESC LIMIT 40"
+          "rawSql": "SELECT if(resource_name='',as_name,resource_name) AS job_name, count() AS conns,\n  sum(toUInt64OrZero(in_bytes)+toUInt64OrZero(out_bytes)) AS bytes\nFROM smf.smf_119_2 WHERE $__timeFilter(event_date)\nGROUP BY job_name ORDER BY bytes DESC LIMIT 40"
         }
       ],
       "fieldConfig": {
@@ -300,6 +299,6 @@
   "timezone": "browser",
   "title": "SMF TCP (119-1/2)",
   "uid": "smf-tcp",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }

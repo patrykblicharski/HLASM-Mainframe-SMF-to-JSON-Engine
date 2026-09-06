@@ -18,7 +18,7 @@ from flask import (
 from markupsafe import Markup
 
 from . import db, queries
-from .helpers import NAV, display_cell, display_dsname, fmt_bytes, fmt_int, scrub_text
+from .helpers import NAV, display_cell, display_dsname, fmt_bytes, fmt_cpu_timer, fmt_int, scrub_text
 
 bp = Blueprint("smf", __name__)
 
@@ -38,6 +38,7 @@ def _ctx(**extra: Any) -> dict[str, Any]:
         "days": days,
         "fmt_int": fmt_int,
         "fmt_bytes": fmt_bytes,
+        "fmt_cpu_timer": fmt_cpu_timer,
         "display_cell": display_cell,
         "display_dsname": display_dsname,
         "scrub_text": scrub_text,
@@ -119,9 +120,11 @@ def dataset_detail(dsname: str):
 def jobs():
     days = _days()
     q = scrub_text(request.args.get("q", ""))
-    top, err = _safe(queries.jobs_top, days, 80, q)
+    hour_from = scrub_text(request.args.get("hour_from", ""))
+    hour_to = scrub_text(request.args.get("hour_to", ""))
+    top, err = _safe(queries.jobs_top, days, 80, q, hour_from, hour_to)
     hourly, _ = _safe(queries.jobs_hourly, days)
-    classes, _ = _safe(queries.job_class_mix, days)
+    classes, _ = _safe(queries.job_class_mix, days, hour_from, hour_to)
     return render_template(
         "jobs.html",
         **_ctx(
@@ -130,6 +133,8 @@ def jobs():
             top=top or [],
             hourly=hourly or [],
             classes=classes or [],
+            hour_from=hour_from,
+            hour_to=hour_to,
             error=err,
         ),
     )
@@ -144,7 +149,16 @@ def job_detail(job: str):
         **_ctx(
             active="jobs",
             title=f"Job · {scrub_text(job)}",
-            data=data or {"job": job, "ends": [], "starts": [], "datasets": [], "racf": [], "tcp": []},
+            data=data
+            or {
+                "job": job,
+                "steps": [],
+                "ends": [],
+                "starts": [],
+                "datasets": [],
+                "racf": [],
+                "tcp": [],
+            },
             error=err,
         ),
     )

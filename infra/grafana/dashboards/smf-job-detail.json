@@ -50,7 +50,7 @@
   ],
   "panels": [
     {
-      "title": "30-5 ends for $job",
+      "title": "Step ends (30-4) \u2014 program / step / class / CPU",
       "type": "table",
       "gridPos": {
         "h": 10,
@@ -67,7 +67,38 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date, time, step_name, program_name, job_class, racf_user, cpu_step_time, step_comp_code\nFROM smf.smf_30_5 WHERE event_date>=today()-4 AND job_name = '$job'\nORDER BY event_date DESC, time DESC LIMIT 200"
+          "rawSql": "SELECT\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  step_name, program_name, job_class, racf_user,\n  cpu_step_time AS cpu_timer, step_comp_code\nFROM smf.smf_30_4 WHERE $__timeFilter(event_date) AND job_name = '$job'\nORDER BY event_date DESC, time DESC LIMIT 200"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm"
+      },
+      "description": "Primary step/program source. Subtype 5 often blanks these fields."
+    },
+    {
+      "title": "Job ends (30-5)",
+      "type": "table",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  racf_user, step_comp_code, cpu_step_time AS cpu_timer\nFROM smf.smf_30_5 WHERE $__timeFilter(event_date) AND job_name = '$job'\nORDER BY event_date DESC, time DESC LIMIT 100"
         }
       ],
       "fieldConfig": {
@@ -84,9 +115,9 @@
       "title": "Dataset I/O for $job",
       "type": "table",
       "gridPos": {
-        "h": 10,
+        "h": 8,
         "w": 12,
-        "x": 0,
+        "x": 12,
         "y": 10
       },
       "datasource": {
@@ -98,7 +129,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT 'INPUT' AS direction, event_date, time, ddname,\n  if(trim(BOTH ' ' FROM dsname)='','(no dsname)',dsname) AS dsname, volser_1, excp_count\nFROM smf.smf_14 WHERE event_date>=today()-4 AND job_name='$job'\nUNION ALL\nSELECT 'OUTPUT', event_date, time, ddname, if(trim(BOTH ' ' FROM dsname)='','(no dsname)',dsname), volser_1, excp_count\nFROM smf.smf_15 WHERE event_date>=today()-4 AND job_name='$job'\nORDER BY event_date DESC, time DESC LIMIT 200"
+          "rawSql": "SELECT 'INPUT' AS direction,\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  ddname, if(trim(BOTH ' ' FROM dsname)='','(no dsname)',dsname) AS dsname, volser_1, excp_count\nFROM smf.smf_14 WHERE $__timeFilter(event_date) AND job_name='$job'\nUNION ALL\nSELECT 'OUTPUT' AS direction,\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  ddname, if(trim(BOTH ' ' FROM dsname)='','(no dsname)',dsname) AS dsname, volser_1, excp_count\nFROM smf.smf_15 WHERE $__timeFilter(event_date) AND job_name='$job'\nORDER BY event_ts DESC LIMIT 200"
         }
       ],
       "fieldConfig": {
@@ -115,10 +146,10 @@
       "title": "RACF for $job",
       "type": "table",
       "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 10
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 18
       },
       "datasource": {
         "type": "grafana-clickhouse-datasource",
@@ -129,7 +160,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date, time, user_id, event_code, class_name, old_resource, access_requested, access_allowed\nFROM smf.smf_80 WHERE event_date>=today()-4 AND job_name='$job'\nORDER BY event_date DESC, time DESC LIMIT 200"
+          "rawSql": "SELECT\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  user_id, event_code, class_name,\n  nullIf(old_resource,'') AS old_resource,\n  nullIf(access_requested,'') AS access_requested,\n  nullIf(access_allowed,'') AS access_allowed\nFROM smf.smf_80 WHERE $__timeFilter(event_date) AND job_name='$job'\nORDER BY event_date DESC, time DESC LIMIT 200"
         }
       ],
       "fieldConfig": {
@@ -184,6 +215,6 @@
   "timezone": "browser",
   "title": "SMF Job Detail",
   "uid": "smf-job-detail",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }

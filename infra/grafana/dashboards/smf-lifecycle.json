@@ -67,7 +67,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT hour AS time, action, sum(cnt) AS rows FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,'DEFINE-61' AS action,count() AS cnt FROM smf.smf_61 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'DELETE-65',count() FROM smf.smf_65 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'ALTER-66',count() FROM smf.smf_66 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'SCRATCH-17',count() FROM smf.smf_17 WHERE event_date>=today()-4 GROUP BY hour\n) GROUP BY time, action ORDER BY time"
+          "rawSql": "SELECT hour AS time, series, sum(cnt) AS value FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'DEFINE-61' AS series, count() AS cnt FROM smf.smf_61 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'DELETE-65' AS series, count() AS cnt FROM smf.smf_65 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'ALTER-66' AS series, count() AS cnt FROM smf.smf_66 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'SCRATCH-17' AS series, count() AS cnt FROM smf.smf_17 WHERE $__timeFilter(event_date) GROUP BY hour\n) GROUP BY time, series ORDER BY time"
         }
       ],
       "fieldConfig": {
@@ -94,7 +94,7 @@
     },
     {
       "title": "Action mix",
-      "type": "piechart",
+      "type": "bargauge",
       "gridPos": {
         "h": 9,
         "w": 8,
@@ -110,33 +110,32 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT action, sum(c) AS rows FROM (\n  SELECT 'DEFINE' AS action, count() AS c FROM smf.smf_61 WHERE event_date>=today()-4\n  UNION ALL SELECT 'DELETE', count() FROM smf.smf_65 WHERE event_date>=today()-4\n  UNION ALL SELECT 'ALTER', count() FROM smf.smf_66 WHERE event_date>=today()-4\n  UNION ALL SELECT 'SCRATCH', count() FROM smf.smf_17 WHERE event_date>=today()-4\n) GROUP BY action"
+          "rawSql": "SELECT action, sum(c) AS events FROM (\n  SELECT 'DEFINE' AS action, count() AS c FROM smf.smf_61 WHERE $__timeFilter(event_date)\n  UNION ALL SELECT 'DELETE' AS action, count() AS c FROM smf.smf_65 WHERE $__timeFilter(event_date)\n  UNION ALL SELECT 'ALTER' AS action, count() AS c FROM smf.smf_66 WHERE $__timeFilter(event_date)\n  UNION ALL SELECT 'SCRATCH' AS action, count() AS c FROM smf.smf_17 WHERE $__timeFilter(event_date)\n) GROUP BY action ORDER BY events DESC"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
           }
         },
         "overrides": []
       },
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        }
-      }
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true
+      },
+      "description": ""
     },
     {
       "title": "Top catalog entries",
@@ -156,7 +155,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT action, entry_name AS dsname, job_name, count() AS rows FROM (\n  SELECT 'DEFINE' AS action, entry_name, job_name FROM smf.smf_61 WHERE event_date>=today()-4\n  UNION ALL SELECT 'DELETE', entry_name, job_name FROM smf.smf_65 WHERE event_date>=today()-4\n  UNION ALL SELECT 'ALTER', entry_name, job_name FROM smf.smf_66 WHERE event_date>=today()-4\n) WHERE entry_name!='' GROUP BY action, dsname, job_name ORDER BY rows DESC LIMIT 60"
+          "rawSql": "SELECT action, entry_name AS dsname, job_name, count() AS rows FROM (\n  SELECT 'DEFINE' AS action, entry_name, job_name FROM smf.smf_61 WHERE $__timeFilter(event_date)\n  UNION ALL SELECT 'DELETE' AS action, entry_name, job_name FROM smf.smf_65 WHERE $__timeFilter(event_date)\n  UNION ALL SELECT 'ALTER' AS action, entry_name, job_name FROM smf.smf_66 WHERE $__timeFilter(event_date)\n) WHERE entry_name!='' GROUP BY action, dsname, job_name ORDER BY rows DESC LIMIT 60"
         }
       ],
       "fieldConfig": {
@@ -197,6 +196,6 @@
   "timezone": "browser",
   "title": "SMF Lifecycle (61/65/66/17)",
   "uid": "smf-lifecycle",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }

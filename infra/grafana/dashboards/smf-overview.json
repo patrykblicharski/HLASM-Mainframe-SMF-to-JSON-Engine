@@ -50,7 +50,7 @@
   ],
   "panels": [
     {
-      "title": "Total rows (stats)",
+      "title": "Total rows",
       "type": "stat",
       "gridPos": {
         "h": 4,
@@ -67,11 +67,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT sum(row_count) FROM smf.stats_records_daily WHERE event_date >= today()-4"
+          "rawSql": "SELECT sum(row_count) AS value FROM smf.stats_records_daily WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "Total rows",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -90,8 +91,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -112,11 +118,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT countDistinct(event_date) FROM smf.stats_records_daily"
+          "rawSql": "SELECT countDistinct(event_date) AS value FROM smf.stats_records_daily WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "Distinct days",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -135,8 +142,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -157,11 +169,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT count() FROM smf.smf_14 WHERE event_date >= today()-4"
+          "rawSql": "SELECT count() AS value FROM smf.smf_14 WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "INPUT 14",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -180,8 +193,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -202,11 +220,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT count() FROM smf.smf_80 WHERE event_date >= today()-4"
+          "rawSql": "SELECT count() AS value FROM smf.smf_80 WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "RACF 80",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -225,8 +244,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -247,11 +271,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT count() FROM smf.smf_119_2 WHERE event_date >= today()-4"
+          "rawSql": "SELECT count() AS value FROM smf.smf_119_2 WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "TCP 119-2",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -270,8 +295,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -292,11 +322,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT count() FROM smf.smf_30_5 WHERE event_date >= today()-4"
+          "rawSql": "SELECT count() AS value FROM smf.smf_30_5 WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "Jobs 30-5",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -315,8 +346,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -337,7 +373,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT hour AS time, source, sum(cnt) AS rows FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,'INPUT-14' AS source,count() AS cnt FROM smf.smf_14 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))), 'OUTPUT-15', count() FROM smf.smf_15 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))), 'RACF-80', count() FROM smf.smf_80 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))), 'TCP-119-2', count() FROM smf.smf_119_2 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))), 'JOB-30-5', count() FROM smf.smf_30_5 WHERE event_date>=today()-4 GROUP BY hour\n) GROUP BY time, source ORDER BY time"
+          "rawSql": "SELECT hour AS time, series, sum(cnt) AS value FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'INPUT-14' AS series, count() AS cnt FROM smf.smf_14 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'OUTPUT-15' AS series, count() AS cnt FROM smf.smf_15 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'RACF-80' AS series, count() AS cnt FROM smf.smf_80 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'TCP-119-2' AS series, count() AS cnt FROM smf.smf_119_2 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'JOB-30-5' AS series, count() AS cnt FROM smf.smf_30_5 WHERE $__timeFilter(event_date) GROUP BY hour\n) GROUP BY time, series ORDER BY time"
         }
       ],
       "fieldConfig": {
@@ -360,11 +396,11 @@
           "placement": "bottom"
         }
       },
-      "description": "Works well when the dump is concentrated on one calendar day."
+      "description": "Uses dashboard time range. Aliased UNION branches for ClickHouse 24.8."
     },
     {
-      "title": "Rows by table",
-      "type": "piechart",
+      "title": "Rows by table (top 12)",
+      "type": "bargauge",
       "gridPos": {
         "h": 9,
         "w": 8,
@@ -380,53 +416,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT table_name, sum(row_count) AS rows FROM smf.stats_records_daily WHERE event_date>=today()-4 GROUP BY table_name ORDER BY rows DESC LIMIT 12"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          }
-        },
-        "overrides": []
-      },
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        }
-      }
-    },
-    {
-      "title": "Top systems",
-      "type": "bargauge",
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 13
-      },
-      "datasource": {
-        "type": "grafana-clickhouse-datasource",
-        "uid": "clickhouse_smf"
-      },
-      "targets": [
-        {
-          "refId": "A",
-          "format": 1,
-          "queryType": "sql",
-          "rawSql": "SELECT smf_system_id, sum(row_count) AS rows FROM smf.stats_records_daily WHERE event_date>=today()-4 GROUP BY smf_system_id ORDER BY rows DESC"
+          "rawSql": "SELECT table_name, sum(row_count) AS rows FROM smf.stats_records_daily WHERE $__timeFilter(event_date) GROUP BY table_name ORDER BY rows DESC LIMIT 12"
         }
       ],
       "fieldConfig": {
@@ -450,7 +440,53 @@
         "orientation": "horizontal",
         "displayMode": "gradient",
         "showUnfilled": true
-      }
+      },
+      "description": "Bar gauge instead of donut \u2014 clearer share of loaded tables."
+    },
+    {
+      "title": "Top systems",
+      "type": "bargauge",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 13
+      },
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse_smf"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "format": 1,
+          "queryType": "sql",
+          "rawSql": "SELECT smf_system_id, sum(row_count) AS rows FROM smf.stats_records_daily WHERE $__timeFilter(event_date) GROUP BY smf_system_id ORDER BY rows DESC"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true
+      },
+      "description": ""
     },
     {
       "title": "Daily / table / system",
@@ -470,7 +506,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date, table_name, smf_system_id, sum(row_count) AS rows FROM smf.stats_records_daily WHERE event_date>=today()-4 GROUP BY event_date, table_name, smf_system_id ORDER BY rows DESC LIMIT 200"
+          "rawSql": "SELECT event_date, table_name, smf_system_id, sum(row_count) AS rows FROM smf.stats_records_daily WHERE $__timeFilter(event_date) GROUP BY event_date, table_name, smf_system_id ORDER BY rows DESC LIMIT 200"
         }
       ],
       "fieldConfig": {
@@ -499,6 +535,6 @@
   "timezone": "browser",
   "title": "SMF Overview",
   "uid": "smf-overview",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }

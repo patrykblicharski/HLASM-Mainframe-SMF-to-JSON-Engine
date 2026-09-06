@@ -29,25 +29,27 @@ window.SMFCharts = {
     div.textContent = msg || "No chart data in this time window.";
     (wrap || document.body).appendChild(div);
   },
-  stackedBar(canvasId, labels, datasets) {
+  stackedBar(canvasId, labels, datasets, extraOptions) {
     const el = this._el(canvasId);
     if (!el) return;
     if (!labels.length || !datasets.length) {
       this._empty(canvasId);
       return;
     }
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom" } },
+      scales: {
+        x: { stacked: true, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } },
+        y: { stacked: true, beginAtZero: true },
+      },
+    };
+    if (extraOptions) Object.assign(options, extraOptions);
     new Chart(el, {
       type: "bar",
       data: { labels, datasets },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: "bottom" } },
-        scales: {
-          x: { stacked: true, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } },
-          y: { stacked: true, beginAtZero: true },
-        },
-      },
+      options,
     });
   },
   line(canvasId, labels, datasets) {

@@ -64,6 +64,11 @@ def fmt_int(n: Any) -> str:
     return f"{intish(n):,}"
 
 
+def fmt_cpu_timer(n: Any) -> str:
+    """Format SMF cpu_step_time sum as raw timer units (not wall seconds)."""
+    return f"{intish(n):,} timer"
+
+
 NAV = [
     {"endpoint": "overview", "label": "Overview", "icon": "grid"},
     {"endpoint": "datasets", "label": "Datasets", "icon": "disk"},

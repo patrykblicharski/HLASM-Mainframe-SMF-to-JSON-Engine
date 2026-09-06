@@ -67,7 +67,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date, time, job_name, event_code, class_name, old_resource, access_requested, access_allowed\nFROM smf.smf_80 WHERE event_date>=today()-4 AND user_id='$user'\nORDER BY event_date DESC, time DESC LIMIT 300"
+          "rawSql": "SELECT\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  date AS smf_date, time AS smf_time,\n  job_name, event_code, class_name,\n  nullIf(old_resource,'') AS old_resource,\n  nullIf(access_requested,'') AS access_requested,\n  nullIf(access_allowed,'') AS access_allowed\nFROM smf.smf_80 WHERE $__timeFilter(event_date) AND user_id='$user'\nORDER BY event_date DESC, time DESC LIMIT 300"
         }
       ],
       "fieldConfig": {
@@ -88,7 +88,7 @@
       "description": ""
     },
     {
-      "title": "Jobs for RACF user $user (30)",
+      "title": "Jobs for RACF user $user",
       "type": "table",
       "gridPos": {
         "h": 8,
@@ -105,7 +105,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT job_name, count() AS ends, sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum\nFROM smf.smf_30_5 WHERE event_date>=today()-4 AND (racf_user='$user' OR user_id_field='$user')\nGROUP BY job_name ORDER BY ends DESC LIMIT 50"
+          "rawSql": "SELECT job_name, count() AS step_ends, sum(toUInt64OrZero(cpu_step_time)) AS cpu_timer_sum\nFROM smf.smf_30_4 WHERE $__timeFilter(event_date) AND (racf_user='$user' OR user_id_field='$user')\nGROUP BY job_name ORDER BY step_ends DESC LIMIT 50"
         }
       ],
       "fieldConfig": {
@@ -160,6 +160,6 @@
   "timezone": "browser",
   "title": "SMF User Detail",
   "uid": "smf-user-detail",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }

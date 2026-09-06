@@ -67,11 +67,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT count() FROM smf.smf_119_3 WHERE event_date>=today()-4"
+          "rawSql": "SELECT count() AS value FROM smf.smf_119_3 WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "Client 119-3",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -90,8 +91,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -112,11 +118,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT count() FROM smf.smf_119_70 WHERE event_date>=today()-4"
+          "rawSql": "SELECT count() AS value FROM smf.smf_119_70 WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "Server 119-70",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -135,8 +142,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -157,11 +169,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT count() FROM smf.smf_119_72 WHERE event_date>=today()-4"
+          "rawSql": "SELECT count() AS value FROM smf.smf_119_72 WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "Fail 119-72",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -180,12 +193,17 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
-      "title": "FTP status",
+      "title": "FTP present",
       "type": "stat",
       "gridPos": {
         "h": 4,
@@ -202,11 +220,12 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT if((SELECT count() FROM smf.smf_119_3)+(SELECT count() FROM smf.smf_119_70)=0, 0, 1)"
+          "rawSql": "SELECT (if((SELECT count() FROM smf.smf_119_3 WHERE $__timeFilter(event_date))+(SELECT count() FROM smf.smf_119_70 WHERE $__timeFilter(event_date))=0, 0, 1) AS value"
         }
       ],
       "fieldConfig": {
         "defaults": {
+          "displayName": "FTP present",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -225,8 +244,13 @@
       },
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "textMode": "value_and_name"
+        "graphMode": "none",
+        "textMode": "value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
       }
     },
     {
@@ -247,7 +271,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT toDateTime(event_date) AS time, direction, sum(bytes_sum) AS bytes FROM smf.stats_ftp_daily WHERE event_date>=today()-4 GROUP BY time, direction ORDER BY time"
+          "rawSql": "SELECT toDateTime(event_date) AS time, direction, sum(bytes_sum) AS bytes FROM smf.stats_ftp_daily WHERE $__timeFilter(event_date) GROUP BY time, direction ORDER BY time"
         }
       ],
       "fieldConfig": {
@@ -271,7 +295,7 @@
       "description": "Empty when dump has no subtype 3/70."
     },
     {
-      "title": "Available 119 subtypes (context when FTP empty)",
+      "title": "Available 119 subtypes",
       "type": "table",
       "gridPos": {
         "h": 8,
@@ -288,7 +312,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT '119-1' AS table, count() AS rows FROM smf.smf_119_1\nUNION ALL SELECT '119-2', count() FROM smf.smf_119_2\nUNION ALL SELECT '119-5', count() FROM smf.smf_119_5\nUNION ALL SELECT '119-6', count() FROM smf.smf_119_6\nUNION ALL SELECT '119-10', count() FROM smf.smf_119_10\nUNION ALL SELECT '119-3', count() FROM smf.smf_119_3\nUNION ALL SELECT '119-70', count() FROM smf.smf_119_70"
+          "rawSql": "SELECT '119-1' AS subtype, count() AS rows FROM smf.smf_119_1 WHERE $__timeFilter(event_date)\nUNION ALL SELECT '119-2', count() FROM smf.smf_119_2 WHERE $__timeFilter(event_date)\nUNION ALL SELECT '119-5', count() FROM smf.smf_119_5 WHERE $__timeFilter(event_date)\nUNION ALL SELECT '119-6', count() FROM smf.smf_119_6 WHERE $__timeFilter(event_date)\nUNION ALL SELECT '119-10', count() FROM smf.smf_119_10 WHERE $__timeFilter(event_date)\nUNION ALL SELECT '119-3', count() FROM smf.smf_119_3 WHERE $__timeFilter(event_date)\nUNION ALL SELECT '119-70', count() FROM smf.smf_119_70 WHERE $__timeFilter(event_date)"
         }
       ],
       "fieldConfig": {
@@ -319,7 +343,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT direction, local_user, sum(bytes_sum) AS bytes, sum(xfer_count) AS transfers FROM smf.stats_ftp_daily WHERE event_date>=today()-4 GROUP BY direction, local_user ORDER BY bytes DESC LIMIT 50"
+          "rawSql": "SELECT direction, local_user, sum(bytes_sum) AS bytes, sum(xfer_count) AS transfers FROM smf.stats_ftp_daily WHERE $__timeFilter(event_date) GROUP BY direction, local_user ORDER BY bytes DESC LIMIT 50"
         }
       ],
       "fieldConfig": {
@@ -348,6 +372,6 @@
   "timezone": "browser",
   "title": "SMF FTP (119-3/70)",
   "uid": "smf-ftp",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }

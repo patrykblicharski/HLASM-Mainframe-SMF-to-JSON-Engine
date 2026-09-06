@@ -67,7 +67,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT hour AS time, direction, sum(cnt) AS rows FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,'INPUT' AS direction,count() AS cnt FROM smf.smf_14 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'OUTPUT',count() FROM smf.smf_15 WHERE event_date>=today()-4 GROUP BY hour\n  UNION ALL SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))),'SCRATCH',count() FROM smf.smf_17 WHERE event_date>=today()-4 GROUP BY hour\n) GROUP BY time, direction ORDER BY time"
+          "rawSql": "SELECT hour AS time, series, sum(cnt) AS value FROM (\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'INPUT' AS series, count() AS cnt FROM smf.smf_14 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'OUTPUT' AS series, count() AS cnt FROM smf.smf_15 WHERE $__timeFilter(event_date) GROUP BY hour\n  UNION ALL\n  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour, 'SCRATCH' AS series, count() AS cnt FROM smf.smf_17 WHERE $__timeFilter(event_date) GROUP BY hour\n) GROUP BY time, series ORDER BY time"
         }
       ],
       "fieldConfig": {
@@ -94,7 +94,7 @@
     },
     {
       "title": "INPUT vs OUTPUT vs SCRATCH",
-      "type": "piechart",
+      "type": "bargauge",
       "gridPos": {
         "h": 8,
         "w": 8,
@@ -110,36 +110,35 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT direction, sum(c) AS rows FROM (\n  SELECT 'INPUT' AS direction, count() AS c FROM smf.smf_14 WHERE event_date>=today()-4\n  UNION ALL SELECT 'OUTPUT', count() FROM smf.smf_15 WHERE event_date>=today()-4\n  UNION ALL SELECT 'SCRATCH', count() FROM smf.smf_17 WHERE event_date>=today()-4\n) GROUP BY direction"
+          "rawSql": "SELECT direction, sum(c) AS events FROM (\n  SELECT 'INPUT' AS direction, count() AS c FROM smf.smf_14 WHERE $__timeFilter(event_date)\n  UNION ALL SELECT 'OUTPUT' AS direction, count() AS c FROM smf.smf_15 WHERE $__timeFilter(event_date)\n  UNION ALL SELECT 'SCRATCH' AS direction, count() AS c FROM smf.smf_17 WHERE $__timeFilter(event_date)\n) GROUP BY direction ORDER BY events DESC"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
           }
         },
         "overrides": []
       },
       "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "right",
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ]
-        }
-      }
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true
+      },
+      "description": "Event counts by SMF type (not a misleading single-slice pie)."
     },
     {
-      "title": "Top datasets (blank JFCB shown as empty \u2014 not ???????)",
+      "title": "Top datasets (blank JFCB shown safely)",
       "type": "table",
       "gridPos": {
         "h": 10,
@@ -156,7 +155,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT direction, job_name,\n  if(dsname = '' OR match(dsname, '^[\\\\x00-\\\\x1f\\\\x7f-\\\\x9f\\\\x{fffd}?]+$'), concat('(no dsname) ', volser), dsname) AS dsname_display,\n  if(dsname = '' OR match(dsname, '^[\\\\x00-\\\\x1f\\\\x7f-\\\\x9f\\\\x{fffd}?]+$'), '', dsname) AS dsname,\n  volser, sum(rows) AS rows, sum(excp) AS excp\nFROM (\n  SELECT 'INPUT' AS direction, job_name, trim(BOTH ' ' FROM dsname) AS dsname, volser_1 AS volser, count() AS rows, sum(toUInt64OrZero(excp_count)) AS excp\n  FROM smf.smf_14 WHERE event_date>=today()-4 GROUP BY job_name, dsname, volser\n  UNION ALL\n  SELECT 'OUTPUT', job_name, trim(BOTH ' ' FROM dsname), volser_1, count(), sum(toUInt64OrZero(excp_count))\n  FROM smf.smf_15 WHERE event_date>=today()-4 GROUP BY job_name, dsname, volser\n)\nGROUP BY direction, job_name, dsname_display, dsname, volser\nORDER BY rows DESC LIMIT 60"
+          "rawSql": "SELECT direction, job_name,\n  if(dsname = '' OR match(dsname, '^[\\\\x00-\\\\x1f\\\\x7f-\\\\x9f\\\\x{fffd}?]+$'), concat('(no dsname) ', volser), dsname) AS dsname_display,\n  if(dsname = '' OR match(dsname, '^[\\\\x00-\\\\x1f\\\\x7f-\\\\x9f\\\\x{fffd}?]+$'), '', dsname) AS dsname,\n  volser, sum(rows) AS rows, sum(excp) AS excp\nFROM (\n  SELECT 'INPUT' AS direction, job_name, trim(BOTH ' ' FROM dsname) AS dsname, volser_1 AS volser, count() AS rows, sum(toUInt64OrZero(excp_count)) AS excp\n  FROM smf.smf_14 WHERE $__timeFilter(event_date) GROUP BY job_name, dsname, volser\n  UNION ALL\n  SELECT 'OUTPUT' AS direction, job_name, trim(BOTH ' ' FROM dsname) AS dsname, volser_1 AS volser, count() AS rows, sum(toUInt64OrZero(excp_count)) AS excp\n  FROM smf.smf_15 WHERE $__timeFilter(event_date) GROUP BY job_name, dsname, volser\n)\nGROUP BY direction, job_name, dsname_display, dsname, volser\nORDER BY rows DESC LIMIT 60"
         }
       ],
       "fieldConfig": {
@@ -178,7 +177,7 @@
         "showHeader": true,
         "cellHeight": "sm"
       },
-      "description": "Control-byte JFCB fills (EBCDIC x'04') are blanked at export; Grafana no longer maps them to ???."
+      "description": ""
     },
     {
       "title": "Top scratches",
@@ -198,7 +197,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT job_name,\n  if(trim(BOTH ' ' FROM dsname)='','(no dsname)', dsname) AS dsname_display,\n  if(trim(BOTH ' ' FROM dsname)='','', dsname) AS dsname,\n  volume_serial AS volser, count() AS rows\nFROM smf.smf_17 WHERE event_date>=today()-4\nGROUP BY job_name, dsname_display, dsname, volser ORDER BY rows DESC LIMIT 50"
+          "rawSql": "SELECT job_name,\n  if(trim(BOTH ' ' FROM dsname)='','(no dsname)', dsname) AS dsname_display,\n  if(trim(BOTH ' ' FROM dsname)='','', dsname) AS dsname,\n  volume_serial AS volser, count() AS rows\nFROM smf.smf_17 WHERE $__timeFilter(event_date)\nGROUP BY job_name, dsname_display, dsname, volser ORDER BY rows DESC LIMIT 50"
         }
       ],
       "fieldConfig": {
@@ -238,6 +237,6 @@
   "timezone": "browser",
   "title": "SMF Datasets (14/15/17)",
   "uid": "smf-datasets",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }

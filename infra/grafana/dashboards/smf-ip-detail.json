@@ -67,7 +67,7 @@
           "refId": "A",
           "format": 1,
           "queryType": "sql",
-          "rawSql": "SELECT event_date, time, resource_name, as_name, local_ip, local_port, remote_ip, remote_port,\n  in_bytes, out_bytes, term_code, connection_id\nFROM smf.smf_119_2 WHERE event_date>=today()-4 AND (remote_ip='$ip' OR local_ip='$ip')\nORDER BY event_date DESC, time DESC LIMIT 300"
+          "rawSql": "SELECT\n  concat(toString(event_date),' ',if(time='','00:00:00',time)) AS event_ts,\n  resource_name, as_name, local_ip, local_port, remote_ip, remote_port,\n  in_bytes, out_bytes, term_code, connection_id\nFROM smf.smf_119_2 WHERE $__timeFilter(event_date) AND (remote_ip='$ip' OR local_ip='$ip')\nORDER BY event_date DESC, time DESC LIMIT 300"
         }
       ],
       "fieldConfig": {
@@ -122,6 +122,6 @@
   "timezone": "browser",
   "title": "SMF IP Detail",
   "uid": "smf-ip-detail",
-  "version": 3,
+  "version": 4,
   "refresh": "5m"
 }
