@@ -76,14 +76,25 @@ What starts:
 Checks:
 
 ```bash
-curl -s http://127.0.0.1:8123/ping
+curl -s 'http://127.0.0.1:8123/ping'
 # → Ok.
 
-curl -s 'http://127.0.0.1:8123/?user=smf&password=blacha123' \
+curl -s -u 'smf:blacha123' 'http://127.0.0.1:8123/' \
   --data-binary "SHOW TABLES FROM smf"
 ```
 
 Grafana: open http://SERVER:3000 → login `admin` / `blacha123`.
+
+If `init_db.sh` / curl returns **403**: password in the Docker volume is stale, or auth was using query-string. Fix:
+
+```bash
+docker compose down -v
+docker compose up -d
+sleep 15
+./scripts/init_db.sh
+```
+
+`init_db.sh` prefers `docker exec` into `smf-clickhouse` (more reliable than HTTP).
 
 If init container failed (race on first boot) **or you pulled a fixed `init.sql`**:
 
@@ -173,14 +184,15 @@ export CH_USER=smf
 export CH_PASSWORD=blacha123
 
 curl -fsS \
-  "${CH_URL}/?user=${CH_USER}&password=${CH_PASSWORD}&database=smf&query=INSERT%20INTO%20smf_14%20FORMAT%20CSVWithNames" \
+  -u "${CH_USER}:${CH_PASSWORD}" \
+  "${CH_URL}/?database=smf&query=INSERT%20INTO%20smf_14%20FORMAT%20CSVWithNames" \
   --data-binary @./data/csv/smf_14.csv
 ```
 
 Verify:
 
 ```bash
-curl -s 'http://127.0.0.1:8123/?user=smf&password=blacha123' \
+curl -s -u 'smf:blacha123' 'http://127.0.0.1:8123/' \
   --data-binary "SELECT count() FROM smf.smf_14"
 ```
 

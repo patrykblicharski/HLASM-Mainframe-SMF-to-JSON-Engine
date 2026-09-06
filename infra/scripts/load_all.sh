@@ -25,10 +25,21 @@ loaded=0
 for f in "${files[@]}"; do
   base="$(basename "${f}" .csv)"
   echo "Loading ${f} → ${CH_DB}.${base}"
-  curl -fsS \
-    "${CH_URL}/?user=${CH_USER}&password=${CH_PASSWORD}&database=${CH_DB}&input_format_skip_unknown_fields=1&query=INSERT%20INTO%20${base}%20FORMAT%20CSVWithNames" \
-    --data-binary @"${f}"
-  echo
+  tmp="$(mktemp)"
+  code="$(
+    curl -sS -o "${tmp}" -w "%{http_code}" \
+      -u "${CH_USER}:${CH_PASSWORD}" \
+      "${CH_URL}/?database=${CH_DB}&input_format_skip_unknown_fields=1&query=INSERT%20INTO%20${base}%20FORMAT%20CSVWithNames" \
+      --data-binary @"${f}"
+  )"
+  if [[ "${code}" != "200" ]]; then
+    echo "ClickHouse HTTP ${code} loading ${base}:" >&2
+    cat "${tmp}" >&2
+    echo >&2
+    rm -f "${tmp}"
+    exit 1
+  fi
+  rm -f "${tmp}"
   loaded=$((loaded + 1))
 done
 

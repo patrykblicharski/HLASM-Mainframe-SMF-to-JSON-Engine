@@ -16,7 +16,6 @@ services:
       CLICKHOUSE_DB: smf
       CLICKHOUSE_USER: smf
       CLICKHOUSE_PASSWORD: blacha123
-      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
       interval: 5s

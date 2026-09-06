@@ -7,8 +7,23 @@ CH_USER="${CH_USER:-smf}"
 CH_PASSWORD="${CH_PASSWORD:-blacha123}"
 
 q() {
-  curl -fsS "${CH_URL}/?user=${CH_USER}&password=${CH_PASSWORD}&database=smf" \
-    --data-binary "$1"
+  local tmp code
+  tmp="$(mktemp)"
+  code="$(
+    curl -sS -o "${tmp}" -w "%{http_code}" \
+      -u "${CH_USER}:${CH_PASSWORD}" \
+      "${CH_URL}/?database=smf" \
+      --data-binary "$1"
+  )"
+  if [[ "${code}" != "200" ]]; then
+    echo "ClickHouse HTTP ${code}:" >&2
+    cat "${tmp}" >&2
+    echo >&2
+    rm -f "${tmp}"
+    exit 1
+  fi
+  cat "${tmp}"
+  rm -f "${tmp}"
   echo
 }
 
