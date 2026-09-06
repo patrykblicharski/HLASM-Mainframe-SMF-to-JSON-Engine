@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
+import json
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 # Keys are lowercase; lookup is case-insensitive.
+# UI / aggregate labels win over map-generated tips when both exist.
 FIELD_DESCRIPTIONS: dict[str, str] = {
     # Common / UI
     "timestamp": "Latest event time in the selected window for this row.",
@@ -95,18 +99,54 @@ FIELD_DESCRIPTIONS: dict[str, str] = {
 }
 
 
+@lru_cache(maxsize=1)
+def _map_tips() -> dict[str, str]:
+    """Tips generated from smf2json FieldSpec maps (IBM name + description)."""
+    path = Path(__file__).with_name("field_meta_maps.json")
+    try:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(raw, dict):
+        return {}
+    return {str(k).lower(): str(v) for k, v in raw.items() if v}
+
+
+def _lookup(key: str) -> str:
+    """Case-insensitive tip lookup: UI overrides → map catalog → empty."""
+    if not key:
+        return ""
+    low = key.lower()
+    variants = (low, low.replace(" ", "_"), low.replace("_", " "))
+    for catalog in (FIELD_DESCRIPTIONS, _map_tips()):
+        for variant in variants:
+            tip = catalog.get(variant)
+            if tip:
+                return tip
+    return ""
+
+
 def field_description(name: Any, default: str = "") -> str:
-    """Return a tip for a column/field name (case-insensitive)."""
+    """Return a tip for a column/field name (case-insensitive).
+
+    Always returns something usable when *name* is non-empty unless *default*
+    is explicitly provided and lookup misses (then *default* is used, including "").
+    """
     if name is None:
         return default
     key = str(name).strip()
     if not key:
         return default
-    return FIELD_DESCRIPTIONS.get(key.lower(), default) or FIELD_DESCRIPTIONS.get(
-        key.lower().replace(" ", "_"), default
-    )
+    found = _lookup(key)
+    if found:
+        return found
+    if default != "":
+        return default
+    return f"{key} — SMF column"
 
 
 def field_meta_json() -> dict[str, str]:
     """Map suitable for embedding in the browser (lowercase keys)."""
-    return dict(FIELD_DESCRIPTIONS)
+    merged = dict(_map_tips())
+    merged.update(FIELD_DESCRIPTIONS)
+    return merged

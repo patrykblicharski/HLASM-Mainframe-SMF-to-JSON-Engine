@@ -217,9 +217,88 @@ window.SMFRange = {
   },
 };
 
+window.SMFTips = {
+  _el: null,
+  _hideTimer: 0,
+
+  ensure() {
+    if (this._el) return this._el;
+    const el = document.createElement("div");
+    el.className = "smf-tip";
+    el.setAttribute("role", "tooltip");
+    el.hidden = true;
+    document.body.appendChild(el);
+    this._el = el;
+    return el;
+  },
+
+  tipText(node) {
+    if (!node) return "";
+    return (
+      node.getAttribute("data-tip") ||
+      node.getAttribute("title") ||
+      ""
+    ).trim();
+  },
+
+  show(anchor, text) {
+    const tip = String(text || "").trim();
+    if (!tip || !anchor) return;
+    if (this._hideTimer) {
+      clearTimeout(this._hideTimer);
+      this._hideTimer = 0;
+    }
+    const el = this.ensure();
+    el.textContent = tip;
+    el.hidden = false;
+    // Measure after unhiding so placement uses real size.
+    const r = anchor.getBoundingClientRect();
+    const pad = 10;
+    const tw = el.offsetWidth || 220;
+    const th = el.offsetHeight || 40;
+    let left = r.left + r.width / 2 - tw / 2;
+    let top = r.bottom + 8;
+    if (left < pad) left = pad;
+    if (left + tw > window.innerWidth - pad) left = window.innerWidth - pad - tw;
+    if (top + th > window.innerHeight - pad) top = Math.max(pad, r.top - th - 8);
+    el.style.left = Math.round(left) + "px";
+    el.style.top = Math.round(top) + "px";
+  },
+
+  hide() {
+    if (!this._el) return;
+    this._el.hidden = true;
+  },
+
+  hideSoon() {
+    if (this._hideTimer) clearTimeout(this._hideTimer);
+    this._hideTimer = setTimeout(() => {
+      this._hideTimer = 0;
+      this.hide();
+    }, 60);
+  },
+
+  bind(root) {
+    const scope = root || document;
+    scope.querySelectorAll("[data-tip]").forEach((node) => {
+      if (node.dataset.smfTipBound === "1") return;
+      node.dataset.smfTipBound = "1";
+      // Prefer custom bubble; drop native title delay/overlap when data-tip is set.
+      if (node.hasAttribute("title") && node.getAttribute("data-tip")) {
+        node.removeAttribute("title");
+      }
+      node.addEventListener("mouseenter", () => this.show(node, this.tipText(node)));
+      node.addEventListener("mouseleave", () => this.hideSoon());
+      node.addEventListener("focus", () => this.show(node, this.tipText(node)));
+      node.addEventListener("blur", () => this.hideSoon());
+    });
+  },
+};
+
 window.SMFTables = {
   init() {
     document.querySelectorAll("table.data").forEach((table) => this.makeSortable(table));
+    if (window.SMFTips) SMFTips.bind(document);
   },
   cellSortValue(td) {
     if (!td) return "";
@@ -243,6 +322,15 @@ window.SMFTables = {
       if (!th || th.classList.contains("no-sort")) return;
       if (!(th.textContent || "").trim()) return;
       th.classList.add("sortable");
+      // Ensure every sortable header has a tip (catalog or generic fallback).
+      if (!th.getAttribute("data-tip")) {
+        const key = th.getAttribute("data-sort-key") || (th.textContent || "").trim();
+        const tip =
+          (window.SMFDetails && SMFDetails._fieldTip(key)) ||
+          (window.SMFFullTable && SMFFullTable._fieldTip(key)) ||
+          "";
+        if (tip) th.setAttribute("data-tip", tip);
+      }
       th.addEventListener("click", () => {
         const asc = th.classList.contains("sorted-asc") ? false : true;
         Array.from(head.cells).forEach((c) => c.classList.remove("sorted-asc", "sorted-desc"));
@@ -257,6 +345,7 @@ window.SMFTables = {
         rows.forEach((r) => body.appendChild(r));
       });
     });
+    if (window.SMFTips) SMFTips.bind(table);
   },
 };
 
@@ -286,13 +375,14 @@ window.SMFDetails = {
 
   _fieldTip(name) {
     const meta = window.SMFFieldMeta || {};
-    const key = String(name || "").trim().toLowerCase();
+    const raw = String(name || "").trim();
+    const key = raw.toLowerCase();
     if (!key) return "";
     return (
       meta[key] ||
       meta[key.replace(/ /g, "_")] ||
       meta[key.replace(/_/g, " ")] ||
-      ""
+      raw + " — SMF column"
     );
   },
 
@@ -528,7 +618,7 @@ window.SMFDetails = {
             '<div class="details-field ' +
             cls +
             '"><dt' +
-            (tip ? ' title="' + this._esc(tip) + '"' : "") +
+            (tip ? ' data-tip="' + this._esc(tip) + '"' : "") +
             ">" +
             this._esc(k) +
             '</dt><dd class="mono">' +
@@ -578,6 +668,7 @@ window.SMFDetails = {
       ')</h3><dl class="details-grid muted-grid">' +
       grid(empty, "is-empty") +
       "</dl></div>";
+    if (window.SMFTips) SMFTips.bind(body);
   },
 };
 
@@ -599,13 +690,14 @@ window.SMFFullTable = {
 
   _fieldTip(name) {
     const meta = window.SMFFieldMeta || {};
-    const key = String(name || "").trim().toLowerCase();
+    const raw = String(name || "").trim();
+    const key = raw.toLowerCase();
     if (!key) return "";
     return (
       meta[key] ||
       meta[key.replace(/ /g, "_")] ||
       meta[key.replace(/_/g, " ")] ||
-      ""
+      raw + " — SMF column"
     );
   },
 
@@ -819,7 +911,7 @@ window.SMFFullTable = {
         const tip = this._fieldTip(c);
         return (
           "<th" +
-          (tip ? ' title="' + this._esc(tip) + '"' : "") +
+          (tip ? ' data-tip="' + this._esc(tip) + '"' : "") +
           ' data-sort-key="' +
           this._esc(String(c).toLowerCase()) +
           '">' +
@@ -873,6 +965,7 @@ window.SMFFullTable = {
 
     const table = document.getElementById("smf-full-table-grid");
     if (table && window.SMFTables) SMFTables.makeSortable(table);
+    else if (table && window.SMFTips) SMFTips.bind(table);
   },
 };
 

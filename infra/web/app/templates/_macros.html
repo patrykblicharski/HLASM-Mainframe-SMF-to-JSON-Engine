@@ -44,7 +44,7 @@ data-days="{{ days }}"
 
 {% macro th(label, key=None) -%}
 {%- set tip = field_tip(key if key is not none else label) -%}
-<th{% if tip %} title="{{ tip }}"{% endif %} data-sort-key="{{ (key if key is not none else label)|lower }}">{{ label }}</th>
+<th{% if tip %} data-tip="{{ tip }}"{% endif %} data-sort-key="{{ (key if key is not none else label)|lower }}">{{ label }}</th>
 {%- endmacro %}
 
 {% macro ts_th() -%}{{ th('Timestamp', 'timestamp') }}{%- endmacro %}
