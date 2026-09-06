@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, ts_th, ts_td, th %}
+{% from "_macros.html" import details_button, ts_th, ts_td, th with context %}
 {% block subtitle %}<p>RACF user <strong class="mono">{{ data.user }}</strong> — events and related job CPU.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">

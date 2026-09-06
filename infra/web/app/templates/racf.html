@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, load_more, ts_th, ts_td, th %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td, th with context %}
 {% block subtitle %}<p>Security events, failed logons (EVT 1), users and classes. Click a chart point/bar to filter.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">

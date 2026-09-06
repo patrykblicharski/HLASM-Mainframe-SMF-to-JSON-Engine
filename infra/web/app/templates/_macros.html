@@ -1,4 +1,5 @@
 {% macro details_button(tables, filters) -%}
+{# filters must be HTML-attr escaped: raw tojson quotes break data-filters="..." #}
 <button type="button"
         class="btn btn-details"
         data-tables="{{ tables }}"
@@ -7,7 +8,7 @@
         {% if date_to %}data-date-to="{{ date_to }}"{% endif %}
         {% if hour_from %}data-hour-from="{{ hour_from }}"{% endif %}
         {% if hour_to %}data-hour-to="{{ hour_to }}"{% endif %}
-        data-filters="{{ filters|tojson }}"
+        data-filters="{{ filters|tojson|forceescape }}"
         onclick="SMFDetails.open(this)">Full details</button>
 {%- endmacro %}
 

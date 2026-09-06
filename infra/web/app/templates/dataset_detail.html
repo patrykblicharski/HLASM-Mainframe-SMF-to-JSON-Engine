@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, ts_th, ts_td, th %}
+{% from "_macros.html" import details_button, ts_th, ts_td, th with context %}
 {% block subtitle %}<p>Lifecycle for <code class="mono">{{ data.dsname or '(blank)' }}</code> — I/O, scratch, catalog, RACF.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-4">

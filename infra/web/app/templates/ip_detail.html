@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, ts_th, ts_td, th %}
+{% from "_macros.html" import details_button, ts_th, ts_td, th with context %}
 {% block subtitle %}<p>Sessions for IP <strong class="mono">{{ data.ip }}</strong>.</p>{% endblock %}
 {% block content %}
 <section class="stack">

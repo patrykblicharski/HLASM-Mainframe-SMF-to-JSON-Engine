@@ -313,10 +313,18 @@ window.SMFDetails = {
 
     let filters = {};
     try {
-      filters = JSON.parse(btn.getAttribute("data-filters") || "{}") || {};
+      // Prefer getAttribute (decodes &quot;); dataset can be unreliable for JSON blobs.
+      const raw = btn.getAttribute("data-filters") || btn.dataset.filters || "{}";
+      filters = JSON.parse(raw) || {};
     } catch (_e) {
       filters = {};
     }
+    // Drop empty filter values so we never over-constrain (e.g. blank sid).
+    Object.keys(filters).forEach((k) => {
+      if (filters[k] === null || filters[k] === undefined || String(filters[k]).trim() === "") {
+        delete filters[k];
+      }
+    });
     const page = new URL(window.location.href);
     const tables = btn.getAttribute("data-tables") || "";
     const days =
@@ -510,17 +518,13 @@ window.SMFDetails = {
           const v = row[k];
           const shown = v === null || v === undefined || String(v).trim() === "" ? "—" : String(v);
           const tip = this._fieldTip(k);
-          const tipHtml = tip
-            ? '<span class="field-tip" title="' + this._esc(tip) + '">' + this._esc(tip) + "</span>"
-            : "";
           return (
             '<div class="details-field ' +
             cls +
-            '"><dt title="' +
-            this._esc(tip || k) +
-            '">' +
+            '"><dt' +
+            (tip ? ' title="' + this._esc(tip) + '"' : "") +
+            ">" +
             this._esc(k) +
-            tipHtml +
             '</dt><dd class="mono">' +
             this._esc(shown) +
             "</dd></div>"
