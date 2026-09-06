@@ -1,5 +1,7 @@
 /*! SMF Analytics — multi-theme UI
-   Themes: phosphor, carbon, harbor, obsidian (dark) · ledger, frost (light)
+   Built-in: phosphor, carbon, harbor, obsidian, ledger, frost
+   Figma: purity-dark, dabang, electric, violet-finance, glass-neon
+   Community: tiesen, logistic-one, business, corporate, cupcake, halloween
 */
 
 /* ── Shared structural defaults (overridden per theme) ── */
@@ -473,6 +475,743 @@
   --chart-8: #5c6b7a;
 }
 
+/* ═══ 7. Purity Dark — navy + seafoam teal (dark) ═══ */
+[data-theme="purity-dark"] {
+  --color-scheme: dark;
+  --radius: 14px;
+  --shadow: 0 12px 40px rgba(0, 0, 0, .45);
+  --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+  --font-display: "IBM Plex Sans", sans-serif;
+  --bg: #0b1437;
+  --bg-elev: #111c44;
+  --bg-soft: #1a274f;
+  --line: #2a3a6a;
+  --text: #e9edf7;
+  --muted: #8b9bb8;
+  --accent: #4fd1c5;
+  --accent-2: #63b3ed;
+  --warn: #f6ad55;
+  --danger: #fc8181;
+  --ok: #68d391;
+  --violet: #b794f4;
+  --orange: #f6ad55;
+  --cyan: #4fd1c5;
+  --link-hover: #9aefea;
+  --sidebar-from: #0e1840;
+  --sidebar-to: #0a1230;
+  --glow-1: rgba(79, 209, 197, .14);
+  --glow-2: rgba(99, 179, 237, .1);
+  --toolbar-bg: rgba(17, 28, 68, .92);
+  --btn-face: linear-gradient(180deg, #1a274f, #111c44);
+  --btn-primary: linear-gradient(180deg, #4fd1c5, #38b2ac);
+  --btn-primary-border: #38b2ac;
+  --btn-primary-text: #0a1230;
+  --btn-details: linear-gradient(180deg, #1e2c58, #152048);
+  --btn-details-border: #3a4a78;
+  --table-head: #152048;
+  --modal-bg: #0e1840;
+  --overlay: rgba(6, 10, 28, .78);
+  --backdrop: rgba(6, 10, 28, .75);
+  --row-hover: rgba(79, 209, 197, .08);
+  --empty-fill: rgba(255, 255, 255, .03);
+  --error-bg: rgba(252, 129, 129, .14);
+  --error-border: rgba(252, 129, 129, .4);
+  --error-text: #ffb4b4;
+  --tip-bg: #16324a;
+  --tip-border: rgba(79, 209, 197, .55);
+  --tip-text: #b8f5ef;
+  --scrollbar-track: #152048;
+  --scrollbar-thumb: linear-gradient(180deg, #4fd1c5, #38b2ac);
+  --loading-card-border: rgba(79, 209, 197, .45);
+  --nav-active-bg: linear-gradient(90deg, rgba(79, 209, 197, .18), rgba(99, 179, 237, .1));
+  --badge-in-bg: rgba(79, 209, 197, .14);
+  --badge-out-bg: rgba(99, 179, 237, .14);
+  --badge-scratch-bg: rgba(246, 173, 85, .14);
+  --badge-blank-bg: rgba(139, 155, 184, .12);
+  --tab-active-bg: rgba(79, 209, 197, .14);
+  --match-bg: rgba(79, 209, 197, .16);
+  --match-border: rgba(79, 209, 197, .5);
+  --chart-1: #4fd1c5;
+  --chart-2: #63b3ed;
+  --chart-3: #68d391;
+  --chart-4: #b794f4;
+  --chart-5: #fc8181;
+  --chart-6: #f6ad55;
+  --chart-7: #76e4f7;
+  --chart-8: #8b9bb8;
+}
+
+/* ═══ 8. Dabang — soft pastel mint SaaS (light) ═══ */
+[data-theme="dabang"] {
+  --color-scheme: light;
+  --radius: 16px;
+  --shadow: 0 8px 28px rgba(40, 50, 80, .08);
+  --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", "Consolas", monospace;
+  --font-display: "Archivo", sans-serif;
+  --bg: #f4f8f5;
+  --bg-elev: #ffffff;
+  --bg-soft: #e8f2ec;
+  --line: #d8e2dc;
+  --text: #1a1d1f;
+  --muted: #9a9fa5;
+  --accent: #5b5fc7;
+  --accent-2: #6c5ce7;
+  --warn: #ffb84d;
+  --danger: #ff8a8a;
+  --ok: #4ad991;
+  --violet: #b198ff;
+  --orange: #ffb84d;
+  --cyan: #00c3f8;
+  --link-hover: #4338ca;
+  --sidebar-from: #ffffff;
+  --sidebar-to: #f6faf7;
+  --glow-1: rgba(91, 95, 199, .08);
+  --glow-2: rgba(74, 217, 145, .07);
+  --toolbar-bg: rgba(255, 255, 255, .95);
+  --btn-face: linear-gradient(180deg, #fff, #f4f8f5);
+  --btn-primary: linear-gradient(135deg, #6c5ce7, #5b5fc7);
+  --btn-primary-border: #5b5fc7;
+  --btn-primary-text: #ffffff;
+  --btn-details: linear-gradient(180deg, #fff, #e8f2ec);
+  --btn-details-border: #c8d4cc;
+  --table-head: #eef5f0;
+  --modal-bg: #ffffff;
+  --overlay: rgba(30, 40, 50, .3);
+  --backdrop: rgba(30, 40, 50, .35);
+  --row-hover: rgba(91, 95, 199, .06);
+  --empty-fill: rgba(0, 0, 0, .02);
+  --error-bg: rgba(255, 138, 138, .12);
+  --error-border: rgba(255, 138, 138, .35);
+  --error-text: #b03030;
+  --tip-bg: #5b5fc7;
+  --tip-border: rgba(91, 95, 199, .5);
+  --tip-text: #f0f0ff;
+  --scrollbar-track: #e8f2ec;
+  --scrollbar-thumb: linear-gradient(180deg, #8b8fd9, #5b5fc7);
+  --loading-card-border: rgba(91, 95, 199, .4);
+  --nav-active-bg: linear-gradient(90deg, rgba(91, 95, 199, .14), rgba(108, 92, 231, .08));
+  --badge-in-bg: rgba(91, 95, 199, .12);
+  --badge-out-bg: rgba(108, 92, 231, .12);
+  --badge-scratch-bg: rgba(255, 184, 77, .14);
+  --badge-blank-bg: rgba(154, 159, 165, .1);
+  --tab-active-bg: rgba(91, 95, 199, .12);
+  --match-bg: rgba(91, 95, 199, .12);
+  --match-border: rgba(91, 95, 199, .45);
+  --chart-1: #5b5fc7;
+  --chart-2: #4ad991;
+  --chart-3: #ff8a8a;
+  --chart-4: #00c3f8;
+  --chart-5: #ffb84d;
+  --chart-6: #b198ff;
+  --chart-7: #00e396;
+  --chart-8: #9a9fa5;
+}
+
+/* ═══ 9. Electric — light SaaS + electric blue (light) ═══ */
+[data-theme="electric"] {
+  --color-scheme: light;
+  --radius: 14px;
+  --shadow: 0 10px 32px rgba(45, 91, 255, .1);
+  --font: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+  --font-display: "Libre Franklin", sans-serif;
+  --bg: #f0f4f8;
+  --bg-elev: #ffffff;
+  --bg-soft: #e4ebf4;
+  --line: #cfd8e6;
+  --text: #1a202c;
+  --muted: #718096;
+  --accent: #2d5bff;
+  --accent-2: #3563e9;
+  --warn: #f6ad55;
+  --danger: #e53e3e;
+  --ok: #48bb78;
+  --violet: #805ad5;
+  --orange: #ed8936;
+  --cyan: #38b2ac;
+  --link-hover: #1e40d8;
+  --sidebar-from: #e8eef8;
+  --sidebar-to: #dce6f4;
+  --glow-1: rgba(45, 91, 255, .12);
+  --glow-2: rgba(53, 99, 233, .08);
+  --toolbar-bg: rgba(255, 255, 255, .95);
+  --btn-face: linear-gradient(180deg, #fff, #f0f4f8);
+  --btn-primary: linear-gradient(180deg, #2d5bff, #2448d4);
+  --btn-primary-border: #2448d4;
+  --btn-primary-text: #ffffff;
+  --btn-details: linear-gradient(180deg, #fff, #e4ebf4);
+  --btn-details-border: #b8c4d8;
+  --table-head: #e8eef6;
+  --modal-bg: #ffffff;
+  --overlay: rgba(20, 40, 80, .32);
+  --backdrop: rgba(20, 40, 80, .38);
+  --row-hover: rgba(45, 91, 255, .06);
+  --empty-fill: rgba(0, 0, 0, .02);
+  --error-bg: rgba(229, 62, 62, .1);
+  --error-border: rgba(229, 62, 62, .35);
+  --error-text: #9b2c2c;
+  --tip-bg: #2d5bff;
+  --tip-border: rgba(45, 91, 255, .5);
+  --tip-text: #eef2ff;
+  --scrollbar-track: #e4ebf4;
+  --scrollbar-thumb: linear-gradient(180deg, #5b7fff, #2d5bff);
+  --loading-card-border: rgba(45, 91, 255, .4);
+  --nav-active-bg: linear-gradient(90deg, rgba(45, 91, 255, .14), rgba(53, 99, 233, .08));
+  --badge-in-bg: rgba(45, 91, 255, .12);
+  --badge-out-bg: rgba(53, 99, 233, .12);
+  --badge-scratch-bg: rgba(246, 173, 85, .14);
+  --badge-blank-bg: rgba(113, 128, 150, .1);
+  --tab-active-bg: rgba(45, 91, 255, .12);
+  --match-bg: rgba(45, 91, 255, .12);
+  --match-border: rgba(45, 91, 255, .45);
+  --chart-1: #2d5bff;
+  --chart-2: #48bb78;
+  --chart-3: #805ad5;
+  --chart-4: #38b2ac;
+  --chart-5: #e53e3e;
+  --chart-6: #ed8936;
+  --chart-7: #63b3ed;
+  --chart-8: #718096;
+}
+
+/* ═══ 10. Violet Finance — charcoal + neon violet (dark) ═══ */
+[data-theme="violet-finance"] {
+  --color-scheme: dark;
+  --radius: 14px;
+  --shadow: 0 14px 44px rgba(0, 0, 0, .55);
+  --font: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", "Consolas", monospace;
+  --font-display: "Source Sans 3", sans-serif;
+  --bg: #0f0f12;
+  --bg-elev: #1a1a1e;
+  --bg-soft: #24242a;
+  --line: #2e2e36;
+  --text: #f5f5f7;
+  --muted: #8b8b96;
+  --accent: #8b5cf6;
+  --accent-2: #a78bfa;
+  --warn: #fbbf24;
+  --danger: #f87171;
+  --ok: #82c91e;
+  --violet: #8b5cf6;
+  --orange: #fb923c;
+  --cyan: #22d3ee;
+  --link-hover: #c4b5fd;
+  --sidebar-from: #141418;
+  --sidebar-to: #0c0c0e;
+  --glow-1: rgba(139, 92, 246, .16);
+  --glow-2: rgba(167, 139, 250, .08);
+  --toolbar-bg: rgba(26, 26, 30, .94);
+  --btn-face: linear-gradient(180deg, #2a2a32, #1a1a1e);
+  --btn-primary: linear-gradient(180deg, #8b5cf6, #7c3aed);
+  --btn-primary-border: #7c3aed;
+  --btn-primary-text: #ffffff;
+  --btn-details: linear-gradient(180deg, #2c2c34, #1e1e24);
+  --btn-details-border: #3a3a44;
+  --table-head: #1e1e24;
+  --modal-bg: #141418;
+  --overlay: rgba(0, 0, 0, .8);
+  --backdrop: rgba(0, 0, 0, .78);
+  --row-hover: rgba(139, 92, 246, .08);
+  --empty-fill: rgba(255, 255, 255, .03);
+  --error-bg: rgba(248, 113, 113, .14);
+  --error-border: rgba(248, 113, 113, .4);
+  --error-text: #fecaca;
+  --tip-bg: #2a1a48;
+  --tip-border: rgba(139, 92, 246, .55);
+  --tip-text: #e9d5ff;
+  --scrollbar-track: #1e1e24;
+  --scrollbar-thumb: linear-gradient(180deg, #a78bfa, #8b5cf6);
+  --loading-card-border: rgba(139, 92, 246, .5);
+  --nav-active-bg: linear-gradient(90deg, rgba(139, 92, 246, .2), rgba(167, 139, 250, .08));
+  --badge-in-bg: rgba(139, 92, 246, .14);
+  --badge-out-bg: rgba(167, 139, 250, .12);
+  --badge-scratch-bg: rgba(251, 191, 36, .14);
+  --badge-blank-bg: rgba(139, 139, 150, .12);
+  --tab-active-bg: rgba(139, 92, 246, .14);
+  --match-bg: rgba(139, 92, 246, .16);
+  --match-border: rgba(139, 92, 246, .5);
+  --chart-1: #8b5cf6;
+  --chart-2: #82c91e;
+  --chart-3: #22d3ee;
+  --chart-4: #fbbf24;
+  --chart-5: #f87171;
+  --chart-6: #fb923c;
+  --chart-7: #a78bfa;
+  --chart-8: #8b8b96;
+}
+
+/* ═══ 11. Glass Neon — dark glass + purple/cyan/lime (dark) ═══ */
+[data-theme="glass-neon"] {
+  --color-scheme: dark;
+  --radius: 14px;
+  --shadow: 0 16px 48px rgba(0, 0, 0, .55), 0 0 24px rgba(139, 92, 246, .08);
+  --font: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", "Consolas", monospace;
+  --font-display: "Barlow", sans-serif;
+  --bg: #0a0b14;
+  --bg-elev: #161b2d;
+  --bg-soft: #1e2540;
+  --line: #2a3358;
+  --text: #ffffff;
+  --muted: #94a3b8;
+  --accent: #a855f7;
+  --accent-2: #3b82f6;
+  --warn: #f59e0b;
+  --danger: #f43f5e;
+  --ok: #22c55e;
+  --violet: #a855f7;
+  --orange: #f59e0b;
+  --cyan: #22d3ee;
+  --link-hover: #c084fc;
+  --sidebar-from: #0e1020;
+  --sidebar-to: #080910;
+  --glow-1: rgba(168, 85, 247, .16);
+  --glow-2: rgba(34, 211, 238, .1);
+  --toolbar-bg: rgba(22, 27, 45, .9);
+  --btn-face: linear-gradient(180deg, #1e2540, #161b2d);
+  --btn-primary: linear-gradient(135deg, #a855f7, #ec4899);
+  --btn-primary-border: #a855f7;
+  --btn-primary-text: #ffffff;
+  --btn-details: linear-gradient(180deg, #222a48, #181e34);
+  --btn-details-border: #3a4570;
+  --table-head: #181e34;
+  --modal-bg: #0e1020;
+  --overlay: rgba(4, 6, 14, .8);
+  --backdrop: rgba(4, 6, 14, .78);
+  --row-hover: rgba(168, 85, 247, .08);
+  --empty-fill: rgba(255, 255, 255, .03);
+  --error-bg: rgba(244, 63, 94, .14);
+  --error-border: rgba(244, 63, 94, .4);
+  --error-text: #fda4af;
+  --tip-bg: #1a1540;
+  --tip-border: rgba(168, 85, 247, .55);
+  --tip-text: #e9d5ff;
+  --scrollbar-track: #181e34;
+  --scrollbar-thumb: linear-gradient(180deg, #c084fc, #a855f7);
+  --loading-card-border: rgba(168, 85, 247, .5);
+  --nav-active-bg: linear-gradient(90deg, rgba(168, 85, 247, .2), rgba(59, 130, 246, .1));
+  --badge-in-bg: rgba(168, 85, 247, .14);
+  --badge-out-bg: rgba(59, 130, 246, .14);
+  --badge-scratch-bg: rgba(245, 158, 11, .14);
+  --badge-blank-bg: rgba(148, 163, 184, .12);
+  --tab-active-bg: rgba(168, 85, 247, .14);
+  --match-bg: rgba(168, 85, 247, .16);
+  --match-border: rgba(168, 85, 247, .5);
+  --chart-1: #a855f7;
+  --chart-2: #3b82f6;
+  --chart-3: #22c55e;
+  --chart-4: #22d3ee;
+  --chart-5: #f59e0b;
+  --chart-6: #ec4899;
+  --chart-7: #f43f5e;
+  --chart-8: #94a3b8;
+}
+
+/* ═══ 12. Tiesen — tweakcn indigo minimal (light) ═══ */
+[data-theme="tiesen"] {
+  --color-scheme: light;
+  --radius: 8px;
+  --shadow: 0.25px 1px 3px 0px rgba(20, 24, 90, .15), 0.25px 4px 6px -1px rgba(20, 24, 90, .12);
+  --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+  --font-display: "IBM Plex Sans", sans-serif;
+  --bg: #fafafa;
+  --bg-elev: #ffffff;
+  --bg-soft: #f5f5f5;
+  --line: #e5e5e5;
+  --text: #1a1a1a;
+  --muted: #525252;
+  --accent: #1f42d0;
+  --accent-2: #8daaff;
+  --warn: #d97706;
+  --danger: #dc2626;
+  --ok: #16a34a;
+  --violet: #4f46e5;
+  --orange: #ea580c;
+  --cyan: #0891b2;
+  --link-hover: #26449d;
+  --sidebar-from: #fafafa;
+  --sidebar-to: #f0f0f0;
+  --glow-1: rgba(31, 66, 208, .08);
+  --glow-2: rgba(141, 170, 255, .08);
+  --toolbar-bg: rgba(255, 255, 255, .95);
+  --btn-face: linear-gradient(180deg, #fff, #f5f5f5);
+  --btn-primary: linear-gradient(180deg, #1f42d0, #1836b0);
+  --btn-primary-border: #1836b0;
+  --btn-primary-text: #ffffff;
+  --btn-details: linear-gradient(180deg, #fff, #ebebeb);
+  --btn-details-border: #d4d4d4;
+  --table-head: #f5f5f5;
+  --modal-bg: #ffffff;
+  --overlay: rgba(20, 24, 90, .28);
+  --backdrop: rgba(20, 24, 90, .32);
+  --row-hover: rgba(31, 66, 208, .05);
+  --empty-fill: rgba(0, 0, 0, .02);
+  --error-bg: rgba(220, 38, 38, .1);
+  --error-border: rgba(220, 38, 38, .35);
+  --error-text: #991b1b;
+  --tip-bg: #1f42d0;
+  --tip-border: rgba(31, 66, 208, .5);
+  --tip-text: #dbe4ff;
+  --scrollbar-track: #f5f5f5;
+  --scrollbar-thumb: linear-gradient(180deg, #8daaff, #1f42d0);
+  --loading-card-border: rgba(31, 66, 208, .4);
+  --nav-active-bg: linear-gradient(90deg, rgba(31, 66, 208, .12), rgba(219, 228, 255, .6));
+  --badge-in-bg: rgba(31, 66, 208, .12);
+  --badge-out-bg: rgba(141, 170, 255, .18);
+  --badge-scratch-bg: rgba(217, 119, 6, .12);
+  --badge-blank-bg: rgba(82, 82, 82, .1);
+  --tab-active-bg: rgba(31, 66, 208, .1);
+  --match-bg: rgba(31, 66, 208, .12);
+  --match-border: rgba(31, 66, 208, .45);
+  --chart-1: #1f42d0;
+  --chart-2: #8daaff;
+  --chart-3: #4f46e5;
+  --chart-4: #26449d;
+  --chart-5: #dc2626;
+  --chart-6: #16a34a;
+  --chart-7: #d97706;
+  --chart-8: #525252;
+}
+
+/* ═══ 13. Logistic One — navy + amber logistics (light) ═══ */
+[data-theme="logistic-one"] {
+  --color-scheme: light;
+  --radius: 10px;
+  --shadow: 0 8px 28px rgba(15, 40, 70, .08);
+  --font: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+  --font-display: "Libre Franklin", sans-serif;
+  --bg: #f5f7fa;
+  --bg-elev: #ffffff;
+  --bg-soft: #e8eef5;
+  --line: #d0dae6;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #ea580c;
+  --accent-2: #0b3d5c;
+  --warn: #f59e0b;
+  --danger: #dc2626;
+  --ok: #059669;
+  --violet: #6366f1;
+  --orange: #ea580c;
+  --cyan: #0e7490;
+  --link-hover: #c2410c;
+  --sidebar-from: #eef2f7;
+  --sidebar-to: #e4ebf2;
+  --glow-1: rgba(234, 88, 12, .08);
+  --glow-2: rgba(11, 61, 92, .06);
+  --toolbar-bg: rgba(255, 255, 255, .95);
+  --btn-face: linear-gradient(180deg, #fff, #f5f7fa);
+  --btn-primary: linear-gradient(180deg, #ea580c, #c2410c);
+  --btn-primary-border: #c2410c;
+  --btn-primary-text: #ffffff;
+  --btn-details: linear-gradient(180deg, #fff, #e8eef5);
+  --btn-details-border: #b8c6d4;
+  --table-head: #e8eef5;
+  --modal-bg: #ffffff;
+  --overlay: rgba(15, 40, 70, .3);
+  --backdrop: rgba(15, 40, 70, .35);
+  --row-hover: rgba(234, 88, 12, .05);
+  --empty-fill: rgba(0, 0, 0, .02);
+  --error-bg: rgba(220, 38, 38, .1);
+  --error-border: rgba(220, 38, 38, .35);
+  --error-text: #991b1b;
+  --tip-bg: #0b3d5c;
+  --tip-border: rgba(11, 61, 92, .5);
+  --tip-text: #e0f2fe;
+  --scrollbar-track: #e8eef5;
+  --scrollbar-thumb: linear-gradient(180deg, #fb923c, #ea580c);
+  --loading-card-border: rgba(234, 88, 12, .4);
+  --nav-active-bg: linear-gradient(90deg, rgba(234, 88, 12, .12), rgba(11, 61, 92, .08));
+  --badge-in-bg: rgba(234, 88, 12, .12);
+  --badge-out-bg: rgba(11, 61, 92, .12);
+  --badge-scratch-bg: rgba(245, 158, 11, .14);
+  --badge-blank-bg: rgba(100, 116, 139, .1);
+  --tab-active-bg: rgba(234, 88, 12, .12);
+  --match-bg: rgba(234, 88, 12, .12);
+  --match-border: rgba(234, 88, 12, .45);
+  --chart-1: #ea580c;
+  --chart-2: #0b3d5c;
+  --chart-3: #059669;
+  --chart-4: #0e7490;
+  --chart-5: #dc2626;
+  --chart-6: #6366f1;
+  --chart-7: #f59e0b;
+  --chart-8: #64748b;
+}
+
+/* ═══ 14. Business — daisyUI dark corporate slate (dark) ═══ */
+[data-theme="business"] {
+  --color-scheme: dark;
+  --radius: 4px;
+  --shadow: 0 10px 32px rgba(0, 0, 0, .5);
+  --font: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+  --font-display: "Source Sans 3", sans-serif;
+  --bg: #202020;
+  --bg-elev: #1c1c1c;
+  --bg-soft: #282828;
+  --line: #383838;
+  --text: #cdcdcd;
+  --muted: #8a8a8a;
+  --accent: #1c4e80;
+  --accent-2: #ea6947;
+  --warn: #dbae5a;
+  --danger: #ac3e31;
+  --ok: #6bb187;
+  --violet: #7c909a;
+  --orange: #ea6947;
+  --cyan: #0291d5;
+  --link-hover: #5a8fc0;
+  --sidebar-from: #23282e;
+  --sidebar-to: #1a1e22;
+  --glow-1: rgba(28, 78, 128, .12);
+  --glow-2: rgba(234, 105, 71, .08);
+  --toolbar-bg: rgba(28, 28, 28, .94);
+  --btn-face: linear-gradient(180deg, #2a2a2a, #1c1c1c);
+  --btn-primary: linear-gradient(180deg, #1c4e80, #163d66);
+  --btn-primary-border: #163d66;
+  --btn-primary-text: #d0dae5;
+  --btn-details: linear-gradient(180deg, #2e2e2e, #222);
+  --btn-details-border: #444;
+  --table-head: #181818;
+  --modal-bg: #1a1a1a;
+  --overlay: rgba(0, 0, 0, .78);
+  --backdrop: rgba(0, 0, 0, .75);
+  --row-hover: rgba(28, 78, 128, .12);
+  --empty-fill: rgba(255, 255, 255, .03);
+  --error-bg: rgba(172, 62, 49, .14);
+  --error-border: rgba(172, 62, 49, .4);
+  --error-text: #f0a8a0;
+  --tip-bg: #1c4e80;
+  --tip-border: rgba(28, 78, 128, .55);
+  --tip-text: #d0dae5;
+  --scrollbar-track: #181818;
+  --scrollbar-thumb: linear-gradient(180deg, #2a6aa8, #1c4e80);
+  --loading-card-border: rgba(28, 78, 128, .5);
+  --nav-active-bg: linear-gradient(90deg, rgba(28, 78, 128, .28), rgba(234, 105, 71, .1));
+  --badge-in-bg: rgba(28, 78, 128, .2);
+  --badge-out-bg: rgba(234, 105, 71, .14);
+  --badge-scratch-bg: rgba(219, 174, 90, .14);
+  --badge-blank-bg: rgba(138, 138, 138, .12);
+  --tab-active-bg: rgba(28, 78, 128, .2);
+  --match-bg: rgba(28, 78, 128, .2);
+  --match-border: rgba(28, 78, 128, .5);
+  --chart-1: #1c4e80;
+  --chart-2: #ea6947;
+  --chart-3: #6bb187;
+  --chart-4: #0291d5;
+  --chart-5: #ac3e31;
+  --chart-6: #7c909a;
+  --chart-7: #dbae5a;
+  --chart-8: #8a8a8a;
+}
+
+/* ═══ 15. Corporate — daisyUI crisp blue (light) ═══ */
+[data-theme="corporate"] {
+  --color-scheme: light;
+  --radius: 4px;
+  --shadow: 0 6px 20px rgba(24, 26, 42, .08);
+  --font: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+  --font-display: "Source Sans 3", sans-serif;
+  --bg: #ffffff;
+  --bg-elev: #f5f5f5;
+  --bg-soft: #e8e8e8;
+  --line: #d1d1d1;
+  --text: #181a2a;
+  --muted: #61738d;
+  --accent: #0082c4;
+  --accent-2: #009488;
+  --warn: #eab308;
+  --danger: #ef4444;
+  --ok: #16a34a;
+  --violet: #6366f1;
+  --orange: #f97316;
+  --cyan: #009488;
+  --link-hover: #006a9e;
+  --sidebar-from: #f5f5f5;
+  --sidebar-to: #e8e8e8;
+  --glow-1: rgba(0, 130, 196, .06);
+  --glow-2: rgba(0, 148, 136, .05);
+  --toolbar-bg: rgba(255, 255, 255, .96);
+  --btn-face: linear-gradient(180deg, #fff, #f0f0f0);
+  --btn-primary: linear-gradient(180deg, #0082c4, #006da3);
+  --btn-primary-border: #006da3;
+  --btn-primary-text: #ffffff;
+  --btn-details: linear-gradient(180deg, #fff, #e8e8e8);
+  --btn-details-border: #c8c8c8;
+  --table-head: #e8e8e8;
+  --modal-bg: #ffffff;
+  --overlay: rgba(24, 26, 42, .3);
+  --backdrop: rgba(24, 26, 42, .35);
+  --row-hover: rgba(0, 130, 196, .06);
+  --empty-fill: rgba(0, 0, 0, .02);
+  --error-bg: rgba(239, 68, 68, .1);
+  --error-border: rgba(239, 68, 68, .35);
+  --error-text: #b91c1c;
+  --tip-bg: #0082c4;
+  --tip-border: rgba(0, 130, 196, .5);
+  --tip-text: #e0f2fe;
+  --scrollbar-track: #e8e8e8;
+  --scrollbar-thumb: linear-gradient(180deg, #33a3d6, #0082c4);
+  --loading-card-border: rgba(0, 130, 196, .4);
+  --nav-active-bg: linear-gradient(90deg, rgba(0, 130, 196, .12), rgba(0, 148, 136, .08));
+  --badge-in-bg: rgba(0, 130, 196, .12);
+  --badge-out-bg: rgba(0, 148, 136, .12);
+  --badge-scratch-bg: rgba(234, 179, 8, .14);
+  --badge-blank-bg: rgba(97, 115, 141, .1);
+  --tab-active-bg: rgba(0, 130, 196, .12);
+  --match-bg: rgba(0, 130, 196, .12);
+  --match-border: rgba(0, 130, 196, .45);
+  --chart-1: #0082c4;
+  --chart-2: #009488;
+  --chart-3: #61738d;
+  --chart-4: #16a34a;
+  --chart-5: #ef4444;
+  --chart-6: #6366f1;
+  --chart-7: #eab308;
+  --chart-8: #64748b;
+}
+
+/* ═══ 16. Cupcake — daisyUI soft pastel bakery (light) ═══ */
+[data-theme="cupcake"] {
+  --color-scheme: light;
+  --radius: 16px;
+  --shadow: 0 8px 24px rgba(41, 19, 52, .08);
+  --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", "Consolas", monospace;
+  --font-display: "Archivo", sans-serif;
+  --bg: #faf7f5;
+  --bg-elev: #ffffff;
+  --bg-soft: #efeae6;
+  --line: #e7e2df;
+  --text: #291334;
+  --muted: #6b5a66;
+  --accent: #65c3c8;
+  --accent-2: #ef9fbc;
+  --warn: #eeaf3a;
+  --danger: #e11d48;
+  --ok: #16a34a;
+  --violet: #a855f7;
+  --orange: #eeaf3a;
+  --cyan: #65c3c8;
+  --link-hover: #4aa8ad;
+  --sidebar-from: #efeae6;
+  --sidebar-to: #e7e2df;
+  --glow-1: rgba(101, 195, 200, .1);
+  --glow-2: rgba(239, 159, 188, .08);
+  --toolbar-bg: rgba(255, 255, 255, .95);
+  --btn-face: linear-gradient(180deg, #fff, #faf7f5);
+  --btn-primary: linear-gradient(180deg, #65c3c8, #4aa8ad);
+  --btn-primary-border: #4aa8ad;
+  --btn-primary-text: #291334;
+  --btn-details: linear-gradient(180deg, #fff, #efeae6);
+  --btn-details-border: #d4ccc6;
+  --table-head: #efeae6;
+  --modal-bg: #ffffff;
+  --overlay: rgba(41, 19, 52, .28);
+  --backdrop: rgba(41, 19, 52, .32);
+  --row-hover: rgba(101, 195, 200, .08);
+  --empty-fill: rgba(0, 0, 0, .02);
+  --error-bg: rgba(225, 29, 72, .1);
+  --error-border: rgba(225, 29, 72, .35);
+  --error-text: #9f1239;
+  --tip-bg: #291334;
+  --tip-border: rgba(101, 195, 200, .5);
+  --tip-text: #faf7f5;
+  --scrollbar-track: #efeae6;
+  --scrollbar-thumb: linear-gradient(180deg, #8fd5d9, #65c3c8);
+  --loading-card-border: rgba(101, 195, 200, .45);
+  --nav-active-bg: linear-gradient(90deg, rgba(101, 195, 200, .18), rgba(239, 159, 188, .12));
+  --badge-in-bg: rgba(101, 195, 200, .16);
+  --badge-out-bg: rgba(239, 159, 188, .16);
+  --badge-scratch-bg: rgba(238, 175, 58, .16);
+  --badge-blank-bg: rgba(107, 90, 102, .1);
+  --tab-active-bg: rgba(101, 195, 200, .16);
+  --match-bg: rgba(101, 195, 200, .14);
+  --match-border: rgba(101, 195, 200, .45);
+  --chart-1: #65c3c8;
+  --chart-2: #ef9fbc;
+  --chart-3: #eeaf3a;
+  --chart-4: #16a34a;
+  --chart-5: #e11d48;
+  --chart-6: #a855f7;
+  --chart-7: #44ebd3;
+  --chart-8: #6b5a66;
+}
+
+/* ═══ 17. Halloween — daisyUI pumpkin + purple (dark) ═══ */
+[data-theme="halloween"] {
+  --color-scheme: dark;
+  --radius: 12px;
+  --shadow: 0 14px 40px rgba(0, 0, 0, .6);
+  --font: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", "Consolas", monospace;
+  --font-display: "Barlow", sans-serif;
+  --bg: #1b1816;
+  --bg-elev: #0b0908;
+  --bg-soft: #2a2218;
+  --line: #3d3224;
+  --text: #cdcdcd;
+  --muted: #9a8a78;
+  --accent: #ff9a33;
+  --accent-2: #7900be;
+  --warn: #d97706;
+  --danger: #ef4444;
+  --ok: #50a700;
+  --violet: #7900be;
+  --orange: #ff9a33;
+  --cyan: #22d3ee;
+  --link-hover: #ffb866;
+  --sidebar-from: #2f1b05;
+  --sidebar-to: #1b1816;
+  --glow-1: rgba(255, 154, 51, .14);
+  --glow-2: rgba(121, 0, 190, .12);
+  --toolbar-bg: rgba(11, 9, 8, .94);
+  --btn-face: linear-gradient(180deg, #2a2218, #1b1816);
+  --btn-primary: linear-gradient(180deg, #ff9a33, #e07a18);
+  --btn-primary-border: #e07a18;
+  --btn-primary-text: #131616;
+  --btn-details: linear-gradient(180deg, #2e2418, #1e1810);
+  --btn-details-border: #4a3a28;
+  --table-head: #0b0908;
+  --modal-bg: #14110f;
+  --overlay: rgba(0, 0, 0, .8);
+  --backdrop: rgba(0, 0, 0, .78);
+  --row-hover: rgba(255, 154, 51, .08);
+  --empty-fill: rgba(255, 255, 255, .03);
+  --error-bg: rgba(239, 68, 68, .14);
+  --error-border: rgba(239, 68, 68, .4);
+  --error-text: #fecaca;
+  --tip-bg: #2f1b05;
+  --tip-border: rgba(255, 154, 51, .55);
+  --tip-text: #ffe0b8;
+  --scrollbar-track: #0b0908;
+  --scrollbar-thumb: linear-gradient(180deg, #ffb866, #ff9a33);
+  --loading-card-border: rgba(255, 154, 51, .5);
+  --nav-active-bg: linear-gradient(90deg, rgba(255, 154, 51, .18), rgba(121, 0, 190, .14));
+  --badge-in-bg: rgba(255, 154, 51, .14);
+  --badge-out-bg: rgba(121, 0, 190, .18);
+  --badge-scratch-bg: rgba(217, 119, 6, .14);
+  --badge-blank-bg: rgba(154, 138, 120, .12);
+  --tab-active-bg: rgba(255, 154, 51, .14);
+  --match-bg: rgba(255, 154, 51, .16);
+  --match-border: rgba(255, 154, 51, .5);
+  --chart-1: #ff9a33;
+  --chart-2: #7900be;
+  --chart-3: #50a700;
+  --chart-4: #22d3ee;
+  --chart-5: #ef4444;
+  --chart-6: #d97706;
+  --chart-7: #a855f7;
+  --chart-8: #9a8a78;
+}
+
 /* ── Base ── */
 * { box-sizing: border-box; }
 html, body {
@@ -539,38 +1278,57 @@ code, .mono { font-family: var(--mono); }
 /* ── Theme picker ── */
 .theme-picker {
   margin-top: auto;
-  padding-top: 1rem;
+  padding-top: .85rem;
   border-top: 1px solid var(--line);
+  min-height: 0;
 }
 .theme-picker-label {
   color: var(--muted);
-  font-size: .7rem;
+  font-size: .68rem;
   text-transform: uppercase;
   letter-spacing: .08em;
-  margin: 0 0 .55rem .15rem;
+  margin: 0 0 .45rem .1rem;
   font-weight: 600;
+}
+.theme-swatches-scroll {
+  max-height: min(42vh, 320px);
+  overflow-y: auto;
+  padding-right: .15rem;
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+.theme-group-label {
+  color: var(--muted);
+  font-size: .58rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin: 0 0 .3rem .1rem;
+  font-weight: 600;
+  opacity: .85;
 }
 .theme-swatches {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: .4rem;
+  gap: .3rem;
 }
 .theme-swatch {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: .3rem;
-  padding: .4rem .35rem .35rem;
+  gap: .22rem;
+  padding: .3rem .25rem .28rem;
   border: 1px solid var(--line);
   border-radius: calc(var(--radius) - 2px);
   background: var(--bg-elev);
   color: var(--muted);
   cursor: pointer;
   font: inherit;
-  font-size: .62rem;
+  font-size: .55rem;
   font-weight: 600;
-  letter-spacing: .02em;
+  letter-spacing: .01em;
   text-align: center;
+  line-height: 1.15;
   transition: border-color .15s, color .15s, box-shadow .15s;
 }
 .theme-swatch:hover {
@@ -584,7 +1342,7 @@ code, .mono { font-family: var(--mono); }
 }
 .theme-swatch-preview {
   display: flex;
-  height: 14px;
+  height: 11px;
   border-radius: 3px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
@@ -607,6 +1365,39 @@ code, .mono { font-family: var(--mono); }
 }
 .theme-swatch[data-theme-id="frost"] .theme-swatch-preview {
   background: linear-gradient(90deg, #eef2f6 33%, #c45c26 33% 66%, #3d5a80 66%);
+}
+.theme-swatch[data-theme-id="purity-dark"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #0b1437 33%, #4fd1c5 33% 66%, #63b3ed 66%);
+}
+.theme-swatch[data-theme-id="dabang"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #f4f8f5 33%, #5b5fc7 33% 66%, #4ad991 66%);
+}
+.theme-swatch[data-theme-id="electric"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #f0f4f8 33%, #2d5bff 33% 66%, #48bb78 66%);
+}
+.theme-swatch[data-theme-id="violet-finance"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #0f0f12 33%, #8b5cf6 33% 66%, #82c91e 66%);
+}
+.theme-swatch[data-theme-id="glass-neon"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #0a0b14 33%, #a855f7 33% 66%, #22d3ee 66%);
+}
+.theme-swatch[data-theme-id="tiesen"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #fafafa 33%, #1f42d0 33% 66%, #8daaff 66%);
+}
+.theme-swatch[data-theme-id="logistic-one"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #f5f7fa 33%, #ea580c 33% 66%, #0b3d5c 66%);
+}
+.theme-swatch[data-theme-id="business"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #202020 33%, #1c4e80 33% 66%, #ea6947 66%);
+}
+.theme-swatch[data-theme-id="corporate"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #ffffff 33%, #0082c4 33% 66%, #009488 66%);
+}
+.theme-swatch[data-theme-id="cupcake"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #faf7f5 33%, #65c3c8 33% 66%, #ef9fbc 66%);
+}
+.theme-swatch[data-theme-id="halloween"] .theme-swatch-preview {
+  background: linear-gradient(90deg, #1b1816 33%, #ff9a33 33% 66%, #7900be 66%);
 }
 
 .main { padding: 1.25rem 1.5rem 2.5rem; }
@@ -680,7 +1471,8 @@ input[type=datetime-local] { min-width: 190px; color-scheme: var(--color-scheme)
   .grid-3, .grid-2 { grid-template-columns: 1fr; }
   .app { grid-template-columns: 1fr; }
   .sidebar { position: relative; height: auto; }
-  .theme-swatches { grid-template-columns: repeat(6, 1fr); }
+  .theme-swatches { grid-template-columns: repeat(4, 1fr); }
+  .theme-swatches-scroll { max-height: none; }
 }
 
 .kpi {

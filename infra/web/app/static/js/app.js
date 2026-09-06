@@ -1,7 +1,11 @@
 /* Theme + Chart.js helpers for SMF Analytics */
 window.SMFTheme = {
   key: "smf-theme",
-  ids: ["phosphor", "carbon", "harbor", "obsidian", "ledger", "frost"],
+  ids: [
+    "phosphor", "carbon", "harbor", "obsidian", "ledger", "frost",
+    "purity-dark", "dabang", "electric", "violet-finance", "glass-neon",
+    "tiesen", "logistic-one", "business", "corporate", "cupcake", "halloween",
+  ],
   current() {
     const t = document.documentElement.getAttribute("data-theme");
     return this.ids.includes(t) ? t : "phosphor";
