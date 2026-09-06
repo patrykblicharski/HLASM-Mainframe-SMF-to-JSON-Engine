@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, load_more, ts_th, ts_td %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td, th %}
 {% block subtitle %}<p>Highest-value crosses from ANALYTICS.md — job×RACF and TCP×workload.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
@@ -7,7 +7,7 @@
     <h2>30 × 80 — jobs with security events</h2>
     {% if summary.job_security %}
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Job</th><th>Ends</th><th>CPU</th><th>RACF events</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('Job', 'job_name') }}{{ th('Ends', 'ends') }}{{ th('CPU', 'cpu_sum') }}{{ th('RACF events', 'racf_events') }}<th></th></tr></thead>
       <tbody>
       {% for r in summary.job_security %}
         <tr>
@@ -28,7 +28,7 @@
     <h2>119 × workload — network bytes by resource/AS</h2>
     {% if summary.net_work %}
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Workload</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('Workload', 'workload') }}{{ th('Conns', 'conns') }}{{ th('In', 'in_bytes') }}{{ th('Out', 'out_bytes') }}<th></th></tr></thead>
       <tbody>
       {% for r in summary.net_work %}
         <tr>

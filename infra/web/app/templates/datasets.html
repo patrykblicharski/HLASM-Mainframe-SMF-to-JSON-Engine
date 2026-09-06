@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, load_more, ts_th, ts_td %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td, th %}
 {% block subtitle %}<p>SMF 14/15 I/O and 17 scratches — blank/control JFCB names shown safely. Click a bar to filter.</p>{% endblock %}
 {% block content %}
 <section class="panel">
@@ -13,7 +13,7 @@
     {% if top %}
     <div class="table-wrap">
       <table class="data">
-        <thead><tr>{{ ts_th() }}<th>Dir</th><th>Job</th><th>Dataset</th><th>Volser</th><th>Rows</th><th>EXCP</th><th></th></tr></thead>
+        <thead><tr>{{ ts_th() }}{{ th('Dir', 'direction') }}{{ th('Job', 'job_name') }}{{ th('Dataset', 'dsname') }}{{ th('Volser', 'volser') }}{{ th('Rows', 'rows') }}{{ th('EXCP', 'excp') }}<th></th></tr></thead>
         <tbody>
         {% for r in top %}
           <tr>
@@ -30,7 +30,10 @@
             <td class="mono">{{ display_cell(r.volser) }}</td>
             <td>{{ fmt_int(r.rows) }}</td>
             <td>{{ fmt_int(r.excp) }}</td>
-            <td>{{ details_button('smf_14' if r.direction=='INPUT' else 'smf_15', {'job_name': r.job_name, 'dsname': r.dsname or '', 'volser': r.volser or ''}) }}</td>
+            <td>{{ details_button(
+                  'smf_14' if r.direction=='INPUT' else 'smf_15',
+                  {'dsname': r.dsname} if r.dsname else ({'volser': r.volser} if r.volser else {'job_name': r.job_name})
+                ) }}</td>
           </tr>
         {% endfor %}
         </tbody>
@@ -46,7 +49,7 @@
     {% if scratch %}
     <div class="table-wrap">
       <table class="data">
-        <thead><tr>{{ ts_th() }}<th>Job</th><th>Dataset</th><th>Vol</th><th>Rows</th><th></th></tr></thead>
+        <thead><tr>{{ ts_th() }}{{ th('Job', 'job_name') }}{{ th('Dataset', 'dsname') }}{{ th('Vol', 'volser') }}{{ th('Rows', 'rows') }}<th></th></tr></thead>
         <tbody>
         {% for r in scratch %}
           <tr>
@@ -61,7 +64,7 @@
             </td>
             <td class="mono">{{ display_cell(r.volser) }}</td>
             <td>{{ fmt_int(r.rows) }}</td>
-            <td>{{ details_button('smf_17', {'job_name': r.job_name, 'dsname': r.dsname or '', 'volser': r.volser or ''}) }}</td>
+            <td>{{ details_button('smf_17', {'job_name': r.job_name}) }}</td>
           </tr>
         {% endfor %}
         </tbody>

@@ -3,6 +3,10 @@
         class="btn btn-details"
         data-tables="{{ tables }}"
         data-days="{{ days }}"
+        {% if date_from %}data-date-from="{{ date_from }}"{% endif %}
+        {% if date_to %}data-date-to="{{ date_to }}"{% endif %}
+        {% if hour_from %}data-hour-from="{{ hour_from }}"{% endif %}
+        {% if hour_to %}data-hour-to="{{ hour_to }}"{% endif %}
         data-filters="{{ filters|tojson }}"
         onclick="SMFDetails.open(this)">Full details</button>
 {%- endmacro %}
@@ -16,10 +20,15 @@
 {% endif %}
 {%- endmacro %}
 
-{% macro ts_th() -%}<th>Timestamp</th>{%- endmacro %}
+{% macro th(label, key=None) -%}
+{%- set tip = field_tip(key if key is not none else label) -%}
+<th{% if tip %} title="{{ tip }}"{% endif %} data-sort-key="{{ (key if key is not none else label)|lower }}">{{ label }}</th>
+{%- endmacro %}
+
+{% macro ts_th() -%}{{ th('Timestamp', 'timestamp') }}{%- endmacro %}
 
 {% macro ts_td(row) -%}
-<td class="mono ts-cell">{%-
+<td class="mono ts-cell" data-sort="{{ row.last_ts or ((row.event_date|string) ~ ' ' ~ (row.time or '')) }}">{%-
   if row.last_ts -%}{{ row.last_ts|string|replace('T',' ')|truncate(19, True, '') }}{%-
   elif row.event_date -%}{{ row.event_date }}{% if row.time %} {{ row.time }}{% endif %}{%-
   else -%}—{%- endif -%}

@@ -17,6 +17,7 @@ from flask import (
 from markupsafe import Markup
 
 from . import db, details, queries
+from .field_meta import field_description, field_meta_json
 from .helpers import (
     NAV,
     display_cell,
@@ -62,6 +63,8 @@ def _ctx(**extra: Any) -> dict[str, Any]:
         "display_cell": display_cell,
         "display_dsname": display_dsname,
         "scrub_text": scrub_text,
+        "field_tip": field_description,
+        "field_meta": field_meta_json(),
         "q": q,
         "error": None,
         "show_search": False,
@@ -84,6 +87,10 @@ def tojson_chart(value: Any) -> Markup:
     """Serialize for inline <script> — must be Markup or Jinja escapes quotes to &#34;."""
     return Markup(json.dumps(value, default=str, ensure_ascii=False))
 
+
+@bp.app_template_global()
+def field_tip(name: Any, default: str = "") -> str:
+    return field_description(name, default)
 
 @bp.app_template_global()
 def more_url(name: str, limit: int, step: int = 40) -> str:

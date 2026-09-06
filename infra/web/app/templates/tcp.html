@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, load_more, ts_th, ts_td %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td, th %}
 {% block subtitle %}<p>TCP connection terminations, talkers, ports, stacks. Click a chart point to filter.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
@@ -17,7 +17,7 @@
   <div class="panel">
     <h2>Top remote IPs</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>IP</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('IP', 'remote_ip') }}{{ th('Conns', 'conns') }}{{ th('In', 'in_bytes') }}{{ th('Out', 'out_bytes') }}<th></th></tr></thead>
       <tbody>
       {% for r in summary.remotes %}
         <tr>
@@ -36,7 +36,7 @@
   <div class="panel">
     <h2>Local ports (119-1)</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Port</th><th>Conns</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('Port', 'local_port') }}{{ th('Conns', 'conns') }}<th></th></tr></thead>
       <tbody>
       {% for r in summary.ports %}
         <tr>
@@ -53,7 +53,7 @@
   <div class="panel">
     <h2>Stacks</h2>
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Stack</th><th>Conns</th><th>In</th><th>Out</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('Stack', 'tcp_stack') }}{{ th('Conns', 'conns') }}{{ th('In', 'in_bytes') }}{{ th('Out', 'out_bytes') }}<th></th></tr></thead>
       <tbody>
       {% for r in summary.stacks %}
         <tr>

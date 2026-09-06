@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, ts_th, ts_td %}
+{% from "_macros.html" import details_button, ts_th, ts_td, th %}
 {% block subtitle %}<p>Multi-level detail for job <strong class="mono">{{ data.job }}</strong>.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-4">
@@ -14,7 +14,7 @@
     <h2>Step / program ends (SMF 30-4) <span>primary source for step &amp; program</span></h2>
     {% if data.steps %}
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Step</th><th>Program</th><th>Class</th><th>User</th><th>CPU (timer)</th><th>CC</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('Step', 'step_name') }}{{ th('Program', 'program_name') }}{{ th('Class', 'job_class') }}{{ th('User', 'racf_user') }}{{ th('CPU (timer)', 'cpu_step_time') }}{{ th('CC', 'step_comp_code') }}<th></th></tr></thead>
       <tbody>
       {% for r in data.steps %}
         <tr>

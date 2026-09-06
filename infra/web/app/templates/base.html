@@ -6,6 +6,7 @@
   <title>{{ title }} · SMF Analytics</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
+  <script>window.SMFFieldMeta = {{ field_meta|default({})|tojson }};</script>
   <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </head>
 <body>

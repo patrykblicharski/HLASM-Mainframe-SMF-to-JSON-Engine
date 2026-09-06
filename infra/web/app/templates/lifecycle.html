@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, load_more, ts_th, ts_td %}
+{% from "_macros.html" import details_button, load_more, ts_th, ts_td, th %}
 {% block subtitle %}<p>Catalog DEFINE/DELETE/ALTER + scratch churn. Click a bar to filter.</p>{% endblock %}
 {% block content %}
 <section class="panel">
@@ -11,7 +11,7 @@
     <h2>Top catalog entries</h2>
     {% if summary.tops %}
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Action</th><th>Entry</th><th>Job</th><th>Rows</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('Action', 'action') }}{{ th('Entry', 'entry_name') }}{{ th('Job', 'job_name') }}{{ th('Rows', 'rows') }}<th></th></tr></thead>
       <tbody>
       {% for r in summary.tops %}
         <tr>
@@ -22,7 +22,7 @@
           <td>{{ fmt_int(r.rows) }}</td>
           <td>{{ details_button(
                 'smf_61' if r.action=='DEFINE' else ('smf_65' if r.action=='DELETE' else 'smf_66'),
-                {'entry_name': r.entry_name, 'job_name': r.job_name}
+                {'entry_name': r.entry_name}
               ) }}</td>
         </tr>
       {% endfor %}
@@ -35,7 +35,7 @@
     <h2>Top catalogs</h2>
     {% if summary.catalogs %}
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Catalog</th><th>Rows</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('Catalog', 'catalog_name') }}{{ th('Rows', 'rows') }}<th></th></tr></thead>
       <tbody>
       {% for r in summary.catalogs %}
         <tr>

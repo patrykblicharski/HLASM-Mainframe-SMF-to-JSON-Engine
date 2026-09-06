@@ -217,15 +217,92 @@ window.SMFRange = {
   },
 };
 
+window.SMFTables = {
+  init() {
+    document.querySelectorAll("table.data").forEach((table) => this.makeSortable(table));
+  },
+  cellSortValue(td) {
+    if (!td) return "";
+    const raw = td.getAttribute("data-sort");
+    if (raw !== null && raw !== undefined && String(raw).trim() !== "") return String(raw).trim();
+    return (td.textContent || "").replace(/\s+/g, " ").trim();
+  },
+  compare(a, b) {
+    const na = Number(String(a).replace(/,/g, "").replace(/[^0-9.\-eE]/g, ""));
+    const nb = Number(String(b).replace(/,/g, "").replace(/[^0-9.\-eE]/g, ""));
+    const aNum = String(a).trim() !== "" && !Number.isNaN(na) && /[0-9]/.test(String(a));
+    const bNum = String(b).trim() !== "" && !Number.isNaN(nb) && /[0-9]/.test(String(b));
+    if (aNum && bNum) return na - nb;
+    return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
+  },
+  makeSortable(table) {
+    const head = table.tHead && table.tHead.rows[0];
+    const body = table.tBodies[0];
+    if (!head || !body) return;
+    Array.from(head.cells).forEach((th, colIdx) => {
+      if (!th || th.classList.contains("no-sort")) return;
+      if (!(th.textContent || "").trim()) return;
+      th.classList.add("sortable");
+      th.addEventListener("click", () => {
+        const asc = th.classList.contains("sorted-asc") ? false : true;
+        Array.from(head.cells).forEach((c) => c.classList.remove("sorted-asc", "sorted-desc"));
+        th.classList.add(asc ? "sorted-asc" : "sorted-desc");
+        const rows = Array.from(body.rows);
+        rows.sort((ra, rb) => {
+          const va = this.cellSortValue(ra.cells[colIdx]);
+          const vb = this.cellSortValue(rb.cells[colIdx]);
+          const cmp = this.compare(va, vb);
+          return asc ? cmp : -cmp;
+        });
+        rows.forEach((r) => body.appendChild(r));
+      });
+    });
+  },
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   SMFCharts.darkDefaults();
   SMFRange.restoreIfEmpty();
+  SMFTables.init();
   const saveBtn = document.getElementById("smf-save-range");
   if (saveBtn) saveBtn.addEventListener("click", () => SMFRange.save());
 });
 
 window.SMFDetails = {
-  _state: { sources: [], si: 0, ri: 0, days: "4", tables: "", filters: {}, limit: 100, offset: 0 },
+  _state: {
+    sources: [],
+    si: 0,
+    ri: 0,
+    days: "4",
+    date_from: "",
+    date_to: "",
+    hour_from: "",
+    hour_to: "",
+    tables: "",
+    filters: {},
+    limit: 100,
+    offset: 0,
+  },
+
+  _fieldTip(name) {
+    const meta = window.SMFFieldMeta || {};
+    const key = String(name || "").trim().toLowerCase();
+    return meta[key] || meta[key.replace(/ /g, "_")] || "";
+  },
+
+  _windowLabel() {
+    const s = this._state;
+    const parts = [];
+    if (s.date_from || s.date_to) {
+      parts.push((s.date_from || "…") + " → " + (s.date_to || "…"));
+    } else {
+      parts.push("last " + (s.days || "4") + "d");
+    }
+    if (s.hour_from || s.hour_to) {
+      parts.push("hour " + (s.hour_from || "…") + (s.hour_to ? " → " + s.hour_to : ""));
+    }
+    return parts.join(" · ");
+  },
 
   open(btn) {
     const dlg = document.getElementById("smf-details-modal");
@@ -240,10 +317,22 @@ window.SMFDetails = {
     } catch (_e) {
       filters = {};
     }
+    const page = new URL(window.location.href);
     const tables = btn.getAttribute("data-tables") || "";
-    const days = btn.getAttribute("data-days") || "4";
+    const days =
+      btn.getAttribute("data-days") ||
+      page.searchParams.get("days") ||
+      "4";
     this._state.tables = tables;
     this._state.days = days;
+    this._state.date_from =
+      btn.getAttribute("data-date-from") || page.searchParams.get("date_from") || "";
+    this._state.date_to =
+      btn.getAttribute("data-date-to") || page.searchParams.get("date_to") || "";
+    this._state.hour_from =
+      btn.getAttribute("data-hour-from") || page.searchParams.get("hour_from") || "";
+    this._state.hour_to =
+      btn.getAttribute("data-hour-to") || page.searchParams.get("hour_to") || "";
     this._state.filters = filters;
     this._state.limit = 100;
     this._state.offset = 0;
@@ -266,6 +355,10 @@ window.SMFDetails = {
       limit: String(this._state.limit),
       offset: String(this._state.offset),
     });
+    ["date_from", "date_to", "hour_from", "hour_to"].forEach((k) => {
+      const v = this._state[k];
+      if (v) params.set(k, v);
+    });
     Object.entries(this._state.filters || {}).forEach(([k, v]) => {
       if (v !== null && v !== undefined && String(v) !== "") params.set(k, String(v));
     });
@@ -280,11 +373,16 @@ window.SMFDetails = {
         this._state.sources = data.sources || [];
         this._state.limit = data.limit || this._state.limit;
         this._state.offset = data.offset || 0;
+        this._state.days = data.days != null ? String(data.days) : this._state.days;
+        this._state.date_from = data.date_from || this._state.date_from;
+        this._state.date_to = data.date_to || this._state.date_to;
+        this._state.hour_from = data.hour_from || this._state.hour_from;
+        this._state.hour_to = data.hour_to || this._state.hour_to;
         this._state.appliedFilters = data.filters || {};
         const filt = Object.entries(this._state.appliedFilters)
           .map(([k, v]) => k + "=" + v)
           .join(", ");
-        if (sub) sub.textContent = (filt || "no filters") + " · last " + this._state.days + "d";
+        if (sub) sub.textContent = (filt || "no filters") + " · " + this._windowLabel();
         this._render();
       })
       .catch((err) => {
@@ -411,11 +509,18 @@ window.SMFDetails = {
         .map((k) => {
           const v = row[k];
           const shown = v === null || v === undefined || String(v).trim() === "" ? "—" : String(v);
+          const tip = this._fieldTip(k);
+          const tipHtml = tip
+            ? '<span class="field-tip" title="' + this._esc(tip) + '">' + this._esc(tip) + "</span>"
+            : "";
           return (
             '<div class="details-field ' +
             cls +
-            '"><dt>' +
+            '"><dt title="' +
+            this._esc(tip || k) +
+            '">' +
             this._esc(k) +
+            tipHtml +
             '</dt><dd class="mono">' +
             this._esc(shown) +
             "</dd></div>"

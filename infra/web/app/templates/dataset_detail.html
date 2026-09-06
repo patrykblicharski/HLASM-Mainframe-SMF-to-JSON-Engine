@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_macros.html" import details_button, ts_th, ts_td %}
+{% from "_macros.html" import details_button, ts_th, ts_td, th %}
 {% block subtitle %}<p>Lifecycle for <code class="mono">{{ data.dsname or '(blank)' }}</code> — I/O, scratch, catalog, RACF.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-4">
@@ -14,7 +14,7 @@
     <h2>I/O activity (14/15)</h2>
     {% if data.io %}
     <div class="table-wrap"><table class="data">
-      <thead><tr>{{ ts_th() }}<th>Dir</th><th>Job</th><th>DD</th><th>Vol</th><th>EXCP</th><th></th></tr></thead>
+      <thead><tr>{{ ts_th() }}{{ th('Dir', 'direction') }}{{ th('Job', 'job_name') }}{{ th('DD', 'ddname') }}{{ th('Vol', 'volser') }}{{ th('EXCP', 'excp_count') }}<th></th></tr></thead>
       <tbody>
       {% for r in data.io %}
         <tr>
