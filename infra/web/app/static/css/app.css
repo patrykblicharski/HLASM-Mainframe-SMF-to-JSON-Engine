@@ -1350,68 +1350,110 @@
 /* ═══ 20. Blue-smlb — tweakcn vivid indigo blue (dark) ═══ */
 [data-theme="blue-smlb"] {
   --color-scheme: dark;
-  --radius: 10px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, .25), 0 1px 2px -1px rgba(0, 0, 0, .2);
+  --radius: 12px;
+  --shadow: 0 14px 40px rgba(0, 0, 0, .45), 0 0 0 1px rgba(22, 93, 252, .06);
   --font: "Segoe UI", "IBM Plex Sans", system-ui, sans-serif;
   --mono: "IBM Plex Mono", "Consolas", monospace;
   --font-display: "Segoe UI", "IBM Plex Sans", sans-serif;
-  --bg: #0a0a0a;
-  --bg-elev: #171717;
-  --bg-soft: #262626;
-  --line: #282828;
-  --text: #fafafa;
-  --muted: #a1a1a1;
+  --bg: #06080e;
+  --bg-elev: #121722;
+  --bg-soft: #1a2230;
+  --line: #243044;
+  --text: #f4f7fb;
+  --muted: #8b97ab;
   --accent: #165dfc;
   --accent-2: #91c5ff;
   --warn: #f59e0b;
   --danger: #ff6467;
   --ok: #22c55e;
-  --violet: #1a4eda;
+  --violet: #3a81f6;
   --orange: #fb923c;
   --cyan: #38bdf8;
-  --link-hover: #91c5ff;
-  --sidebar-from: #171717;
-  --sidebar-to: #0f0f0f;
-  --glow-1: rgba(22, 93, 252, .16);
-  --glow-2: rgba(145, 197, 255, .1);
-  --toolbar-bg: rgba(23, 23, 23, .94);
-  --btn-face: linear-gradient(180deg, #262626, #171717);
-  --btn-primary: linear-gradient(180deg, #165dfc, #1447e6);
+  --link-hover: #b7d9ff;
+  --sidebar-from: #0e1420;
+  --sidebar-to: #070a10;
+  --glow-1: rgba(22, 93, 252, .28);
+  --glow-2: rgba(56, 189, 248, .14);
+  --toolbar-bg: linear-gradient(145deg, rgba(22, 93, 252, .12) 0%, transparent 45%), rgba(14, 18, 28, .92);
+  --btn-face: linear-gradient(180deg, #1c2433, #131925);
+  --btn-primary: linear-gradient(180deg, #2a6fff, #165dfc);
   --btn-primary-border: #1447e6;
-  --btn-primary-text: #dbeafe;
-  --btn-details: linear-gradient(180deg, #2a2a2a, #1a1a1a);
-  --btn-details-border: #404040;
-  --table-head: #121212;
-  --modal-bg: #141414;
-  --overlay: rgba(0, 0, 0, .78);
-  --backdrop: rgba(0, 0, 0, .75);
+  --btn-primary-text: #e8f1ff;
+  --btn-details: linear-gradient(180deg, #1e2636, #151b28);
+  --btn-details-border: #2f3d55;
+  --table-head: #101722;
+  --modal-bg: #0e1420;
+  --overlay: rgba(3, 6, 12, .78);
+  --backdrop: rgba(2, 4, 10, .75);
   --row-hover: rgba(22, 93, 252, .1);
-  --empty-fill: rgba(255, 255, 255, .03);
+  --empty-fill: rgba(145, 197, 255, .04);
   --error-bg: rgba(255, 100, 103, .14);
   --error-border: rgba(255, 100, 103, .4);
   --error-text: #fecaca;
   --tip-bg: #1447e6;
   --tip-border: rgba(22, 93, 252, .55);
   --tip-text: #dbeafe;
-  --scrollbar-track: #121212;
+  --scrollbar-track: #101722;
   --scrollbar-thumb: linear-gradient(180deg, #3a81f6, #165dfc);
   --loading-card-border: rgba(22, 93, 252, .5);
-  --nav-active-bg: linear-gradient(90deg, rgba(22, 93, 252, .22), rgba(145, 197, 255, .1));
+  --nav-active-bg: linear-gradient(90deg, rgba(22, 93, 252, .24), rgba(145, 197, 255, .08));
   --badge-in-bg: rgba(22, 93, 252, .18);
   --badge-out-bg: rgba(145, 197, 255, .14);
   --badge-scratch-bg: rgba(245, 158, 11, .14);
-  --badge-blank-bg: rgba(161, 161, 161, .12);
+  --badge-blank-bg: rgba(139, 151, 171, .12);
   --tab-active-bg: rgba(22, 93, 252, .18);
   --match-bg: rgba(22, 93, 252, .18);
   --match-border: rgba(22, 93, 252, .5);
   --chart-1: #165dfc;
   --chart-2: #91c5ff;
   --chart-3: #3a81f6;
-  --chart-4: #2563ef;
+  --chart-4: #38bdf8;
   --chart-5: #ff6467;
   --chart-6: #22c55e;
   --chart-7: #f59e0b;
-  --chart-8: #a1a1a1;
+  --chart-8: #8b97ab;
+}
+
+/* Blue Smlb — spatial wash on shell + soft surface gradients on cards */
+[data-theme="blue-smlb"] .app {
+  background:
+    radial-gradient(ellipse 1100px 700px at 8% -8%, rgba(22, 93, 252, .32), transparent 58%),
+    radial-gradient(ellipse 900px 620px at 100% 0%, rgba(56, 189, 248, .14), transparent 52%),
+    radial-gradient(ellipse 900px 700px at 55% 110%, rgba(22, 93, 252, .16), transparent 58%),
+    radial-gradient(ellipse 600px 400px at 70% 40%, rgba(26, 58, 140, .12), transparent 60%),
+    linear-gradient(165deg, #0a1020 0%, #06080e 42%, #05070c 100%);
+}
+[data-theme="blue-smlb"] .sidebar {
+  background:
+    radial-gradient(ellipse 240px 320px at 0% 0%, rgba(22, 93, 252, .22), transparent 70%),
+    radial-gradient(ellipse 200px 280px at 100% 100%, rgba(56, 189, 248, .08), transparent 65%),
+    linear-gradient(180deg, #0e1420, #070a10);
+  border-right-color: rgba(58, 129, 246, .18);
+  box-shadow: inset -1px 0 0 rgba(145, 197, 255, .04);
+}
+[data-theme="blue-smlb"] .kpi,
+[data-theme="blue-smlb"] .panel,
+[data-theme="blue-smlb"] .info-box,
+[data-theme="blue-smlb"] .toolbar-form,
+[data-theme="blue-smlb"] .details-modal,
+[data-theme="blue-smlb"] .modal-loading-card {
+  background:
+    linear-gradient(155deg, rgba(22, 93, 252, .14) 0%, rgba(22, 93, 252, .03) 38%, transparent 62%),
+    linear-gradient(180deg, #161d2c 0%, #101622 100%);
+  border-color: rgba(58, 129, 246, .22);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, .4),
+    inset 0 1px 0 rgba(145, 197, 255, .08);
+}
+[data-theme="blue-smlb"] .toolbar-form {
+  backdrop-filter: blur(10px);
+}
+[data-theme="blue-smlb"] table.data th {
+  background: linear-gradient(180deg, #141b28, #101722);
+}
+[data-theme="blue-smlb"] .nav a.active {
+  background: linear-gradient(90deg, rgba(22, 93, 252, .28), rgba(56, 189, 248, .06));
+  box-shadow: inset 3px 0 0 #3a81f6, inset 0 1px 0 rgba(145, 197, 255, .06);
 }
 
 /* ═══ 21. Albl V2 — tweakcn deep blue + mint charts (light) ═══ */

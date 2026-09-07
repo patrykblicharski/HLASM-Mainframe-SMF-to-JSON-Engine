@@ -9,10 +9,10 @@ window.SMFTheme = {
   ],
   current() {
     const t = document.documentElement.getAttribute("data-theme");
-    return this.ids.includes(t) ? t : "phosphor";
+    return this.ids.includes(t) ? t : "blue-smlb";
   },
   apply(id) {
-    if (!this.ids.includes(id)) id = "phosphor";
+    if (!this.ids.includes(id)) id = "blue-smlb";
     document.documentElement.setAttribute("data-theme", id);
     try { localStorage.setItem(this.key, id); } catch (e) {}
     this._syncPicker(id);

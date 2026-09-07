@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="phosphor">
+<html lang="en" data-theme="blue-smlb">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,17 +14,19 @@
           tiesen:1, "logistic-one":1, business:1, corporate:1, cupcake:1, halloween:1,
           "claude-blu-2":1, "blue-smlb":1, "albl-v2":1
         };
-        if (t && ok[t]) document.documentElement.setAttribute("data-theme", t);
-      } catch (e) {}
+        document.documentElement.setAttribute("data-theme", (t && ok[t]) ? t : "blue-smlb");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "blue-smlb");
+      }
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Libre+Franklin:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}?v=themes21">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}?v=themes23">
   <script src="{{ url_for('static', filename='vendor/chart.umd.min.js') }}"></script>
   <script>window.SMFFieldMeta = {{ field_meta|default({})|tojson }};</script>
-  <script src="{{ url_for('static', filename='js/app.js') }}?v=themes21"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}?v=themes23"></script>
 </head>
 <body>
 <div class="app">
@@ -42,11 +44,12 @@
       {% endfor %}
     </nav>
     <div class="theme-picker" id="smf-theme-picker">
-      <div class="theme-picker-label">Theme</div>
+      <div class="theme-picker-label">Theme (select all)</div>
       <label class="theme-select-wrap">
         <span class="visually-hidden">Select theme</span>
         <select id="smf-theme-select" class="theme-select" aria-label="Color theme">
           <optgroup label="Dark">
+            <option value="blue-smlb">Blue Smlb</option>
             <option value="classic">Classic (original)</option>
             <option value="phosphor">Phosphor</option>
             <option value="carbon">Carbon</option>
@@ -57,7 +60,6 @@
             <option value="glass-neon">Glass Neon</option>
             <option value="business">Business</option>
             <option value="halloween">Halloween</option>
-            <option value="blue-smlb">Blue Smlb</option>
           </optgroup>
           <optgroup label="Light">
             <option value="ledger">Ledger</option>
