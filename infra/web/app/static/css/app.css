@@ -1876,7 +1876,7 @@ input[type=datetime-local] { min-width: 190px; color-scheme: var(--color-scheme)
 }
 .panel h2 > span:not(.panel-heading),
 .panel h2 .panel-note {
-  color: var(--muted); font-weight: 500; font-size: .88rem;
+  color: var(--muted); font-weight: 600; font-size: .95rem;
 }
 .panel h2 .panel-heading {
   flex: 1; min-width: 0; font: inherit; font-weight: inherit; color: inherit;

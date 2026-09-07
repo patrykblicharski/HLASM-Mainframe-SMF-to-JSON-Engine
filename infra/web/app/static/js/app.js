@@ -64,18 +64,39 @@ window.SMFCharts = {
     this._readPalette();
     this.darkDefaults();
     if (!window.Chart || typeof Chart.getChart !== "function") return;
-    const muted = this._css("--muted", "#7a9a72");
+    const label = this._labelColor();
+    const tick = this._tickColor();
     const line = this._css("--line", "#2a3a2c");
+    const fontFam = this._fontFamily();
     document.querySelectorAll("canvas").forEach((canvas) => {
       const chart = Chart.getChart(canvas);
       if (!chart) return;
-      chart.options.color = muted;
+      chart.options.color = label;
+      chart.options.font = chart.options.font || {};
+      chart.options.font.family = fontFam;
+      chart.options.font.size = 14;
+      if (!chart.options.plugins) chart.options.plugins = {};
+      if (!chart.options.plugins.legend) chart.options.plugins.legend = {};
+      chart.options.plugins.legend.labels = Object.assign({}, chart.options.plugins.legend.labels || {}, {
+        color: label,
+        font: { family: fontFam, size: 14, weight: "600" },
+        boxWidth: 14,
+        boxHeight: 14,
+        padding: 14,
+      });
       if (chart.options.scales) {
         Object.values(chart.options.scales).forEach((scale) => {
           if (!scale) return;
-          if (scale.ticks) scale.ticks.color = muted;
+          scale.ticks = Object.assign({}, scale.ticks || {}, {
+            color: tick,
+            font: { family: fontFam, size: 13, weight: "500" },
+          });
           if (scale.grid) scale.grid.color = line;
           if (scale.border) scale.border.color = line;
+          if (scale.title) {
+            scale.title.color = label;
+            scale.title.font = { family: fontFam, size: 13, weight: "600" };
+          }
         });
       }
       if (chart.data && Array.isArray(chart.data.datasets)) {
@@ -92,12 +113,69 @@ window.SMFCharts = {
       chart.update("none");
     });
   },
+  _fontFamily() {
+    return this._css("--font-table", this._css("--font", "Inter, system-ui, sans-serif"));
+  },
+  _labelColor() {
+    return this._css("--text", "#f4f7fb");
+  },
+  _tickColor() {
+    // Brighter than muted so axis/legend stay readable on dark skins
+    return this._css("--accent-2", this._css("--muted", "#aeb9cc"));
+  },
   darkDefaults() {
     if (!window.Chart) return;
     this._readPalette();
-    Chart.defaults.color = this._css("--muted", "#7a9a72");
+    const label = this._labelColor();
+    const tick = this._tickColor();
+    const fontFam = this._fontFamily();
+    Chart.defaults.color = label;
     Chart.defaults.borderColor = this._css("--line", "#2a3a2c");
-    Chart.defaults.font.family = this._css("--font", "system-ui, sans-serif");
+    Chart.defaults.font.family = fontFam;
+    Chart.defaults.font.size = 14;
+    Chart.defaults.font.weight = "500";
+    Chart.defaults.plugins = Chart.defaults.plugins || {};
+    Chart.defaults.plugins.legend = Chart.defaults.plugins.legend || {};
+    Chart.defaults.plugins.legend.labels = {
+      color: label,
+      font: { family: fontFam, size: 14, weight: "600" },
+      boxWidth: 14,
+      boxHeight: 14,
+      padding: 14,
+      usePointStyle: false,
+    };
+    Chart.defaults.plugins.tooltip = Chart.defaults.plugins.tooltip || {};
+    Chart.defaults.plugins.tooltip.titleFont = { family: fontFam, size: 14, weight: "650" };
+    Chart.defaults.plugins.tooltip.bodyFont = { family: fontFam, size: 13 };
+    Chart.defaults.plugins.tooltip.padding = 10;
+    // Chart.js v3/v4 scale defaults
+    const tickFont = { family: fontFam, size: 13, weight: "500" };
+    ["category", "linear", "time", "timeseries", "logarithmic"].forEach((id) => {
+      Chart.defaults.scales = Chart.defaults.scales || {};
+      Chart.defaults.scales[id] = Chart.defaults.scales[id] || {};
+      Chart.defaults.scales[id].ticks = Object.assign({}, Chart.defaults.scales[id].ticks || {}, {
+        color: tick,
+        font: tickFont,
+      });
+    });
+  },
+  _legendOpts() {
+    return {
+      position: "bottom",
+      labels: {
+        color: this._labelColor(),
+        font: { family: this._fontFamily(), size: 14, weight: "600" },
+        boxWidth: 14,
+        boxHeight: 14,
+        padding: 14,
+      },
+    };
+  },
+  _scaleTickOpts() {
+    return {
+      color: this._tickColor(),
+      font: { family: this._fontFamily(), size: 13, weight: "500" },
+    };
   },
   _el(canvasId) {
     const el = document.getElementById(canvasId);
@@ -174,10 +252,10 @@ window.SMFCharts = {
     const options = {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: "bottom" } },
+      plugins: { legend: this._legendOpts() },
       scales: {
-        x: { stacked: true, ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 12 } },
-        y: { stacked: true, beginAtZero: true },
+        x: { stacked: true, ticks: Object.assign({ maxRotation: 0, autoSkip: true, maxTicksLimit: 12 }, this._scaleTickOpts()) },
+        y: { stacked: true, beginAtZero: true, ticks: this._scaleTickOpts() },
       },
     };
     Object.keys(extra).forEach((k) => {
@@ -202,8 +280,11 @@ window.SMFCharts = {
     const options = {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: "bottom" } },
-      scales: { y: { beginAtZero: true } },
+      plugins: { legend: this._legendOpts() },
+      scales: {
+        x: { ticks: this._scaleTickOpts() },
+        y: { beginAtZero: true, ticks: this._scaleTickOpts() },
+      },
       elements: { line: { tension: 0.25, borderWidth: 2 }, point: { radius: 2, hitRadius: 8 } },
     };
     Object.keys(extra).forEach((k) => {
@@ -237,7 +318,7 @@ window.SMFCharts = {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { position: "right" } },
+        plugins: { legend: Object.assign(this._legendOpts(), { position: "right" }) },
         cutout: "62%",
       },
     });
