@@ -1,59 +1,118 @@
-{% extends "base.html" %}
-{% from "_macros.html" import details_button, load_more, panel_h2, ts_th, ts_td, th with context %}
-{% block subtitle %}<p>SMF 30 job ends (30-5) with program/step/CPU from step-end records (30-4). Click a bar to filter tables to that hour.</p>{% endblock %}
-{% block content %}
-<section class="grid grid-2">
-  <div class="panel">
-    <h2>Job ends by hour <span>click a bar to filter</span></h2>
-    <div class="chart-wrap"><canvas id="jobHourly"></canvas></div>
-  </div>
-  <div class="panel">
-    <h2>Job class mix <span>from SMF 30-4</span></h2>
-    <div class="chart-wrap"><canvas id="jobClass"></canvas></div>
-  </div>
-</section>
-
-<section class="panel" style="margin-top:1rem">
-  {{ panel_h2('Top jobs', 'smf_30_4,smf_30_5', note='ends=30-5 · program/step/CPU=30-4') }}
-  {% if top %}
-  <div class="table-wrap"><table class="data">
-    <thead><tr>{{ ts_th() }}{{ th('Job', 'job_name') }}{{ th('SID', 'smf_system_id') }}{{ th('Ends', 'ends') }}{{ th('Programs (top)', 'programs') }}{{ th('Steps (top)', 'steps') }}{{ th('CPU (timer units)', 'cpu_sum') }}<th></th></tr></thead>
-    <tbody>
-    {% for r in top %}
-      <tr>
-        {{ ts_td(r) }}
-        <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
-        <td class="mono">{{ display_cell(r.smf_system_id) }}</td>
-        <td>{{ fmt_int(r.ends) }}</td>
-        <td class="mono">{{ display_cell(r.programs) }}</td>
-        <td class="mono">{{ display_cell(r.steps) }}</td>
-        <td>{{ fmt_cpu_timer(r.cpu_sum) }}</td>
-        <td>{{ details_button('smf_30_4,smf_30_5', {'job_name': r.job_name}) }}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table></div>
-  {{ load_more('jobs', limit_jobs, has_more_jobs, shown=top|length) }}
-  {% else %}<div class="empty">No SMF 30 rows in this window.</div>{% endif %}
-</section>
-{% endblock %}
-{% block scripts %}
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const hourly = {{ hourly|tojson_chart }};
-  const classes = {{ classes|tojson_chart }};
-  const labels = hourly.map(r => String(r.hour).replace("T"," ").slice(0,16));
-  SMFCharts.stackedBar(
-    "jobHourly",
-    labels,
-    [{ label: "Ends", data: hourly.map(r => Number(r.ends)), backgroundColor: "#9b7bffcc", borderColor: "#9b7bff" }],
-    { hourBrush: true }
-  );
-  SMFCharts.doughnut(
-    "jobClass",
-    classes.map(r => (r.job_class && String(r.job_class).trim()) ? r.job_class : "(none)"),
-    classes.map(r => Number(r.rows))
-  );
-});
-</script>
-{% endblock %}
+{% extends "base.html" %}
+
+{% from "_macros.html" import details_button, load_more, panel_h2, ts_th, ts_td, th with context %}
+
+{% block subtitle %}<p>SMF 30 job ends (30-5) with program/step/CPU from step-end records (30-4). Click a bar to filter tables to that hour.</p>{% endblock %}
+
+{% block content %}
+
+<section class="grid grid-2">
+
+  <div class="panel">
+
+    <h2>Job ends by hour <span>click a bar to filter</span></h2>
+
+    <div class="chart-wrap"><canvas id="jobHourly"></canvas></div>
+
+  </div>
+
+  <div class="panel">
+
+    <h2>Job class mix <span>from SMF 30-4</span></h2>
+
+    <div class="chart-wrap"><canvas id="jobClass"></canvas></div>
+
+  </div>
+
+</section>
+
+
+
+<section class="panel" style="margin-top:1rem">
+
+  {{ panel_h2('Top jobs', 'smf_30_4,smf_30_5', note='ends=30-5 · program/step/CPU=30-4') }}
+
+  {% if top %}
+
+  <div class="table-wrap"><table class="data">
+
+    <thead><tr>{{ ts_th() }}{{ th('Job', 'job_name') }}{{ th('SID', 'smf_system_id') }}{{ th('Ends', 'ends') }}{{ th('Programs (top)', 'programs') }}{{ th('Steps (top)', 'steps') }}{{ th('CPU (timer units)', 'cpu_sum') }}<th></th></tr></thead>
+
+    <tbody>
+
+    {% for r in top %}
+
+      <tr>
+
+        {{ ts_td(r) }}
+
+        <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+
+        <td class="mono">{{ display_cell(r.smf_system_id) }}</td>
+
+        <td>{{ fmt_int(r.ends) }}</td>
+
+        <td class="mono">{{ display_cell(r.programs) }}</td>
+
+        <td class="mono">{{ display_cell(r.steps) }}</td>
+
+        <td>{{ fmt_cpu_timer(r.cpu_sum) }}</td>
+
+        <td>{{ details_button('smf_30_4,smf_30_5', {'job_name': r.job_name}) }}</td>
+
+      </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+  </table></div>
+
+  {{ load_more('jobs', limit_jobs, has_more_jobs, shown=top|length) }}
+
+  {% else %}<div class="empty">No SMF 30 rows in this window.</div>{% endif %}
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const hourly = {{ hourly|tojson_chart }};
+
+  const classes = {{ classes|tojson_chart }};
+
+  const labels = hourly.map(r => String(r.hour).replace("T"," ").slice(0,16));
+
+  SMFCharts.stackedBar(
+
+    "jobHourly",
+
+    labels,
+
+    [{ label: "Ends", data: hourly.map(r => Number(r.ends)), backgroundColor: SMFCharts.colors[0], borderColor: SMFCharts.colors[0] }],
+
+    { hourBrush: true }
+
+  );
+
+  SMFCharts.doughnut(
+
+    "jobClass",
+
+    classes.map(r => (r.job_class && String(r.job_class).trim()) ? r.job_class : "(none)"),
+
+    classes.map(r => Number(r.rows))
+
+  );
+
+});
+
+</script>
+
+{% endblock %}
+

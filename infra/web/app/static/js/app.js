@@ -82,7 +82,7 @@ window.SMFCharts = {
         chart.data.datasets.forEach((ds, i) => {
           const c = this.colors[i % this.colors.length];
           if (ds.backgroundColor && !Array.isArray(ds.backgroundColor)) {
-            ds.backgroundColor = c.length === 7 ? c + "cc" : c;
+            ds.backgroundColor = c;
           } else if (Array.isArray(ds.backgroundColor)) {
             ds.backgroundColor = this.colors.slice();
           }
@@ -256,8 +256,9 @@ window.SMFCharts = {
     const datasets = Object.keys(series).map((name, i) => ({
       label: name,
       data: labels.map((t) => series[name][t] || 0),
-      backgroundColor: this.colors[i % this.colors.length] + "cc",
+      backgroundColor: this.colors[i % this.colors.length],
       borderColor: this.colors[i % this.colors.length],
+      borderWidth: 0,
       fill: false,
     }));
     return {
