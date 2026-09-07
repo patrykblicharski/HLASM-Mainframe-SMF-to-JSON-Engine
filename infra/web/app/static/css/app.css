@@ -1525,11 +1525,20 @@
 
 /* ── Base ── */
 * { box-sizing: border-box; }
+html {
+  /* Fit typical maximized ~1910×960 without browser zoom */
+  zoom: 0.82;
+}
+@supports not (zoom: 1) {
+  html { font-size: 82.5%; }
+}
 html, body {
   margin: 0; padding: 0;
   background: var(--bg); color: var(--text);
   font-family: var(--font);
   color-scheme: var(--color-scheme);
+  max-width: 100%;
+  overflow-x: hidden;
 }
 a { color: var(--accent-2); text-decoration: none; }
 a:hover { color: var(--link-hover); }
@@ -1537,8 +1546,11 @@ code, .mono { font-family: var(--mono); }
 
 .app {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 220px minmax(0, 1fr);
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   background:
     radial-gradient(1200px 500px at 10% -10%, var(--glow-1), transparent 55%),
     radial-gradient(900px 400px at 100% 0%, var(--glow-2), transparent 50%),
@@ -1742,7 +1754,12 @@ code, .mono { font-family: var(--mono); }
   background: linear-gradient(90deg, #fafafa 33%, #0255a3 33% 66%, #00bc7d 66%);
 }
 
-.main { padding: 1.25rem 1.5rem 2.5rem; }
+.main {
+  padding: 1rem 1.15rem 2rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+}
 .topbar {
   display: flex; justify-content: flex-start; align-items: flex-start;
   gap: 1rem; margin-bottom: .85rem; flex-wrap: wrap;
@@ -1804,13 +1821,16 @@ input[type=datetime-local] { min-width: 190px; color-scheme: var(--color-scheme)
   color: var(--accent);
 }
 
-.grid { display: grid; gap: 1rem; }
+.grid { display: grid; gap: 1rem; min-width: 0; }
+.grid > * { min-width: 0; }
 .grid-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
 .grid-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
 .grid-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
-@media (max-width: 1200px) {
+@media (max-width: 1400px) {
   .grid-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .grid-3, .grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 1200px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { position: relative; height: auto; }
   .theme-swatches { grid-template-columns: repeat(4, 1fr); }
@@ -1846,6 +1866,8 @@ input[type=datetime-local] { min-width: 190px; color-scheme: var(--color-scheme)
 .panel {
   background: var(--bg-elev); border: 1px solid var(--line);
   border-radius: var(--radius); padding: 1rem 1.1rem; box-shadow: var(--shadow);
+  min-width: 0;
+  max-width: 100%;
 }
 .panel h2 {
   margin: 0 0 .85rem; font-size: 1rem; font-weight: 650;
@@ -1861,9 +1883,22 @@ input[type=datetime-local] { min-width: 190px; color-scheme: var(--color-scheme)
 .chart-wrap { position: relative; height: 280px; }
 .chart-wrap.sm { height: 220px; }
 
-.table-wrap { overflow: auto; max-height: 520px; border-radius: calc(var(--radius) - 2px); border: 1px solid var(--line); }
+.table-wrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 520px;
+  max-width: 100%;
+  width: 100%;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid var(--line);
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+}
 table.data {
-  width: 100%; border-collapse: collapse; font-size: .9rem;
+  width: max-content;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
 }
 table.data th, table.data td {
   padding: .55rem .7rem; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap;
@@ -1872,9 +1907,25 @@ table.data th {
   position: sticky; top: 0; background: var(--table-head); color: var(--muted);
   font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; z-index: 1;
 }
+/* Keep Full details reachable when columns are wide */
+table.data th:last-child,
+table.data td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 2;
+  background: var(--bg-elev);
+  box-shadow: -8px 0 12px rgba(0, 0, 0, .18);
+}
+table.data th:last-child {
+  top: 0;
+  z-index: 3;
+  background: var(--table-head);
+}
 /* Sticky page headers paint above <dialog> top-layer in Chromium — disable while any modal is open. */
-body.smf-modal-open .main table.data th {
+body.smf-modal-open .main table.data th,
+body.smf-modal-open .main table.data td:last-child {
   position: static;
+  box-shadow: none;
 }
 table.data th.sortable {
   cursor: pointer; user-select: none;
