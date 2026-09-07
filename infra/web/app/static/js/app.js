@@ -123,8 +123,74 @@ window.SMFCharts = {
     // Brighter than muted so axis/legend stay readable on dark skins
     return this._css("--accent-2", this._css("--muted", "#aeb9cc"));
   },
+  /**
+   * CSS `html { zoom }` breaks Chart.js mouse → canvas mapping in Chromium,
+   * so tooltips render far from the hovered bar. Remap from client coords.
+   */
+  _registerZoomEventFix() {
+    if (!window.Chart || Chart._smfZoomFix) return;
+    Chart._smfZoomFix = true;
+    Chart.register({
+      id: "smfZoomEventFix",
+      beforeEvent(chart, args) {
+        const ev = args && args.event;
+        const native = ev && ev.native;
+        if (!ev || !native || typeof native.clientX !== "number") return;
+        const canvas = chart.canvas;
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        ev.x = ((native.clientX - rect.left) / rect.width) * canvas.clientWidth;
+        ev.y = ((native.clientY - rect.top) / rect.height) * canvas.clientHeight;
+      },
+    });
+  },
+
+  /** Hover a category → show every series at that index (stacked bars / multi-line). */
+  _indexInteraction() {
+    return { mode: "index", intersect: false, axis: "x" };
+  },
+
+  _indexTooltip() {
+    return {
+      enabled: true,
+      mode: "index",
+      intersect: false,
+      position: "nearest",
+      callbacks: {
+        title(items) {
+          if (!items || !items.length) return "";
+          return String(items[0].label ?? "");
+        },
+        label(item) {
+          const ds = item.dataset && item.dataset.label != null ? String(item.dataset.label) : "";
+          let val = item.formattedValue;
+          if (val == null || val === "") {
+            const raw = item.raw;
+            val = typeof raw === "number" ? String(raw) : String(raw ?? "");
+          }
+          return (ds ? ds + ": " : "") + val;
+        },
+        footer(items) {
+          if (!items || items.length < 2) return "";
+          let sum = 0;
+          let any = false;
+          items.forEach((it) => {
+            const n = Number(it.parsed && it.parsed.y != null ? it.parsed.y : it.raw);
+            if (!Number.isNaN(n)) {
+              sum += n;
+              any = true;
+            }
+          });
+          return any ? "Total: " + sum.toLocaleString("en-US") : "";
+        },
+      },
+    };
+  },
+
   darkDefaults() {
     if (!window.Chart) return;
+    this._registerZoomEventFix();
     this._readPalette();
     const label = this._labelColor();
     const tick = this._tickColor();
@@ -134,6 +200,7 @@ window.SMFCharts = {
     Chart.defaults.font.family = fontFam;
     Chart.defaults.font.size = 14;
     Chart.defaults.font.weight = "500";
+    Chart.defaults.interaction = Object.assign({}, Chart.defaults.interaction || {}, this._indexInteraction());
     Chart.defaults.plugins = Chart.defaults.plugins || {};
     Chart.defaults.plugins.legend = Chart.defaults.plugins.legend || {};
     Chart.defaults.plugins.legend.labels = {
@@ -144,10 +211,16 @@ window.SMFCharts = {
       padding: 14,
       usePointStyle: false,
     };
-    Chart.defaults.plugins.tooltip = Chart.defaults.plugins.tooltip || {};
-    Chart.defaults.plugins.tooltip.titleFont = { family: fontFam, size: 14, weight: "650" };
-    Chart.defaults.plugins.tooltip.bodyFont = { family: fontFam, size: 13 };
-    Chart.defaults.plugins.tooltip.padding = 10;
+    Chart.defaults.plugins.tooltip = Object.assign(
+      {},
+      Chart.defaults.plugins.tooltip || {},
+      this._indexTooltip(),
+      {
+        titleFont: { family: fontFam, size: 14, weight: "650" },
+        bodyFont: { family: fontFam, size: 13 },
+        padding: 10,
+      }
+    );
     // Chart.js v3/v4 scale defaults
     const tickFont = { family: fontFam, size: 13, weight: "500" };
     ["category", "linear", "time", "timeseries", "logarithmic"].forEach((id) => {
@@ -230,12 +303,13 @@ window.SMFCharts = {
       this.applyHourRange(labels[i]);
     };
     options.plugins = options.plugins || {};
-    const tip = options.plugins.tooltip || {};
-    tip.callbacks = tip.callbacks || {};
+    const tip = Object.assign({}, this._indexTooltip(), options.plugins.tooltip || {});
+    tip.callbacks = Object.assign({}, this._indexTooltip().callbacks, tip.callbacks || {});
     const oldFooter = tip.callbacks.footer;
     tip.callbacks.footer = (items) => {
       const base = typeof oldFooter === "function" ? oldFooter(items) : "";
-      return (base ? base + "\n" : "") + "Click to filter this hour";
+      const hint = "Click to filter this hour";
+      return (base ? base + "\n" : "") + hint;
     };
     options.plugins.tooltip = tip;
     return options;
@@ -252,7 +326,11 @@ window.SMFCharts = {
     const options = {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: this._legendOpts() },
+      interaction: this._indexInteraction(),
+      plugins: {
+        legend: this._legendOpts(),
+        tooltip: this._indexTooltip(),
+      },
       scales: {
         x: { stacked: true, ticks: Object.assign({ maxRotation: 0, autoSkip: true, maxTicksLimit: 12 }, this._scaleTickOpts()) },
         y: { stacked: true, beginAtZero: true, ticks: this._scaleTickOpts() },
@@ -280,7 +358,11 @@ window.SMFCharts = {
     const options = {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: this._legendOpts() },
+      interaction: this._indexInteraction(),
+      plugins: {
+        legend: this._legendOpts(),
+        tooltip: this._indexTooltip(),
+      },
       scales: {
         x: { ticks: this._scaleTickOpts() },
         y: { beginAtZero: true, ticks: this._scaleTickOpts() },
@@ -318,7 +400,20 @@ window.SMFCharts = {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: Object.assign(this._legendOpts(), { position: "right" }) },
+        interaction: { mode: "nearest", intersect: true },
+        plugins: {
+          legend: Object.assign(this._legendOpts(), { position: "right" }),
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label(item) {
+                const name = item.label != null ? String(item.label) : "";
+                const val = item.formattedValue != null ? item.formattedValue : String(item.raw ?? "");
+                return (name ? name + ": " : "") + val;
+              },
+            },
+          },
+        },
         cutout: "62%",
       },
     });
