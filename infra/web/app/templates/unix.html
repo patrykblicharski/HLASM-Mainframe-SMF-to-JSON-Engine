@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% from "_macros.html" import details_button, load_more, panel_h2, ts_th, ts_td, th with context %}
+{% block subtitle %}<p>OMVS / HFS / zFS activity from SMF 92 — open, close, access, delete/rename, mounts.</p>{% endblock %}
+{% block content %}
+{% set k = summary.kpis or {} %}
+<section class="grid grid-4">
+  <div class="kpi teal">
+    <div class="label">OPEN 92-10</div>
+    <div class="kpi-desc">File open events</div>
+    <div class="value">{{ fmt_int(k.get('opens', 0)) }}</div>
+  </div>
+  <div class="kpi blue">
+    <div class="label">CLOSE 92-11</div>
+    <div class="kpi-desc">File close events</div>
+    <div class="value">{{ fmt_int(k.get('closes', 0)) }}</div>
+  </div>
+  <div class="kpi cyan">
+    <div class="label">ACCESS 92-17</div>
+    <div class="kpi-desc">Interval access counts</div>
+    <div class="value">{{ fmt_int(k.get('accesses', 0)) }}</div>
+  </div>
+  <div class="kpi orange">
+    <div class="label">DELETE/REN 92-14</div>
+    <div class="kpi-desc">Delete and rename events</div>
+    <div class="value">{{ fmt_int(k.get('deletes', 0)) }}</div>
+  </div>
+  <div class="kpi violet">
+    <div class="label">OPEN / CLOSE</div>
+    <div class="kpi-desc">Ratio — ~1.0 is balanced</div>
+    <div class="value">{{ k.get('open_close_ratio', 0) }}</div>
+  </div>
+  <div class="kpi green">
+    <div class="label">BYTES R / W</div>
+    <div class="kpi-desc">Close-path bytes read / written</div>
+    <div class="value">{{ fmt_bytes(k.get('bytes_read', 0)) }} / {{ fmt_bytes(k.get('bytes_written', 0)) }}</div>
+  </div>
+  <div class="kpi">
+    <div class="label">MOUNT / UNMOUNT</div>
+    <div class="kpi-desc">92-1 mounts · 92-5 unmounts</div>
+    <div class="value">{{ fmt_int(k.get('mounts', 0)) }} / {{ fmt_int(k.get('unmounts', 0)) }}</div>
+  </div>
+  <div class="kpi red">
+    <div class="label">DELETE SPIKE</div>
+    <div class="kpi-desc">vs prior baseline (1.0 = expected)</div>
+    <div class="value">{% if k.get('delete_spike_ratio') is none %}—{% else %}{{ k.get('delete_spike_ratio') }}{% endif %}</div>
+  </div>
+</section>
+
+<section class="panel" style="margin-top:1rem">
+  <h2>USS activity by hour <span>click a bar</span></h2>
+  {% if summary.hourly %}
+  <div class="chart-wrap"><canvas id="ussHourly"></canvas></div>
+  {% else %}
+  <div class="empty">No SMF 92 open/close/access/delete rows in this window.</div>
+  {% endif %}
+</section>
+
+<section class="grid grid-2" style="margin-top:1rem">
+  <div class="panel">
+    {{ panel_h2('Top paths', 'smf_92_11,smf_92_17') }}
+    {% if summary.paths %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>
+        {{ ts_th() }}
+        {{ th('Path', 'pathname') }}
+        {% if summary.paths_source == 'access' %}
+          {{ th('Accesses', 'access_count') }}{{ th('Rows', 'rows') }}
+        {% else %}
+          {{ th('Closes', 'closes') }}{{ th('Read', 'bytes_read') }}{{ th('Write', 'bytes_written') }}
+        {% endif %}
+        <th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in summary.paths %}
+        <tr>
+          {{ ts_td(r) }}
+          <td class="mono">{{ display_cell(r.pathname) }}</td>
+          {% if summary.paths_source == 'access' %}
+            <td>{{ fmt_int(r.access_count) }}</td>
+            <td>{{ fmt_int(r.rows) }}</td>
+            <td>{{ details_button('smf_92_17', {'pathname': r.pathname}) }}</td>
+          {% else %}
+            <td>{{ fmt_int(r.closes) }}</td>
+            <td>{{ fmt_bytes(r.bytes_read) }}</td>
+            <td>{{ fmt_bytes(r.bytes_written) }}</td>
+            <td>{{ details_button('smf_92_11', {'pathname': r.pathname}) }}</td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {{ load_more('paths', limit_paths, has_more_paths, shown=summary.paths|length) }}
+    {% else %}<div class="empty">No pathnames in 92-11/17 for this window.</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    {{ panel_h2('Top jobs / SAF users', 'smf_92_10,smf_92_11') }}
+    {% if summary.jobs %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>
+        {{ ts_th() }}{{ th('Job', 'job_name') }}{{ th('SAF user', 'saf_user') }}
+        {{ th('Opens', 'opens') }}{{ th('Closes', 'closes') }}
+        {{ th('Read', 'bytes_read') }}{{ th('Write', 'bytes_written') }}<th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in summary.jobs %}
+        <tr>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td class="mono">{{ display_cell(r.saf_user) }}</td>
+          <td>{{ fmt_int(r.opens) }}</td>
+          <td>{{ fmt_int(r.closes) }}</td>
+          <td>{{ fmt_bytes(r.bytes_read) }}</td>
+          <td>{{ fmt_bytes(r.bytes_written) }}</td>
+          <td>{{ details_button('smf_92_10,smf_92_11', {'job_name': r.job_name}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {{ load_more('jobs', limit_jobs, has_more_jobs, shown=summary.jobs|length) }}
+    {% else %}<div class="empty">No open/close job activity.</div>{% endif %}
+  </div>
+</section>
+
+<section class="grid grid-2" style="margin-top:1rem">
+  <div class="panel">
+    {{ panel_h2('Delete / rename audit', 'smf_92_14') }}
+    {% if summary.deletes %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>
+        {{ ts_th() }}{{ th('File', 'file_name') }}{{ th('New name', 'new_file_name') }}
+        {{ th('Job', 'job_name') }}{{ th('SAF user', 'saf_user') }}{{ th('FS', 'fs_name') }}
+        {{ th('Rows', 'rows') }}<th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in summary.deletes %}
+        <tr>
+          {{ ts_td(r) }}
+          <td class="mono">{{ display_cell(r.file_name) }}</td>
+          <td class="mono">{{ display_cell(r.new_file_name) }}</td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td class="mono">{{ display_cell(r.saf_user) }}</td>
+          <td class="mono">{{ display_cell(r.fs_name) }}</td>
+          <td>{{ fmt_int(r.rows) }}</td>
+          <td>{{ details_button('smf_92_14', {'job_name': r.job_name, 'file_name': r.file_name}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {{ load_more('deletes', limit_deletes, has_more_deletes, shown=summary.deletes|length) }}
+    {% else %}<div class="empty">No delete/rename events (92-14).</div>{% endif %}
+  </div>
+
+  <div class="panel">
+    {{ panel_h2('Mount inventory', 'smf_92_1') }}
+    {% if summary.mounts %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>
+        {{ ts_th() }}{{ th('FS name', 'fs_name') }}{{ th('Type', 'fs_type_name') }}
+        {{ th('Job', 'job_name') }}{{ th('Space total', 'fs_space_total') }}{{ th('Space used', 'fs_space_used') }}
+        {{ th('Rows', 'rows') }}<th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in summary.mounts %}
+        <tr>
+          {{ ts_td(r) }}
+          <td class="mono">{{ display_cell(r.fs_name) }}</td>
+          <td>{{ display_cell(r.fs_type_name) }}</td>
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td>{{ display_cell(r.fs_space_total) }}</td>
+          <td>{{ display_cell(r.fs_space_used) }}</td>
+          <td>{{ fmt_int(r.rows) }}</td>
+          <td>{{ details_button('smf_92_1', {'fs_name': r.fs_name}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {{ load_more('mounts', limit_mounts, has_more_mounts, shown=summary.mounts|length) }}
+    {% else %}<div class="empty">No mount records (92-1) in this window.</div>{% endif %}
+
+    {% if summary.unmount_io %}
+    <h3 style="margin-top:1rem">Unmount I/O lifetime <span class="panel-note">92-5</span></h3>
+    <div class="table-wrap"><table class="data">
+      <thead><tr>
+        {{ ts_th() }}{{ th('FS name', 'fs_name') }}{{ th('Job', 'job_name') }}
+        {{ th('Read', 'bytes_read') }}{{ th('Write', 'bytes_written') }}{{ th('Rows', 'rows') }}<th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in summary.unmount_io %}
+        <tr>
+          {{ ts_td(r) }}
+          <td class="mono">{{ display_cell(r.fs_name) }}</td>
+          <td>{{ display_cell(r.job_name) }}</td>
+          <td>{{ fmt_bytes(r.bytes_read) }}</td>
+          <td>{{ fmt_bytes(r.bytes_written) }}</td>
+          <td>{{ fmt_int(r.rows) }}</td>
+          <td>{{ details_button('smf_92_5', {'fs_name': r.fs_name}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const hourly = {{ summary.hourly|tojson_chart }};
+  if (hourly && hourly.length) {
+    const packed = SMFCharts.groupSeries(hourly, "hour", "action", "rows");
+    SMFCharts.stackedBar("ussHourly", packed.labels, packed.datasets, { hourBrush: true });
+  }
+});
+</script>
+{% endblock %}

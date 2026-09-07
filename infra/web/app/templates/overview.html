@@ -52,6 +52,11 @@
     <div class="kpi-desc">FTP client (3) and server (70) transfers</div>
     <div class="value">{{ fmt_int(kpis.get('ftp3',0)) }} / {{ fmt_int(kpis.get('ftp70',0)) }}</div>
   </div>
+  <div class="kpi teal">
+    <div class="label">USS CLOSE / ACCESS</div>
+    <div class="kpi-desc">OMVS file close (92-11) and access (92-17)</div>
+    <div class="value">{{ fmt_int(kpis.get('uss_close',0)) }} / {{ fmt_int(kpis.get('uss_access',0)) }}</div>
+  </div>
 </section>
 
 <section class="grid grid-2" style="margin-top:1rem">

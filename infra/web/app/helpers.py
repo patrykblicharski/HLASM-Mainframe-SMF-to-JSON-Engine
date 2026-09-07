@@ -85,6 +85,7 @@ NAV = [
     {"endpoint": "overview", "label": "Overview", "icon": "grid"},
     {"endpoint": "datasets", "label": "Datasets", "icon": "disk"},
     {"endpoint": "lifecycle", "label": "Lifecycle", "icon": "cycle"},
+    {"endpoint": "unix", "label": "Unix / OMVS", "icon": "unix"},
     {"endpoint": "jobs", "label": "Jobs", "icon": "cpu"},
     {"endpoint": "racf", "label": "RACF", "icon": "shield"},
     {"endpoint": "tcp", "label": "TCP", "icon": "net"},

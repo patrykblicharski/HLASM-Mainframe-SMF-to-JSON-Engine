@@ -51,6 +51,14 @@ UNION ALL
 SELECT event_date, 'smf_30_4', smf_system_id, count() FROM smf.smf_30_4 WHERE event_date >= today() - 10 GROUP BY event_date, smf_system_id
 UNION ALL
 SELECT event_date, 'smf_30_5', smf_system_id, count() FROM smf.smf_30_5 WHERE event_date >= today() - 10 GROUP BY event_date, smf_system_id
+UNION ALL
+SELECT event_date, 'smf_92_10', smf_system_id, count() FROM smf.smf_92_10 WHERE event_date >= today() - 10 GROUP BY event_date, smf_system_id
+UNION ALL
+SELECT event_date, 'smf_92_11', smf_system_id, count() FROM smf.smf_92_11 WHERE event_date >= today() - 10 GROUP BY event_date, smf_system_id
+UNION ALL
+SELECT event_date, 'smf_92_14', smf_system_id, count() FROM smf.smf_92_14 WHERE event_date >= today() - 10 GROUP BY event_date, smf_system_id
+UNION ALL
+SELECT event_date, 'smf_92_17', smf_system_id, count() FROM smf.smf_92_17 WHERE event_date >= today() - 10 GROUP BY event_date, smf_system_id
 "
 
 q "TRUNCATE TABLE IF EXISTS smf.stats_tcp_hourly"
@@ -108,6 +116,40 @@ SELECT event_date, smf_system_id, smf_subtype, job_name, count()
 FROM smf.smf_30_5
 WHERE event_date >= today() - 10
 GROUP BY event_date, smf_system_id, smf_subtype, job_name
+"
+
+q "TRUNCATE TABLE IF EXISTS smf.stats_uss_hourly"
+q "
+INSERT INTO smf.stats_uss_hourly
+SELECT hour, smf_system_id, action, sum(cnt) FROM (
+  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', nullIf(time, '')))) AS hour,
+         smf_system_id, 'OPEN-10' AS action, count() AS cnt
+  FROM smf.smf_92_10 WHERE event_date >= today() - 10 GROUP BY hour, smf_system_id
+  UNION ALL
+  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', nullIf(time, '')))) AS hour,
+         smf_system_id, 'CLOSE-11' AS action, count() AS cnt
+  FROM smf.smf_92_11 WHERE event_date >= today() - 10 GROUP BY hour, smf_system_id
+  UNION ALL
+  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', nullIf(time, '')))) AS hour,
+         smf_system_id, 'ACCESS-17' AS action, count() AS cnt
+  FROM smf.smf_92_17 WHERE event_date >= today() - 10 GROUP BY hour, smf_system_id
+  UNION ALL
+  SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date), ' ', nullIf(time, '')))) AS hour,
+         smf_system_id, 'DELETE-14' AS action, count() AS cnt
+  FROM smf.smf_92_14 WHERE event_date >= today() - 10 GROUP BY hour, smf_system_id
+) GROUP BY hour, smf_system_id, action
+"
+
+q "TRUNCATE TABLE IF EXISTS smf.stats_uss_path_daily"
+q "
+INSERT INTO smf.stats_uss_path_daily
+SELECT event_date, smf_system_id, pathname, job_name,
+       count() AS close_count,
+       sum(toUInt64OrZero(bytes_read)) AS bytes_read,
+       sum(toUInt64OrZero(bytes_written)) AS bytes_written
+FROM smf.smf_92_11
+WHERE event_date >= today() - 10 AND pathname != ''
+GROUP BY event_date, smf_system_id, pathname, job_name
 "
 
 echo "stats refresh done."

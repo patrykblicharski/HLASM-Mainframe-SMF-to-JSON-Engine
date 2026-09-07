@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% from "_macros.html" import details_button, load_more, panel_h2, ts_th, ts_td, th with context %}
-{% block subtitle %}<p>Highest-value crosses from ANALYTICS.md — job×RACF and TCP×workload.</p>{% endblock %}
+{% block subtitle %}<p>Highest-value crosses from ANALYTICS.md — job×RACF, TCP×workload, job×USS, RACF×USS delete.</p>{% endblock %}
 {% block content %}
 <section class="grid grid-2">
   <div class="panel">
@@ -44,6 +44,57 @@
     </table></div>
     {{ load_more('network', limit_network, has_more_network, shown=summary.net_work|length) }}
     {% else %}<div class="empty">No TCP workload rows.</div>{% endif %}
+  </div>
+</section>
+
+<section class="grid grid-2" style="margin-top:1rem">
+  <div class="panel">
+    {{ panel_h2('30 × 92 — jobs with USS bytes', 'smf_30_5,smf_92_11') }}
+    {% if summary.job_uss %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>
+        {{ ts_th() }}{{ th('Job', 'job_name') }}{{ th('Ends', 'ends') }}{{ th('CPU', 'cpu_sum') }}
+        {{ th('Closes', 'uss_closes') }}{{ th('Read', 'uss_bytes_read') }}{{ th('Write', 'uss_bytes_written') }}<th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in summary.job_uss %}
+        <tr>
+          {{ ts_td(r) }}
+          <td><a href="{{ url_for('smf.job_detail', job=r.job_name, **window_args) }}">{{ display_cell(r.job_name) }}</a></td>
+          <td>{{ fmt_int(r.ends) }}</td>
+          <td>{{ fmt_int(r.cpu_sum) }}</td>
+          <td>{{ fmt_int(r.uss_closes) }}</td>
+          <td>{{ fmt_bytes(r.uss_bytes_read) }}</td>
+          <td>{{ fmt_bytes(r.uss_bytes_written) }}</td>
+          <td>{{ details_button('smf_30_5,smf_92_11', {'job_name': r.job_name}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {{ load_more('jobuss', limit_jobuss, has_more_jobuss, shown=summary.job_uss|length) }}
+    {% else %}<div class="empty">No jobs with both 30-5 and 92-11 activity.</div>{% endif %}
+  </div>
+  <div class="panel">
+    {{ panel_h2('80 × 92-14 — RACF users with USS deletes', 'smf_80,smf_92_14') }}
+    {% if summary.racf_uss %}
+    <div class="table-wrap"><table class="data">
+      <thead><tr>
+        {{ ts_th() }}{{ th('User', 'user_id') }}{{ th('USS deletes', 'uss_deletes') }}{{ th('RACF events', 'racf_events') }}<th></th>
+      </tr></thead>
+      <tbody>
+      {% for r in summary.racf_uss %}
+        <tr>
+          {{ ts_td(r) }}
+          <td class="mono">{{ display_cell(r.user_id) }}</td>
+          <td>{{ fmt_int(r.uss_deletes) }}</td>
+          <td>{{ fmt_int(r.racf_events) }}</td>
+          <td>{{ details_button('smf_80,smf_92_14', {'user_id': r.user_id}) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {{ load_more('racfuss', limit_racfuss, has_more_racfuss, shown=summary.racf_uss|length) }}
+    {% else %}<div class="empty">No USS delete users to join with RACF.</div>{% endif %}
   </div>
 </section>
 {% endblock %}

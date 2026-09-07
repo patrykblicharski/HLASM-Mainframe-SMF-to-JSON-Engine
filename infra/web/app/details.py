@@ -29,10 +29,18 @@ ALLOWED_TABLES = frozenset(
         "smf_89",
         "smf_92_1",
         "smf_92_2",
+        "smf_92_4",
+        "smf_92_5",
+        "smf_92_6",
+        "smf_92_7",
         "smf_92_10",
         "smf_92_11",
+        "smf_92_12",
+        "smf_92_13",
         "smf_92_14",
+        "smf_92_15",
         "smf_92_16",
+        "smf_92_17",
         "smf_119_1",
         "smf_119_2",
         "smf_119_3",
@@ -73,6 +81,12 @@ ALLOWED_FILTERS = frozenset(
         "ddname",
         "local_user",
         "tcp_stack",
+        "saf_user",
+        "pathname",
+        "fs_name",
+        "file_name",
+        "file_inode",
+        "fs_device",
         "event_date",
         "time",
         "date",
@@ -102,6 +116,10 @@ def _table_filters(table: str, filters: dict[str, str]) -> tuple[str, dict[str, 
                 col = "volume_serial"
             else:
                 continue
+        elif key == "user_id" and table.startswith("smf_92_"):
+            col = "saf_user"
+        elif key == "saf_user" and table == "smf_80":
+            col = "user_id"
         parts.append(f"{col} = {_quote(val)}")
         applied[col] = val
     sql = (" AND " + " AND ".join(parts)) if parts else ""

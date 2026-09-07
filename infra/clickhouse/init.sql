@@ -4687,3 +4687,30 @@ ENGINE = SummingMergeTree(row_count)
 PARTITION BY toYYYYMM(event_date)
 ORDER BY (event_date, smf_system_id, smf_subtype, job_name)
 TTL event_date + INTERVAL 10 DAY;
+
+CREATE TABLE IF NOT EXISTS smf.stats_uss_hourly
+(
+    hour DateTime,
+    smf_system_id LowCardinality(String),
+    action LowCardinality(String),
+    row_count UInt64
+)
+ENGINE = SummingMergeTree(row_count)
+PARTITION BY toYYYYMM(hour)
+ORDER BY (hour, smf_system_id, action)
+TTL toDate(hour) + INTERVAL 10 DAY;
+
+CREATE TABLE IF NOT EXISTS smf.stats_uss_path_daily
+(
+    event_date Date,
+    smf_system_id LowCardinality(String),
+    pathname String,
+    job_name LowCardinality(String),
+    close_count UInt64,
+    bytes_read UInt64,
+    bytes_written UInt64
+)
+ENGINE = SummingMergeTree((close_count, bytes_read, bytes_written))
+PARTITION BY toYYYYMM(event_date)
+ORDER BY (event_date, smf_system_id, pathname, job_name)
+TTL event_date + INTERVAL 10 DAY;

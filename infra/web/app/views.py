@@ -378,22 +378,89 @@ def lifecycle():
     )
 
 
+@bp.route("/unix")
+def unix():
+    days = _days()
+    lim_paths = _limit("paths", 50)
+    lim_jobs = _limit("jobs", 40)
+    lim_deletes = _limit("deletes", 40)
+    lim_mounts = _limit("mounts", 20)
+    summary, err = _safe(
+        queries.uss_summary,
+        days,
+        paths_limit=lim_paths + 1,
+        jobs_limit=lim_jobs + 1,
+        deletes_limit=lim_deletes + 1,
+        mounts_limit=lim_mounts + 1,
+    )
+    empty = {
+        "hourly": [],
+        "kpis": {},
+        "paths": [],
+        "jobs": [],
+        "deletes": [],
+        "mounts": [],
+        "unmount_io": [],
+    }
+    summary = summary or empty
+    if "paths_source" not in summary:
+        summary["paths_source"] = "close"
+    paths, has_more_paths = _slice(summary.get("paths"), lim_paths)
+    jobs, has_more_jobs = _slice(summary.get("jobs"), lim_jobs)
+    deletes, has_more_deletes = _slice(summary.get("deletes"), lim_deletes)
+    mounts, has_more_mounts = _slice(summary.get("mounts"), lim_mounts)
+    summary["paths"] = paths
+    summary["jobs"] = jobs
+    summary["deletes"] = deletes
+    summary["mounts"] = mounts
+    return render_template(
+        "unix.html",
+        **_ctx(
+            active="unix",
+            title="Unix / OMVS",
+            summary=summary,
+            limit_paths=lim_paths,
+            limit_jobs=lim_jobs,
+            limit_deletes=lim_deletes,
+            limit_mounts=lim_mounts,
+            has_more_paths=has_more_paths,
+            has_more_jobs=has_more_jobs,
+            has_more_deletes=has_more_deletes,
+            has_more_mounts=has_more_mounts,
+            error=err,
+        ),
+    )
+
+
 @bp.route("/cross")
 def cross():
     days = _days()
     lim_job = _limit("jobsec", 40)
     lim_net = _limit("network", 40)
+    lim_uss = _limit("jobuss", 40)
+    lim_racf_uss = _limit("racfuss", 40)
     summary, err = _safe(
         queries.cross_summary,
         days,
         job_limit=lim_job + 1,
         net_limit=lim_net + 1,
+        uss_limit=lim_uss + 1,
+        racf_uss_limit=lim_racf_uss + 1,
     )
-    summary = summary or {"job_security": [], "net_work": []}
+    summary = summary or {
+        "job_security": [],
+        "net_work": [],
+        "job_uss": [],
+        "racf_uss": [],
+    }
     job_security, has_more_jobsec = _slice(summary.get("job_security"), lim_job)
     net_work, has_more_network = _slice(summary.get("net_work"), lim_net)
+    job_uss, has_more_jobuss = _slice(summary.get("job_uss"), lim_uss)
+    racf_uss, has_more_racfuss = _slice(summary.get("racf_uss"), lim_racf_uss)
     summary["job_security"] = job_security
     summary["net_work"] = net_work
+    summary["job_uss"] = job_uss
+    summary["racf_uss"] = racf_uss
     return render_template(
         "cross.html",
         **_ctx(
@@ -402,8 +469,12 @@ def cross():
             summary=summary,
             limit_jobsec=lim_job,
             limit_network=lim_net,
+            limit_jobuss=lim_uss,
+            limit_racfuss=lim_racf_uss,
             has_more_jobsec=has_more_jobsec,
             has_more_network=has_more_network,
+            has_more_jobuss=has_more_jobuss,
+            has_more_racfuss=has_more_racfuss,
             error=err,
         ),
     )

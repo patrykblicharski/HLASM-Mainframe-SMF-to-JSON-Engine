@@ -1885,19 +1885,40 @@ input[type=datetime-local] { min-width: 190px; color-scheme: var(--color-scheme)
 .chart-wrap.sm { height: 220px; }
 
 .table-wrap {
-  overflow-x: auto;
+  /* scroll (not auto): keep a visible horizontal track when content is wider */
+  overflow-x: scroll;
   overflow-y: auto;
   max-height: 520px;
   max-width: 100%;
   width: 100%;
+  min-width: 0;
+  -webkit-overflow-scrolling: touch;
   border-radius: calc(var(--radius) - 2px);
   border: 1px solid var(--line);
   scrollbar-gutter: stable;
-  scrollbar-width: thin;
+  scrollbar-width: auto;
+  scrollbar-color: var(--accent) var(--scrollbar-track);
+}
+.table-wrap::-webkit-scrollbar {
+  height: 14px;
+  width: 14px;
+}
+.table-wrap::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 8px;
+}
+.table-wrap::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 8px;
+  border: 3px solid var(--scrollbar-track);
+}
+.table-wrap::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }
 table.data {
   width: max-content;
   min-width: 100%;
+  table-layout: auto;
   border-collapse: collapse;
   font-family: var(--font-table);
   font-size: .98rem;

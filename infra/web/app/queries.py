@@ -41,7 +41,10 @@ def overview_kpis(days: int) -> dict[str, Any]:
       (SELECT count() FROM smf.smf_119_70 WHERE {_days(days)}) AS ftp70,
       (SELECT count() FROM smf.smf_61 WHERE {_days(days)}) AS def61,
       (SELECT count() FROM smf.smf_65 WHERE {_days(days)}) AS del65,
-      (SELECT count() FROM smf.smf_66 WHERE {_days(days)}) AS alt66
+      (SELECT count() FROM smf.smf_66 WHERE {_days(days)}) AS alt66,
+      (SELECT count() FROM smf.smf_92_11 WHERE {_days(days)}) AS uss_close,
+      (SELECT count() FROM smf.smf_92_17 WHERE {_days(days)}) AS uss_access,
+      (SELECT count() FROM smf.smf_92_10 WHERE {_days(days)}) AS uss_open
     """
     rows = db.query(sql)
     return rows[0] if rows else {}
@@ -59,6 +62,10 @@ def latest_smf_update() -> Any:
         "smf_65",
         "smf_66",
         "smf_80",
+        "smf_92_10",
+        "smf_92_11",
+        "smf_92_14",
+        "smf_92_17",
         "smf_119_1",
         "smf_119_2",
         "smf_119_3",
@@ -626,11 +633,187 @@ def lifecycle_summary(
     return {"hourly": hourly, "tops": tops, "catalogs": catalogs}
 
 
+def uss_summary(
+    days: int,
+    *,
+    paths_limit: int = 50,
+    jobs_limit: int = 40,
+    deletes_limit: int = 40,
+    mounts_limit: int = 20,
+) -> dict[str, Any]:
+    """SMF 92 OMVS/HFS/zFS activity — hot subtypes 10/11/17/14 plus mount KPIs."""
+    w = _chart_days(days)
+    d = _days(days)
+    hourly = db.query(
+        f"""
+        SELECT hour, action, sum(cnt) AS rows FROM (
+          SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
+                 'OPEN-10' AS action, count() AS cnt FROM smf.smf_92_10 WHERE {w} GROUP BY hour
+          UNION ALL
+          SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
+                 'CLOSE-11' AS action, count() AS cnt FROM smf.smf_92_11 WHERE {w} GROUP BY hour
+          UNION ALL
+          SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
+                 'ACCESS-17' AS action, count() AS cnt FROM smf.smf_92_17 WHERE {w} GROUP BY hour
+          UNION ALL
+          SELECT toStartOfHour(parseDateTimeBestEffort(concat(toString(event_date),' ',if(time='','00:00:00',time)))) AS hour,
+                 'DELETE-14' AS action, count() AS cnt FROM smf.smf_92_14 WHERE {w} GROUP BY hour
+        ) GROUP BY hour, action ORDER BY hour
+        """
+    )
+    kpis_rows = db.query(
+        f"""
+        SELECT
+          (SELECT count() FROM smf.smf_92_10 WHERE {d}) AS opens,
+          (SELECT count() FROM smf.smf_92_11 WHERE {d}) AS closes,
+          (SELECT count() FROM smf.smf_92_17 WHERE {d}) AS accesses,
+          (SELECT count() FROM smf.smf_92_14 WHERE {d}) AS deletes,
+          (SELECT count() FROM smf.smf_92_1 WHERE {d}) AS mounts,
+          (SELECT count() FROM smf.smf_92_5 WHERE {d}) AS unmounts,
+          (SELECT sum(toUInt64OrZero(bytes_read)) FROM smf.smf_92_11 WHERE {d}) AS bytes_read,
+          (SELECT sum(toUInt64OrZero(bytes_written)) FROM smf.smf_92_11 WHERE {d}) AS bytes_written
+        """
+    )
+    kpis = kpis_rows[0] if kpis_rows else {}
+    opens = int(kpis.get("opens") or 0)
+    closes = int(kpis.get("closes") or 0)
+    deletes = int(kpis.get("deletes") or 0)
+    open_close_ratio = round(opens / closes, 3) if closes else (float(opens) if opens else 0.0)
+
+    # Delete spike vs prior 14d baseline (simple count ratio; empty-safe).
+    delete_baseline_rows = db.query(
+        f"""
+        SELECT
+          (SELECT count() FROM smf.smf_92_14 WHERE {d}) AS window_cnt,
+          (SELECT count() FROM smf.smf_92_14
+           WHERE event_date >= today() - 14 AND event_date < today() - {int(days)}
+          ) AS baseline_cnt
+        """
+    )
+    db_row = delete_baseline_rows[0] if delete_baseline_rows else {}
+    baseline_cnt = int(db_row.get("baseline_cnt") or 0)
+    # Normalize baseline to same-length window when possible.
+    baseline_days = max(14 - int(days), 1)
+    baseline_daily = baseline_cnt / baseline_days if baseline_cnt else 0.0
+    expected = baseline_daily * max(int(days), 1)
+    delete_spike_ratio = round(deletes / expected, 2) if expected > 0 else (0.0 if deletes == 0 else None)
+
+    paths = db.query(
+        f"""
+        SELECT pathname, count() AS closes,
+               sum(toUInt64OrZero(bytes_read)) AS bytes_read,
+               sum(toUInt64OrZero(bytes_written)) AS bytes_written,
+               {last_ts_select()}
+        FROM smf.smf_92_11
+        WHERE {d} AND pathname != ''
+        GROUP BY pathname
+        ORDER BY (bytes_read + bytes_written) DESC, closes DESC
+        LIMIT {int(paths_limit)}
+        """
+    )
+    paths_source = "close"
+    if not paths:
+        paths_source = "access"
+        paths = db.query(
+            f"""
+            SELECT pathname, sum(toUInt64OrZero(access_count)) AS access_count,
+                   count() AS rows, {last_ts_select()}
+            FROM smf.smf_92_17
+            WHERE {d} AND pathname != ''
+            GROUP BY pathname
+            ORDER BY access_count DESC, rows DESC
+            LIMIT {int(paths_limit)}
+            """
+        )
+
+    jobs = db.query(
+        f"""
+        SELECT job_name, saf_user,
+               sum(opens) AS opens, sum(closes) AS closes,
+               sum(bytes_read) AS bytes_read, sum(bytes_written) AS bytes_written,
+               max(last_ts) AS last_ts
+        FROM (
+          SELECT job_name, saf_user, count() AS opens, toUInt64(0) AS closes,
+                 toUInt64(0) AS bytes_read, toUInt64(0) AS bytes_written,
+                 {last_ts_select()}
+          FROM smf.smf_92_10 WHERE {d} AND job_name != ''
+          GROUP BY job_name, saf_user
+          UNION ALL
+          SELECT job_name, saf_user, toUInt64(0), count(),
+                 sum(toUInt64OrZero(bytes_read)), sum(toUInt64OrZero(bytes_written)),
+                 {last_ts_select()}
+          FROM smf.smf_92_11 WHERE {d} AND job_name != ''
+          GROUP BY job_name, saf_user
+        )
+        GROUP BY job_name, saf_user
+        ORDER BY (bytes_read + bytes_written) DESC, (opens + closes) DESC
+        LIMIT {int(jobs_limit)}
+        """
+    )
+
+    delete_rows = db.query(
+        f"""
+        SELECT file_name, new_file_name, job_name, saf_user, fs_name,
+               count() AS rows, {last_ts_select()}
+        FROM smf.smf_92_14
+        WHERE {d}
+        GROUP BY file_name, new_file_name, job_name, saf_user, fs_name
+        ORDER BY rows DESC
+        LIMIT {int(deletes_limit)}
+        """
+    )
+
+    mounts = db.query(
+        f"""
+        SELECT fs_name, fs_type_name, job_name, saf_user,
+               anyLast(fs_space_total) AS fs_space_total,
+               anyLast(fs_space_used) AS fs_space_used,
+               count() AS rows, {last_ts_select()}
+        FROM smf.smf_92_1
+        WHERE {d} AND fs_name != ''
+        GROUP BY fs_name, fs_type_name, job_name, saf_user
+        ORDER BY rows DESC
+        LIMIT {int(mounts_limit)}
+        """
+    )
+
+    unmount_io = db.query(
+        f"""
+        SELECT fs_name, job_name,
+               sum(toUInt64OrZero(bytes_read)) AS bytes_read,
+               sum(toUInt64OrZero(bytes_written)) AS bytes_written,
+               count() AS rows, {last_ts_select()}
+        FROM smf.smf_92_5
+        WHERE {d} AND fs_name != ''
+        GROUP BY fs_name, job_name
+        ORDER BY (bytes_read + bytes_written) DESC
+        LIMIT {int(mounts_limit)}
+        """
+    )
+
+    return {
+        "hourly": hourly,
+        "kpis": {
+            **kpis,
+            "open_close_ratio": open_close_ratio,
+            "delete_spike_ratio": delete_spike_ratio,
+        },
+        "paths": paths,
+        "paths_source": paths_source,
+        "jobs": jobs,
+        "deletes": delete_rows,
+        "mounts": mounts,
+        "unmount_io": unmount_io,
+    }
+
+
 def cross_summary(
     days: int,
     *,
     job_limit: int = 40,
     net_limit: int = 40,
+    uss_limit: int = 40,
+    racf_uss_limit: int = 40,
 ) -> dict[str, Any]:
     """ANALYTICS.md priority crosses as practical tables."""
     job_security = db.query(
@@ -668,4 +851,57 @@ def cross_summary(
         LIMIT {int(net_limit)}
         """
     )
-    return {"job_security": job_security, "net_work": net_work}
+    job_uss = db.query(
+        f"""
+        SELECT j.job_name,
+               j.ends,
+               j.cpu_sum,
+               j.last_ts,
+               coalesce(u.closes, 0) AS uss_closes,
+               coalesce(u.bytes_read, 0) AS uss_bytes_read,
+               coalesce(u.bytes_written, 0) AS uss_bytes_written
+        FROM (
+          SELECT job_name, count() AS ends, sum(toUInt64OrZero(cpu_step_time)) AS cpu_sum, {last_ts_select()}
+          FROM smf.smf_30_5 WHERE {_days(days)} AND job_name != ''
+          GROUP BY job_name
+        ) j
+        INNER JOIN (
+          SELECT job_name,
+                 count() AS closes,
+                 sum(toUInt64OrZero(bytes_read)) AS bytes_read,
+                 sum(toUInt64OrZero(bytes_written)) AS bytes_written
+          FROM smf.smf_92_11 WHERE {_days(days)} AND job_name != ''
+          GROUP BY job_name
+        ) u USING (job_name)
+        ORDER BY (uss_bytes_read + uss_bytes_written) DESC, uss_closes DESC
+        LIMIT {int(uss_limit)}
+        """
+    )
+    racf_uss = db.query(
+        f"""
+        SELECT u.saf_user AS user_id,
+               u.deletes AS uss_deletes,
+               coalesce(r.events, 0) AS racf_events,
+               u.last_ts
+        FROM (
+          SELECT saf_user, count() AS deletes, {last_ts_select()}
+          FROM smf.smf_92_14
+          WHERE {_days(days)} AND saf_user != ''
+          GROUP BY saf_user
+        ) u
+        LEFT JOIN (
+          SELECT user_id, count() AS events
+          FROM smf.smf_80
+          WHERE {_days(days)} AND user_id != ''
+          GROUP BY user_id
+        ) r ON r.user_id = u.saf_user
+        ORDER BY uss_deletes DESC, racf_events DESC
+        LIMIT {int(racf_uss_limit)}
+        """
+    )
+    return {
+        "job_security": job_security,
+        "net_work": net_work,
+        "job_uss": job_uss,
+        "racf_uss": racf_uss,
+    }
